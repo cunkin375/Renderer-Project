@@ -12,6 +12,7 @@ int main()
 
     std::cout << "Hello, world!\n";
 
+    // TODO: make window :D
     while (Backend::WindowIsOpen()) {
         Backend::BeginFrame();
         Renderer::Render();
