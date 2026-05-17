@@ -1,10 +1,8 @@
 #pragma once
 #include "App/Enums.hpp"
 
-namespace Backend {
+namespace Backend::GLFW {
     bool Init(API api, WindowMode window_mode);
     bool WindowIsOpen();
-    API GetAPI();
-    void BeginFrame();
-    void EndFrame();
+    void Destroy();
 }
