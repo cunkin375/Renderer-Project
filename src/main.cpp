@@ -5,17 +5,22 @@
 
 int main() 
 {
-    if (!Backend::Init(API::OPENGL, WindowMode::WINDOWED)) {
-        std::cout << "Backend failed to initialize!\n";
+    if (!Backend::Init(API::OPENGL, WindowMode::WINDOWED))
+    {
+        std::cerr << "Backend failed to initialize!\n";
         std::exit(-1);
     }
 
-    std::cout << "Hello, world!\n";
+    std::cout << "Pre-Window\n";
 
     // TODO: make window :D
-    while (Backend::WindowIsOpen()) {
+    while (Backend::WindowIsOpen())
+    {
         Backend::BeginFrame();
         Renderer::Render();
         Backend::EndFrame();
     }
+
+    std::cout << "Hello, world!\n";
+
 }
