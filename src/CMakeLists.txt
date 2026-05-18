@@ -1,17 +1,23 @@
 cmake_minimum_required(VERSION 4.1.0)
 
-file(GLOB_RECURSE SOURCE_FILES ./*.cpp)
-
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+file(GLOB_RECURSE SOURCE_FILES  ./*.cpp)
 
 set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendor)
 
-# GLFW files
-set(GLFW_INCLUDE_DIR ${VENDOR_DIR}/GLFW/include)
-set(GLFW_LIBS ${VENDOR_DIR}/GLFW/lib/)
-
 # Glad files
 set(GLAD_INCLUDE_DIR ${VENDOR_DIR}/glad/include)
+set(GLAD_SOURCE ${VENDOR_DIR}/glad/src/glad.c)
+# GLFW files
+set(GLFW_INCLUDE_DIR ${VENDOR_DIR}/GLFW/include)
+set(GLFW_LIBS ${VENDOR_DIR}/GLFW/lib)
+# Windows Libraries
+set(MINGW_LIBS ${GLFW_LIBS}/mingw-w64)
+# Linux-Compiled
+set(LINUX_LIBS ${GLFW_LIBS}/linux)
+
+set(VENDOR_SOURCE ${GLAD_SOURCE})
+
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${VENDOR_SOURCE})
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${CMAKE_SOURCE_DIR}/vendor
@@ -20,7 +26,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${GLAD_INCLUDE_DIR}
 )
 
-# Only MinGW is supported for now
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    ${GLFW_LIBS}/mingw-w64/libglfw3.a
+    $<$<PLATFORM_ID:Windows>:${MINGW_LIBS}/libglfw3.a>
+    $<$<PLATFORM_ID:Linux>:${LINUX_LIBS}/libglfw3.a>
 )
+
+# GLFW dependencies for linux
+if(UNIX AND NOT APPLE)
+    target_link_libraries(${PROJECT_NAME} PRIVATE 
+        X11
+        pthread
+        dl
+    )
+endif()

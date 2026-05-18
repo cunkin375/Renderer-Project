@@ -1,6 +1,6 @@
 #include "GLFW.hpp"
 
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 
 namespace Backend::GLFW {

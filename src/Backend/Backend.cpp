@@ -1,6 +1,6 @@
 #include "Backend.hpp"
 
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include "Integration/GLFW.hpp"
 #include "API/OpenGL/GL_backend.hpp"
