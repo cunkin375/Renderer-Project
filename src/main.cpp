@@ -5,13 +5,14 @@
 
 int main() 
 {
+
+    std::cout << "Pre-Window\n";
+
     if (!Backend::Init(API::OPENGL, WindowMode::WINDOWED))
     {
         std::cerr << "Backend failed to initialize!\n";
         std::exit(-1);
     }
-
-    std::cout << "Pre-Window\n";
 
     // TODO: make window :D
     while (Backend::WindowIsOpen())
