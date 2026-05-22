@@ -2,5 +2,6 @@
 
 namespace OpenGLBackend {
     void Init();
+    void BeginFrame();
 }
 
