@@ -18,9 +18,12 @@ int main()
     while (Backend::WindowIsOpen())
     {
         Backend::BeginFrame();
+        Backend::Update();
         Renderer::Render();
         Backend::EndFrame();
     }
+
+    Backend::Destroy();
 
     std::cout << "Hello, world!\n";
 

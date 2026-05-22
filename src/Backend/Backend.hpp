@@ -10,4 +10,6 @@ namespace Backend {
     WindowHandle GetWindowPointer();
     void BeginFrame();
     void EndFrame();
+    void Update();
+    void Destroy();
 }

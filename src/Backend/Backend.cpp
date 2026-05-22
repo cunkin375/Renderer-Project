@@ -1,7 +1,5 @@
 #include "Backend.hpp"
 
-#include <GLFW/glfw3.h>
-
 #include "Integration/GLFW.hpp"
 #include "API/OpenGL/GL_backend.hpp"
 #include "API/OpenGL/GL_renderer.hpp"
@@ -18,11 +16,15 @@ namespace Backend {
             return false;
         }
 
+
         if (GetAPI() == API::OPENGL)
         {
+            GLFW::MakeContextCurrent();
             OpenGLBackend::Init();
             OpenGLRenderer::Init();
         }
+
+        GLFW::ShowWindow(GetWindowPointer().asGLFW());
 
         return true;
     }
@@ -34,13 +36,27 @@ namespace Backend {
 
     void BeginFrame()
     {
+        GLFW::BeginFrame(g_api);
+        if (GetAPI() == API::OPENGL)
+        {
+            OpenGLBackend::BeginFrame();
+        }
     }
 
     void EndFrame()
     {
+        GLFW::EndFrame(g_api);
+    }
+    
+    void Update()
+    {
+        GLFW::Update();
     }
 
-    
+    void Destroy()
+    {
+        GLFW::Destroy();
+    }
 
     API GetAPI()
     {
@@ -49,6 +65,6 @@ namespace Backend {
 
     WindowHandle GetWindowPointer()
     {
-        return GLFW::GetWindowPointer(); 
+        return GLFW::GetWindowPointer();
     }
 }

@@ -18,6 +18,7 @@ namespace Backend::GLFW {
     i32 g_fullscreen_width = 0;
     i32 g_current_window_width = 0;
     i32 g_current_window_height = 0;
+    bool g_force_close_window;
 
     bool Init(API api, WindowMode window_mode) 
     {
@@ -63,8 +64,7 @@ namespace Backend::GLFW {
                             g_windowed_height, 
                             "GLFW Window", 
                             nullptr, 
-                            nullptr
-                        );
+                            nullptr);
             glfwSetWindowPos(g_window, 0, 0);
         }
         else if (g_window_mode == WindowMode::FULLSCREEN)
@@ -76,8 +76,7 @@ namespace Backend::GLFW {
                             g_fullscreen_height, 
                             "GLFW Window",
                             g_monitor, 
-                            nullptr
-                        );
+                            nullptr);
         }
         if (g_window == nullptr)
         {
@@ -93,9 +92,43 @@ namespace Backend::GLFW {
         return true;
     }
 
+    void Destroy()
+    {
+        glfwTerminate();
+    }
+
+    void BeginFrame(API api)
+    {
+        if (api == API::OPENGL)
+        {
+            glfwPollEvents();
+        }
+    }
+
+    void EndFrame(API api)
+    {
+        if (api == API::OPENGL)
+        {
+            glfwSwapBuffers(g_window);
+        }
+    }
+
+    void Update()
+    {
+        if(glfwGetKey(g_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        {
+            glfwSetWindowShouldClose(g_window, true);
+        }
+    }
+
     bool WindowIsOpen()
     {
-        return false;
+        return (!glfwWindowShouldClose(g_window) || g_force_close_window);
+    }
+
+    u32 GetTime()
+    {
+        return glfwGetTime();
     }
 
     WindowHandle GetWindowPointer()
@@ -103,6 +136,14 @@ namespace Backend::GLFW {
         return WindowHandle(g_window);
     }
 
-    void Destroy();
+    void MakeContextCurrent()
+    {
+        glfwMakeContextCurrent(g_window);
+    }
+
+    void ShowWindow(GLFWwindow* window)
+    {
+        glfwShowWindow(window);
+    }
 
 }
