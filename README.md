@@ -1,1 +1,1 @@
-### Template/(Rewrite of Old Implementations) for Graphics Projects
+### Template/Rewrite of Old Implementations for Graphics Projects
