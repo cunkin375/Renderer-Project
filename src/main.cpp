@@ -14,7 +14,6 @@ int main()
         std::exit(-1);
     }
 
-    // TODO: make window :D
     while (Backend::WindowIsOpen())
     {
         Backend::BeginFrame();
