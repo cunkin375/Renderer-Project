@@ -3,9 +3,10 @@
 namespace OpenGLRenderer {
     void Init() 
     {
+        LoadShaders();
     }
 
-    void LoadShaders() 
+    void LoadShaders()
     {
     }
 
