@@ -11,4 +11,12 @@ namespace Renderer {
             OpenGLRenderer::Render();
         }
     }
+
+    void Init() 
+    {
+        if (Backend::GetAPI() == API::OPENGL)
+        {
+            OpenGLRenderer::Init();
+        }
+    }
 }

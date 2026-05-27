@@ -2,4 +2,5 @@
 
 namespace Renderer {
     void Render();
+    void Init();
 }
