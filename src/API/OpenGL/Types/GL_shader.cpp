@@ -5,28 +5,31 @@
 #include <sstream>
 #include <ranges>
 
-// TODO: IMPLEMENT ALL FUNCTIONS IN GL_shadper.hpp
+// TODO: IMPLEMENT ALL FUNCTIONS IN GL_shader.hpp
+
 
 /*** === HELPER FUNCTIONS === ***/
 
-static auto GetLinkingErrors(i32 program_id, bool brief = false) -> std::string
+
+using BriefLog = bool;
+static auto GetLinkingErrors(ProgramHandle program, BriefLog brief=false) -> std::string
 {
     i32 link_status;
-    glGetProgramiv(program_id, GL_LINK_STATUS, &link_status);
+    glGetProgramiv(program, GL_LINK_STATUS, &link_status);
     if (link_status != GL_FALSE) 
     {
         return "";
     }
 
     i32 log_len;
-    glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &log_len);
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_len);
     if (log_len < 0)
     {
         return "\n    An unknown linking error occured (no logs available).\n";
     }
 
     auto log_buffer = std::vector<char>(log_len + 1); // needs null terminator
-    glGetProgramInfoLog(program_id, log_len, NULL, log_buffer.data());
+    glGetProgramInfoLog(program, log_len, NULL, log_buffer.data());
 
     if (!brief)
     {
@@ -34,8 +37,7 @@ static auto GetLinkingErrors(i32 program_id, bool brief = false) -> std::string
     }
 
     std::string line;
-    auto full_log = std::string{ log_buffer.data() };
-    auto log_stream = std::stringstream{ full_log };
+    auto log_stream = std::stringstream{ log_buffer.data() };
     const std::string assembly_start_delim = "--- internal assmebly text ---";
 
     std::string result = "\n";
@@ -76,7 +78,7 @@ auto OpenGLShader::Load(const std::vector<std::string>& shader_paths) -> bool
     for (const auto& shader_path : shader_paths)
     {
          std::string full_path = _sub_directory.empty() ? shader_path : _sub_directory + "/" + shader_path;
-         modules.push_back(OpenGLShaderModule(full_path, _defines));
+         modules.emplace_back(full_path, _defines);
     }
 
 
@@ -84,40 +86,40 @@ auto OpenGLShader::Load(const std::vector<std::string>& shader_paths) -> bool
     {
         if (module.CompilationFailed())
         {
-            std::cout << "\n---------------------------------------------------------------\n\n";
-            std::cout << " COMPILATION ERROR: " + module.GetFilename() + "\n\n";
-            std::cout << module.GetErrors() + "\n";
-            std::cout << "\n---------------------------------------------------------------\n";
+            std::cerr << "\n---------------------------------------------------------------\n\n";
+            std::cerr << " COMPILATION ERROR: " + module.GetFilename() + "\n\n";
+            std::cerr << module.GetErrors() + "\n";
+            std::cerr << "\n---------------------------------------------------------------\n";
             glDeleteShader(module.GetHandle());
             return false;
         }
     }
 
-    // link
-    i32 temp_handle = glCreateProgram();
+    // link shader modules
+    ProgramHandle temp_handle = glCreateProgram();
     for (auto& module : modules)
     {
-        glAttachShader(temp_handle, module.GetHandle());
+        glAttachShader(ProgramHandle{temp_handle}, ShaderHandle{module.GetHandle()});
     }
     glLinkProgram(temp_handle);
-    auto linking_errors = GetLinkingErrors(temp_handle);
+    std::string linking_errors = GetLinkingErrors(ProgramHandle{temp_handle}, BriefLog{true});
 
     if (linking_errors.length())
     {
-        std::cout << "\n---------------------------------------------------------------\n\n";
-        std::cout << " LINKING ERROR: ";
+        std::cerr << "\n---------------------------------------------------------------\n\n";
+        std::cerr << " LINKING ERROR: ";
         for (auto [idx, module] : std::views::enumerate(modules))
         {
             auto split = (idx < modules.size() - 1) ? "/" : "";
-            std::cout << module.GetFilename() << split;
+            std::cerr << module.GetFilename() << split;
             glDeleteShader(module.GetHandle());
         }
-        std::cout << linking_errors << "\n";
-        std::cout << "\n---------------------------------------------------------------\n";
+        std::cerr << linking_errors << "\n";
+        std::cerr << "\n---------------------------------------------------------------\n";
         return false;
     }
 
-    // cleanup
+    // cleanup after success
     if (_handle != -1)
     {
         glDeleteProgram(_handle);

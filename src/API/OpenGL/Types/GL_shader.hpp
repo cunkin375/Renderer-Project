@@ -5,9 +5,13 @@
 
 #include "App/Types.hpp"
 
+using ShaderHandle = i32;
+using ProgramHandle = ShaderHandle;
+using GLUniformCache = std::unordered_map<std::string, i32>;
+
 struct OpenGLShaderModule {
 private:
-    i32 _handle = -1;
+    ShaderHandle _handle = -1;
     std::string _filename = "";
     std::string _errors = "";
     std::string _final_source = "";
@@ -15,7 +19,7 @@ private:
 public:
     OpenGLShaderModule(const std::string& filename, 
                        const std::vector<std::string>& defines);
-    i32 GetHandle() const;
+    ShaderHandle GetHandle() const;
     bool CompilationFailed() const;
     std::string& GetFilename() const;
     std::string& GetErrors() const;
@@ -26,8 +30,8 @@ struct OpenGLShader {
 private:
     std::vector<std::string> _defines;
     std::vector<std::string> _shader_paths;
-    std::unordered_map<std::string, i32> _uniform_locations;
-    i32 _handle = -1;
+    GLUniformCache _uniform_locations;
+    ProgramHandle _handle = -1;
     std::string _sub_directory = "";
 
 public:
