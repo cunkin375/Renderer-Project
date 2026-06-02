@@ -11,28 +11,32 @@ using GLUniformCache = std::unordered_map<std::string, i32>;
 
 struct OpenGLShaderModule {
 private:
-    ShaderHandle _handle = -1;
-    std::string _filename = "";
-    std::string _errors = "";
-    std::string _final_source = "";
+    ShaderHandle handle_ = -1;
+    std::string filename_ = "";
+    std::string errors_ = "";
+    std::string final_source_ = "";
 
 public:
     OpenGLShaderModule(const std::string& filename, 
                        const std::vector<std::string>& defines);
-    ShaderHandle GetHandle() const;
     bool CompilationFailed() const;
-    std::string& GetFilename() const;
-    std::string& GetErrors() const;
-    inline const std::string& GetFinalSource() const { return _final_source; }
+    ShaderHandle GetHandle() const { return handle_; }
+    const std::string& GetFilename() const { return filename_; }
+    const std::string& GetErrors() const { return errors_; }
+    const std::string& GetFinalSource() const { return final_source_; }
 };
 
 struct OpenGLShader {
 private:
-    std::vector<std::string> _defines;
-    std::vector<std::string> _shader_paths;
-    GLUniformCache _uniform_locations;
-    ProgramHandle _handle = -1;
-    std::string _sub_directory = "";
+    /** defines_ refers to preprocessor directives that can be injected into shader source code
+     *  this allows for a single shader file to be defined with different behaviors according to
+     *  system specifications, runtime-decided optimizations, etc.
+     */
+    std::vector<std::string> defines_;
+    std::vector<std::string> shader_paths_;
+    GLUniformCache uniform_locations_;
+    ProgramHandle handle_ = -1;
+    std::string sub_directory_ = "";
 
 public:
     OpenGLShader(std::vector<std::string>& shader_paths, 
