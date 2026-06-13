@@ -189,8 +189,8 @@ namespace {
 
 /*** === UPPER SHADER FUNCTIONS === ***/
 
-OpenGLShader::OpenGLShader(std::vector<std::string>& shader_paths, 
-                           const std::string sub_directory, 
+OpenGLShader::OpenGLShader(const std::vector<std::string>& shader_paths, 
+                           const std::string& sub_directory,
                            const std::vector<std::string>& defines)
                           : defines_{ defines }
                           , shader_paths_{ shader_paths }

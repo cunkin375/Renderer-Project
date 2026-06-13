@@ -20,19 +20,17 @@ private:
 public:
     OpenGLShaderModule(const std::string& filename, 
                        const std::vector<std::string>& defines);
+
     bool CompilationFailed() const { return errors_.length(); }
-    ShaderHandle GetHandle() const { return handle_; }
-    const std::string& GetFilename() const { return filename_; }
-    const std::string& GetErrors() const { return errors_; }
+
+    const ShaderHandle GetHandle()      const { return handle_; }
+    const std::string& GetFilename()    const { return filename_; }
+    const std::string& GetErrors()      const { return errors_; }
     const std::string& GetFinalSource() const { return final_source_; }
 };
 
 struct OpenGLShader {
 private:
-    /** defines_ refers to preprocessor directives that can be injected into shader source code
-     *  this allows for a single shader file to be defined with different behaviors according to
-     *  system specifications, runtime-decided optimizations, etc.
-     */
     std::vector<std::string> defines_;
     std::vector<std::string> shader_paths_;
     GLUniformCache uniform_locations_;
@@ -40,8 +38,8 @@ private:
     std::string sub_directory_ = "";
 
 public:
-    OpenGLShader(std::vector<std::string>& shader_paths, 
-                 const std::string sub_directory, 
+    OpenGLShader(const std::vector<std::string>& shader_paths, 
+                 const std::string& sub_directory, 
                  const std::vector<std::string>& defines);
     void Bind() const;
     bool Load(const std::vector<std::string>& shader_paths);
