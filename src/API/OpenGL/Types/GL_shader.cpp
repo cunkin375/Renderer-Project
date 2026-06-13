@@ -86,7 +86,7 @@ namespace {
         return (include_file.empty()) ? std::nullopt : std::make_optional(trimmed);
     }
 
-    void ParseFile(const std::string& filepath,
+    bool ParseFile(const std::string& filepath,
                 std::string& output_string,
                 std::vector<std::string>& line_to_file,
                 ShaderParseContext& context,
@@ -104,7 +104,7 @@ namespace {
             std::cerr << "\n---------------------------------------------------------------\n\n";
             std::cerr << "ERROR: Failed to open shader file: " << filepath << "\n";
             std::cerr << "\n---------------------------------------------------------------\n";
-            return;
+            return false;
         }
 
         while(std::getline(file, line))
@@ -124,7 +124,10 @@ namespace {
 
                 if (context.included_paths.insert(include_path).second)
                 {
-                    ParseFile(include_path, output_string, line_to_file, context, root_filepath);
+                    if (!ParseFile(include_path, output_string, line_to_file, context, root_filepath))
+                    {
+                        return false;
+                    }
                 }
 
                 file_line_number++;
@@ -150,6 +153,7 @@ namespace {
             line_to_file.emplace_back(filepath + "(line " + std::to_string(file_line_number) + ")");
             file_line_number++;
         }
+        return true;
     }
 
     void InsertDefines(std::string& source, const std::vector<std::string>& defines)
@@ -191,10 +195,12 @@ namespace {
 
 OpenGLShader::OpenGLShader(const std::vector<std::string>& shader_paths, 
                            const std::string& sub_directory,
-                           const std::vector<std::string>& defines)
+                           const std::vector<std::string>& defines,
+                           const std::string& base_path)
                           : defines_{ defines }
                           , shader_paths_{ shader_paths }
                           , sub_directory_{ sub_directory }
+                          , base_path_{ base_path }
 {
     // sources must be assigned before loading
     Load(shader_paths_);
@@ -207,7 +213,7 @@ bool OpenGLShader::Load(const std::vector<std::string>& shader_paths)
     for (const auto& shader_path : shader_paths)
     {
          std::string full_path = sub_directory_.empty() ? shader_path : sub_directory_ + "/" + shader_path;
-         modules.emplace_back(full_path, defines_);
+         modules.emplace_back(full_path, defines_, base_path_);
     }
 
 
@@ -271,14 +277,19 @@ void OpenGLShader::Bind() const
 
 /*** === SHADER MODULE FUNCTIONS === ***/
 
-OpenGLShaderModule::OpenGLShaderModule(const std::string& shader_path, const std::vector<std::string>& defines)
+OpenGLShaderModule::OpenGLShaderModule(const std::string& shader_path, const std::vector<std::string>& defines, const std::string& base_path)
 {
     ShaderParseContext context;
     std::vector<std::string> line_map;
     std::string parsed_shader_source = "";
-    const std::string& root_path = "resources/shaders/OpenGL" + shader_path;
+    const std::string root_path = base_path + shader_path;
 
-    ParseFile(root_path, parsed_shader_source, line_map, context, root_path);
+    if (!ParseFile(root_path, parsed_shader_source, line_map, context, root_path))
+    {
+        errors_ = "Failed to open or parse shader file: " + root_path;
+        filename_ = shader_path;
+        return;
+    }
     InsertDefines(parsed_shader_source, defines);
 
     std::string extension = std::filesystem::path(shader_path).extension().string();
@@ -288,6 +299,8 @@ OpenGLShaderModule::OpenGLShaderModule(const std::string& shader_path, const std
     };
 
     i32 shader_type = shader_type_map.contains(extension) ? shader_type_map.at(extension) : GL_NONE;
+
+    handle_ = glCreateShader(shader_type);
 
     // error checking
     const char* shader_code = parsed_shader_source.c_str();

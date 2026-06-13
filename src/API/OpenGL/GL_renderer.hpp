@@ -14,13 +14,13 @@ using DefineDirectives = std::vector<std::string>;
 namespace OpenGLRenderer {
     void Init();
 
-    void LoadShader(const Filename& name,             
-                    const ShaderPaths& shader_paths,  
-                    const DefineDirectives& defines); 
+    void LoadShader(const Filename& name,
+                    const ShaderPaths& shader_paths,
+                    const DefineDirectives& defines);
 
-    void LoadShader(const SubDirectory& sub_directory, 
+    void LoadShader(const SubDirectory& sub_directory,
                     const Filename& name, 
-                    const ShaderPaths& shader_paths, 
+                    const ShaderPaths& shader_paths,
                     const DefineDirectives& defines);
 
     void LoadShaders();

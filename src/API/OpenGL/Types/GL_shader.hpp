@@ -5,6 +5,8 @@
 
 #include "App/Types.hpp"
 
+constexpr char opengl_shader_path[] = "resources/shaders/OpenGL/";
+
 using ShaderHandle = i32;
 using ProgramHandle = ShaderHandle;
 using GLUniformCache = std::unordered_map<std::string, i32>;
@@ -19,7 +21,8 @@ private:
 
 public:
     OpenGLShaderModule(const std::string& filename, 
-                       const std::vector<std::string>& defines);
+                       const std::vector<std::string>& defines,
+                       const std::string& base_path = opengl_shader_path);
 
     bool CompilationFailed() const { return errors_.length(); }
 
@@ -36,11 +39,13 @@ private:
     GLUniformCache uniform_locations_;
     ProgramHandle handle_ = -1;
     std::string sub_directory_ = "";
+    std::string base_path_ = "";
 
 public:
     OpenGLShader(const std::vector<std::string>& shader_paths, 
                  const std::string& sub_directory, 
-                 const std::vector<std::string>& defines);
+                 const std::vector<std::string>& defines,
+                 const std::string& base_path = opengl_shader_path);
     void Bind() const;
     bool Load(const std::vector<std::string>& shader_paths);
 };
