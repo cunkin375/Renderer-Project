@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <filesystem>
 #include <fstream>
+#include <optional>
 
 // TODO: IMPLEMENT ALL FUNCTIONS IN GL_shader.hpp
 
@@ -20,13 +21,13 @@ using BriefLog = bool;
 
 /*** === HELPER FUNCTIONS === ***/
 namespace {
-    std::string GetLinkingErrors(ProgramHandle program, BriefLog brief)
+    std::optional<std::string> GetLinkingErrors(ProgramHandle program, BriefLog brief)
     {
         i32 link_status;
         glGetProgramiv(program, GL_LINK_STATUS, &link_status);
         if (link_status != GL_FALSE) 
         {
-            return "";
+            return std::nullopt;
         }
 
         i32 log_len;
@@ -53,6 +54,7 @@ namespace {
         while(std::getline(log_stream, line))
         {
             result += "    " + line + "\n";
+            // if this is the delimeter stop
             if(line.find(assembly_start_delim) != std::string::npos)
             {
                 result += "    (Internal assembly text omitted for brevity)";
@@ -63,29 +65,23 @@ namespace {
         return result;
     }
 
-    std::string LTrimCopy(const std::string& str)
+    std::string LeftTrimCopy(const std::string& str)
     {
-        size_t start = str.find_first_not_of(" \t\r");
+        std::size_t start = str.find_first_not_of(" \t\r");
         return (start == std::string::npos) ? "" : str.substr(start);
     }
 
     std::optional<std::string> TryParseInclude(const std::string& line)
     {
-        std::string trimmed = LTrimCopy(line);
-        if (!trimmed.starts_with("#include"))
-        {
-            return std::nullopt;
-        }
-        size_t first_quote = trimmed.find('"');
-        if (first_quote == std::string::npos)
-        {
-            return std::nullopt;
-        }
-        size_t second_quote = trimmed.find('"', first_quote + 1);
-        if (second_quote == std::string::npos)
-        {
-            return std::nullopt;
-        }
+        std::string trimmed = LeftTrimCopy(line);
+        if (!trimmed.starts_with("#include")) { return std::nullopt; }
+
+        std::size_t first_quote = trimmed.find('"');
+        if (first_quote == std::string::npos) { return std::nullopt; }
+
+        std::size_t second_quote = trimmed.find('"', first_quote + 1);
+        if (second_quote == std::string::npos) { return std::nullopt; }
+
         std::string include_file = trimmed.substr(first_quote + 1, second_quote - first_quote - 1);
         return (include_file.empty()) ? std::nullopt : std::make_optional(trimmed);
     }
@@ -96,12 +92,12 @@ namespace {
                 ShaderParseContext& context,
                 const std::string& root_filepath) 
     {
-        std::string base_dir = std::filesystem::path(filepath).parent_path().string();
+        std::string base_directory = std::filesystem::path(filepath).parent_path().string();
         std::string filename = std::filesystem::path(filepath).filename().string();
         std::string line;
         auto file = std::ifstream{ filepath };
-        bool first_line_of_file = true;
         i32 file_line_number = 1;
+        bool first_line_of_file = true;
 
         if (!file.is_open())
         {
@@ -124,7 +120,7 @@ namespace {
             if(auto include_file = TryParseInclude(line))
             {
                 using namespace std::filesystem;
-                std::string include_path = std::filesystem::weakly_canonical(path(base_dir) / path(*include_file)).string();
+                std::string include_path = std::filesystem::weakly_canonical(path(base_directory) / path(*include_file)).string();
 
                 if (context.included_paths.insert(include_path).second)
                 {
@@ -136,7 +132,7 @@ namespace {
             }
 
             // prevent duplicate version directives
-            std::string triimed = LTrimCopy(line);
+            std::string trimmed = LeftTrimCopy(line);
             if (line.starts_with("#version"))
             {
                 if (filepath != root_filepath)
@@ -152,10 +148,43 @@ namespace {
 
             output_string += line + "\n";
             line_to_file.emplace_back(filepath + "(line " + std::to_string(file_line_number) + ")");
+            file_line_number++;
+        }
+    }
+
+    void InsertDefines(std::string& source, const std::vector<std::string>& defines)
+    {
+        if (defines.empty()) return;
+        std::string defines_block = "";
+
+        for (const auto& define : defines)
+        {
+            defines_block += "#define " + define + "\n";
         }
 
-        file_line_number++;
+        if (source.find("#version") == std::string::npos) return;
+
+        std::size_t new_line_position = source.find("\n");
+        if (new_line_position != std::string::npos) 
+        { 
+            source.insert(new_line_position + 1, defines_block); 
+        }
     }
+
+    std::string GetShaderCompileErrors(const ShaderHandle shader, const std::string &filename, const std::vector<std::string> &line_map)
+    {
+        i32 success;
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        if (success) { return ""; }
+        
+        constexpr i32 info_log_buffer_size = 1024;
+        char info_log[info_log_buffer_size];
+
+        glGetShaderInfoLog(shader, info_log_buffer_size, nullptr, info_log);
+        
+        return std::string{ info_log };
+    }
+
 }
 
 /*** === UPPER SHADER FUNCTIONS === ***/
@@ -202,9 +231,8 @@ bool OpenGLShader::Load(const std::vector<std::string>& shader_paths)
         glAttachShader(program_temp, ShaderHandle{module.GetHandle()});
     }
     glLinkProgram(program_temp);
-    std::string linking_errors = GetLinkingErrors(program_temp, BriefLog{true});
 
-    if (linking_errors.length())
+    if (auto linking_errors = GetLinkingErrors(program_temp, BriefLog{ true }))
     {
         std::cerr << "\n---------------------------------------------------------------\n\n";
         std::cerr << " LINKING ERROR: ";
@@ -214,7 +242,7 @@ bool OpenGLShader::Load(const std::vector<std::string>& shader_paths)
             std::cerr << module.GetFilename() << split;
             glDeleteShader(module.GetHandle());
         }
-        std::cerr << linking_errors << "\n";
+        std::cerr << *linking_errors << "\n";
         std::cerr << "\n---------------------------------------------------------------\n";
         return false;
     }
@@ -236,9 +264,10 @@ bool OpenGLShader::Load(const std::vector<std::string>& shader_paths)
     return true;
 } // end OpenGLShader::Load
 
-void OpenGLShader::Bind() 
+void OpenGLShader::Bind() const
 {
-    glUseProgram(handle_); }
+    glUseProgram(handle_); 
+}
 
 /*** === SHADER MODULE FUNCTIONS === ***/
 
@@ -250,6 +279,26 @@ OpenGLShaderModule::OpenGLShaderModule(const std::string& shader_path, const std
     const std::string& root_path = "resources/shaders/OpenGL" + shader_path;
 
     ParseFile(root_path, parsed_shader_source, line_map, context, root_path);
+    InsertDefines(parsed_shader_source, defines);
 
+    std::string extension = std::filesystem::path(shader_path).extension().string();
+    static const std::unordered_map<std::string, i32> shader_type_map = {
+        {".vert", GL_VERTEX_SHADER},
+        {".frag", GL_FRAGMENT_SHADER},
+    };
+
+    i32 shader_type = shader_type_map.contains(extension) ? shader_type_map.at(extension) : GL_NONE;
+
+    // error checking
+    const char* shader_code = parsed_shader_source.c_str();
+
+    glShaderSource(handle_, 1, &shader_code, NULL);
+    glCompileShader(handle_);
+    errors_ = GetShaderCompileErrors(handle_, shader_path, line_map);
+    filename_ = shader_path;
+    
+    line_map_ = line_map;
+
+    final_source_ = parsed_shader_source;
 }
 

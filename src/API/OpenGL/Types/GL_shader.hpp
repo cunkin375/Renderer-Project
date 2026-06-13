@@ -15,11 +15,12 @@ private:
     std::string filename_ = "";
     std::string errors_ = "";
     std::string final_source_ = "";
+    std::vector<std::string> line_map_;
 
 public:
     OpenGLShaderModule(const std::string& filename, 
                        const std::vector<std::string>& defines);
-    bool CompilationFailed() const;
+    bool CompilationFailed() const { return errors_.length(); }
     ShaderHandle GetHandle() const { return handle_; }
     const std::string& GetFilename() const { return filename_; }
     const std::string& GetErrors() const { return errors_; }
@@ -42,6 +43,6 @@ public:
     OpenGLShader(std::vector<std::string>& shader_paths, 
                  const std::string sub_directory, 
                  const std::vector<std::string>& defines);
-    void Bind();
+    void Bind() const;
     bool Load(const std::vector<std::string>& shader_paths);
 };
