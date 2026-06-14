@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "App/Types.hpp"
 #include "App/Globals.hpp"
