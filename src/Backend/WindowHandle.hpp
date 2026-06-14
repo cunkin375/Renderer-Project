@@ -3,9 +3,7 @@
 struct GLFWwindow;
 
 namespace Backend {
-    /**
-     * @brief WindowHandle wrapper meant to support multiple APIS. Currently supports GLFW.
-    */
+    // WindowHandle wrapper meant to support multiple APIS. Currently supports GLFW.
     class WindowHandle {
     private:
         void* handle = nullptr;
