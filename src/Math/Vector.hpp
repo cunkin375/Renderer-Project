@@ -28,12 +28,16 @@ struct Vector<3, T> {
 
     // returns reference to modified vector type
     constexpr Vector& operator+=(const Vector& right_vector) {
-        x += right_vector.x; y += right_vector.y; z += right_vector.z;
+        x += right_vector.x;
+        y += right_vector.y;
+        z += right_vector.z;
         return *this; // <- do not change, this prevents undefined behavior
     }
 
     constexpr Vector& operator*=(const T right_number) {
-        x *= right_number; y *= right_number; z *= right_number;
+        x *= right_number;
+        y *= right_number;
+        z *= right_number;
         return *this;
     }
 
@@ -60,16 +64,18 @@ struct Vector<2, T> {
     constexpr Vector(T _x, T _y) : x(_x), y(_y) {}
 
     constexpr Vector& operator+=(const Vector& right) {
-        x += right.x; y += right.y;
+        x += right.x;
+        y += right.y;
         return *this;
     }
 
     constexpr Vector& operator*=(const T right) {
-        x *= right; y *= right;
+        x *= right;
+        y *= right;
         return *this;
     }
 
-    friend constexpr Vector operator+(Vector left, const Vector& right) { 
+    friend constexpr Vector operator+(Vector left, const Vector& right) {
         return left += right;
     }
 
