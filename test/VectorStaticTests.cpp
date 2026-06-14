@@ -37,3 +37,7 @@ static_assert(vec3_v5_scaled.x == 4 && vec3_v5_scaled.y == 2 && vec3_v5_scaled.z
 constexpr auto vec2_v5 = ivec2{2, 1};
 constexpr auto vec2_v5_scaled = static_cast<ivec2>(vec2_v5 * 2);
 static_assert(vec2_v5_scaled.x == 4 && vec2_v5_scaled.y == 2);
+
+constexpr auto bad_vector  = ivec3{2, 4, 6};
+constexpr auto bad_vector2 = ivec2{2, 4};
+constexpr bad_vector2 *= bad_vector;
