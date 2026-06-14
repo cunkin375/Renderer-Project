@@ -17,11 +17,11 @@ static_assert(sizeof(double) == 8, "App/Types.hpp requires doubles to be 8 bytes
 using f32 = float;
 using f64 = double;
 
-using ivec2 = Math::Vector<2zu, i32>;
-using ivec3 = Math::Vector<3zu, i32>;
+using ivec2 = Math::Vector2<i32>;
+using ivec3 = Math::Vector3<i32>;
 
-using vec2  = Math::Vector<2zu, f32>;
-using vec3  = Math::Vector<3zu, f32>;
+using vec2  = Math::Vector2<f32>;
+using vec3  = Math::Vector3<f32>;
 
 struct Resolution {
     ivec2 size;

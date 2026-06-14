@@ -38,6 +38,18 @@ constexpr auto vec2_v5 = ivec2{2, 1};
 constexpr auto vec2_v5_scaled = static_cast<ivec2>(vec2_v5 * 2);
 static_assert(vec2_v5_scaled.x == 4 && vec2_v5_scaled.y == 2);
 
-constexpr auto bad_vector  = ivec3{2, 4, 6};
-constexpr auto bad_vector2 = ivec2{2, 4};
-constexpr bad_vector2 *= bad_vector;
+// Test Vector Multiplication
+constexpr auto vec3_v6 = ivec3{1, 2, 3};
+constexpr auto vec3_v7 = ivec3{4, 5, 6};
+constexpr auto vec3_prod = static_cast<ivec3>(vec3_v1 * vec3_v2);
+static_assert(vec3_prod.x == 4 && vec3_prod.y == 10 && vec3_prod.z == 18);
+
+constexpr auto vec2_v6 = ivec2{1, 2};
+constexpr auto vec2_v7 = ivec2{4, 5};
+constexpr auto vec2_prod = static_cast<ivec2>(vec2_v1 * vec2_v2);
+static_assert(vec2_prod.x == 4 && vec2_prod.y == 10);
+
+// This fails (big checkmark)
+// constexpr auto bad_vector  = ivec3{2, 4, 6};
+// constexpr auto bad_vector2 = ivec2{2, 4};
+// constexpr auto bad_multiply = bad_vector2 * bad_vector;
