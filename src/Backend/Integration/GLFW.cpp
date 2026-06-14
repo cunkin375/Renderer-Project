@@ -86,7 +86,7 @@ namespace Backend::GLFW {
         }
         if (api == API::OPENGL)
         {
-            glfwSetFramebufferSizeCallback(g_window, OpenGL::GLFW::framebuffer_size_callback);
+            glfwSetFramebufferSizeCallback(g_window, OpenGL::GLFW::FramebufferSizeCallback);
         }
 
         return true;
