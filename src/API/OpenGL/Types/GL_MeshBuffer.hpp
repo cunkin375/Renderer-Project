@@ -8,13 +8,13 @@
 
 struct OpenGLMeshBuffer {
 private:
-    GLuint VAO_ = 0;
-    GLuint VBO_ = 0;
-    GLuint EBO_ = 0;
-    GLsizei vertex_count_ = 0;
-    GLsizei index_count_ = 0;
-    GLsizei allocated_vertex_count_ = 0;
-    GLsizei allocated_index_count_ = 0;
+    GLuint VAO_{};
+    GLuint VBO_{};
+    GLuint EBO_{};
+    GLsizei vertex_count_{};
+    GLsizei index_count_{};
+    GLsizei allocated_vertex_count_{};
+    GLsizei allocated_index_count_{};
 
 public:
     void ReleaseBuffers();
