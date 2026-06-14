@@ -23,25 +23,16 @@ namespace {
     {
         i32 link_status;
         glGetProgramiv(program, GL_LINK_STATUS, &link_status);
-        if (link_status != GL_FALSE) 
-        {
-            return std::nullopt;
-        }
+        if (link_status != GL_FALSE) { return std::nullopt; }
 
         i32 log_len;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_len);
-        if (log_len < 0)
-        {
-            return "\n    An unknown linking error occured (no logs available).\n";
-        }
+        if (log_len < 0) { return "\n    An unknown linking error occured (no logs available).\n"; }
 
         auto log_buffer = std::vector<char>(log_len + 1); // needs null terminator
         glGetProgramInfoLog(program, log_len, NULL, log_buffer.data());
 
-        if (!brief)
-        {
-            return std::string{ log_buffer.data() };
-        }
+        if (!brief) { return std::string{ log_buffer.data() }; }
 
         std::string line;
         auto log_stream = std::stringstream{ log_buffer.data() };
