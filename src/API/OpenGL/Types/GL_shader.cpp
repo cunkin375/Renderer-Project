@@ -9,8 +9,6 @@
 #include <fstream>
 #include <optional>
 
-// TODO: IMPLEMENT ALL FUNCTIONS IN GL_shader.hpp
-
 struct ShaderParseContext {
     std::unordered_set<std::string> included_paths;
     bool version_inserted = false;
@@ -277,7 +275,9 @@ void OpenGLShader::Bind() const
 
 /*** === SHADER MODULE FUNCTIONS === ***/
 
-OpenGLShaderModule::OpenGLShaderModule(const std::string& shader_path, const std::vector<std::string>& defines, const std::string& base_path)
+OpenGLShaderModule::OpenGLShaderModule(const std::string& shader_path,
+                                       const std::vector<std::string>& defines,
+                                       const std::string& base_path)
 {
     ShaderParseContext context;
     std::vector<std::string> line_map;
