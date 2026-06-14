@@ -1,8 +1,8 @@
 #include "Backend.hpp"
 
 #include "Integration/GLFW.hpp"
-#include "API/OpenGL/GL_backend.hpp"
-#include "API/OpenGL/GL_renderer.hpp"
+#include "API/OpenGL/GL_Backend.hpp"
+#include "API/OpenGL/GL_Renderer.hpp"
 
 namespace Backend {
     API g_api = API::UNDEFINED;

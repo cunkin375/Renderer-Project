@@ -1,4 +1,4 @@
-#include "GL_framebuffer.hpp"
+#include "GL_Framebuffer.hpp"
 
 namespace OpenGL {
     namespace GLFW {

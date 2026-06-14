@@ -6,7 +6,6 @@
 #include "App/Types.hpp"
 #include "App/Globals.hpp"
 
-
 using ShaderHandle = i32;
 using ProgramHandle = ShaderHandle;
 using GLUniformCache = std::unordered_map<std::string, i32>;
@@ -22,7 +21,7 @@ private:
 public:
     OpenGLShaderModule(const std::string& filename, 
                        const std::vector<std::string>& defines,
-                       const std::string& base_path = OpenGLGlobals::shader_path);
+                       const std::string& base_path = OpenGL::Globals::shader_path);
 
     bool CompilationFailed() const { return errors_.length(); }
 
@@ -45,7 +44,7 @@ public:
     OpenGLShader(const std::vector<std::string>& shader_paths, 
                  const std::string& sub_directory, 
                  const std::vector<std::string>& defines,
-                 const std::string& base_path = OpenGLGlobals::shader_path);
+                 const std::string& base_path = OpenGL::Globals::shader_path);
     void Bind() const;
     bool Load(const std::vector<std::string>& shader_paths);
 };
