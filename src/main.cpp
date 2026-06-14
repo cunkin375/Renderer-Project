@@ -5,7 +5,6 @@
 
 int main() 
 {
-
     std::cout << "Pre-Window\n";
 
     if (!Backend::Init(API::OPENGL, WindowMode::WINDOWED))

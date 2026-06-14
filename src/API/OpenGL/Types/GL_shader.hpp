@@ -34,12 +34,12 @@ public:
 
 struct OpenGLShader {
 private:
-    std::vector<std::string> defines_;
-    std::vector<std::string> shader_paths_;
-    GLUniformCache uniform_locations_;
+    std::vector<std::string> defines_{};
+    std::vector<std::string> shader_paths_{};
+    std::string sub_directory_{};
+    std::string base_path_{};
+    GLUniformCache uniform_locations_{};
     ProgramHandle handle_ = -1;
-    std::string sub_directory_ = "";
-    std::string base_path_ = "";
 
 public:
     OpenGLShader(const std::vector<std::string>& shader_paths, 

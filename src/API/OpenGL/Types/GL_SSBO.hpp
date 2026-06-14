@@ -10,9 +10,9 @@ using ObjectBuffer = std::size_t;
 // TODO: implement this
 struct OpenGLSSBO {
 private:
-    ObjectHandle handle_ = 0;
-    ObjectBuffer buffer_size_ = 0;
-    GLbitfield flags_bitmask_ = 0;
+    ObjectHandle handle_{};
+    ObjectBuffer buffer_size_{};
+    GLbitfield flags_bitmask_{};
 
 public:
     OpenGLSSBO() = default;

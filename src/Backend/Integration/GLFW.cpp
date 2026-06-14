@@ -12,13 +12,14 @@ namespace Backend::GLFW {
     GLFWwindow* g_window = nullptr;
     GLFWmonitor* g_monitor = nullptr;
     WindowMode g_window_mode = WindowMode::WINDOWED;
-    i32 g_windowed_height = 0;
-    i32 g_windowed_width = 0;
-    i32 g_fullscreen_height = 0;
-    i32 g_fullscreen_width = 0;
-    i32 g_current_window_width = 0;
-    i32 g_current_window_height = 0;
-    bool g_force_close_window;
+
+    auto g_windowed_height       = i32{};
+    auto g_windowed_width        = i32{};
+    auto g_fullscreen_height     = i32{};
+    auto g_fullscreen_width      = i32{};
+    auto g_current_window_width  = i32{};
+    auto g_current_window_height = i32{};
+    auto g_force_close_window    = bool{};
 
     bool Init(API api, WindowMode window_mode) 
     {

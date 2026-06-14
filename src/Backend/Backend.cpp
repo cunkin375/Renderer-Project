@@ -11,10 +11,7 @@ namespace Backend {
     {
         g_api = api;
 
-        if (!GLFW::Init(api, window_mode))
-        {
-            return false;
-        }
+        if (!GLFW::Init(api, window_mode)) { return false; }
 
 
         if (GetAPI() == API::OPENGL)
