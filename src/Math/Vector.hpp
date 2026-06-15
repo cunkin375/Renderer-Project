@@ -12,9 +12,7 @@ namespace Math {
 template <typename T>
 concept Number = std::floating_point<T> || std::integral<T>;
 
-/**
- * Base operations for any vector type using Curiously Recurring Template Pattern (CRTP)
- */
+/** Base operations for any vector type using Curiously Recurring Template Pattern (CRTP) */
 template <typename Derived, Number T, std::size_t N>
 struct VectorOperations {
     /* vector += vector using the [] operator of the derived class */
