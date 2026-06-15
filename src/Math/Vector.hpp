@@ -1,6 +1,6 @@
 #pragma once
-#include <concepts>
 #include <array>
+#include <concepts>
 #include <utility>
 
 /** Linear Algebra Library made to experiment with template metaprogramming */
@@ -145,12 +145,11 @@ struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu> {
     }
 
     using Vector3 = Vector<T, 3zu>; // this is ok, allegedly
-    constexpr Vector3 CrossProduct(Vector3 other) {
-        auto& self = static_cast<Vector3&>(*this);
-        auto x_param = self.y * other.z - self.z * other.y;
-        auto y_param = self.z * other.x - self.x * other.z;
-        auto z_param = self.x * other.y - self.y * other.x;
-        return Vector3{ x_param, y_param, z_param };
+    constexpr Vector3 CrossProduct(const Vector3& other) const {
+        auto x_param = y * other.z - z * other.y;
+        auto y_param = z * other.x - x * other.z;
+        auto z_param = x * other.y - y * other.x;
+        return { x_param, y_param, z_param };
     }
 };
 
