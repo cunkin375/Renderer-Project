@@ -1,7 +1,7 @@
 #pragma once
+#include "../WindowHandle.hpp"
 #include "Define/Enums.hpp"
 #include "Define/Types.hpp"
-#include "../WindowHandle.hpp"
 
 namespace Backend::GLFW {
     WindowHandle GetWindowPointer();
@@ -13,5 +13,5 @@ namespace Backend::GLFW {
     bool WindowIsOpen();
     u32 GetTime();
     void MakeContextCurrent();
-    void ShowWindow(GLFWwindow* window);
-}
+    void ShowWindow(GLFWwindow *window);
+} // namespace Backend::GLFW

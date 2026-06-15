@@ -1,21 +1,20 @@
 #include "Backend.hpp"
 
-#include "Integration/GLFW.hpp"
 #include "API/OpenGL/GL_Backend.hpp"
 #include "API/OpenGL/GL_Renderer.hpp"
+#include "Integration/GLFW.hpp"
 
 namespace Backend {
     API g_api = API::UNDEFINED;
 
-    bool Init(API api, WindowMode window_mode)
-    {
+    bool Init(API api, WindowMode window_mode) {
         g_api = api;
 
-        if (!GLFW::Init(api, window_mode)) { return false; }
+        if (!GLFW::Init(api, window_mode)) {
+            return false;
+        }
 
-
-        if (GetAPI() == API::OPENGL)
-        {
+        if (GetAPI() == API::OPENGL) {
             GLFW::MakeContextCurrent();
             OpenGLBackend::Init();
             OpenGLRenderer::Init();
@@ -26,42 +25,22 @@ namespace Backend {
         return true;
     }
 
-    bool WindowIsOpen() 
-    { 
-        return GLFW::WindowIsOpen(); 
-    }
+    bool WindowIsOpen() { return GLFW::WindowIsOpen(); }
 
-    void BeginFrame()
-    {
+    void BeginFrame() {
         GLFW::BeginFrame(g_api);
-        if (GetAPI() == API::OPENGL)
-        {
+        if (GetAPI() == API::OPENGL) {
             OpenGLBackend::BeginFrame();
         }
     }
 
-    void EndFrame()
-    {
-        GLFW::EndFrame(g_api);
-    }
-    
-    void Update()
-    {
-        GLFW::Update();
-    }
+    void EndFrame() { GLFW::EndFrame(g_api); }
 
-    void Destroy()
-    {
-        GLFW::Destroy();
-    }
+    void Update() { GLFW::Update(); }
 
-    API GetAPI()
-    {
-        return g_api; 
-    }
+    void Destroy() { GLFW::Destroy(); }
 
-    WindowHandle GetWindowPointer()
-    {
-        return GLFW::GetWindowPointer();
-    }
-}
+    API GetAPI() { return g_api; }
+
+    WindowHandle GetWindowPointer() { return GLFW::GetWindowPointer(); }
+} // namespace Backend

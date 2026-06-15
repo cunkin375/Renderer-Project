@@ -1,7 +1,7 @@
 #pragma once
 
-#include "WindowHandle.hpp"
 #include "Define/Enums.hpp"
+#include "WindowHandle.hpp"
 
 namespace Backend {
     bool Init(API api, WindowMode window_mode);
@@ -12,4 +12,4 @@ namespace Backend {
     void EndFrame();
     void Update();
     void Destroy();
-}
+} // namespace Backend
