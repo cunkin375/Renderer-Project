@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "App/Types.hpp"
-#include "App/Globals.hpp"
+#include "Define/Types.hpp"
+#include "API/OpenGL/Globals.hpp"
 
 using ShaderHandle = i32;
 using ProgramHandle = ShaderHandle;

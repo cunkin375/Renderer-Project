@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include "App/Types.hpp"
+#include "Define/Types.hpp"
 #include "API/OpenGL/GL_framebuffer.hpp"
 
 namespace Backend::GLFW {

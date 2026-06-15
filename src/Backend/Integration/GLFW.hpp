@@ -1,6 +1,6 @@
 #pragma once
-#include "App/Enums.hpp"
-#include "App/Types.hpp"
+#include "Define/Enums.hpp"
+#include "Define/Types.hpp"
 #include "../WindowHandle.hpp"
 
 namespace Backend::GLFW {

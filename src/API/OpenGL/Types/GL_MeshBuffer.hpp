@@ -3,8 +3,7 @@
 #include <glad/glad.h>
 #include <vector>
 
-#include "App/Types.hpp"
-
+#include "Define/Types.hpp"
 
 struct OpenGLMeshBuffer {
 private:

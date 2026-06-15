@@ -1,7 +1,8 @@
-#include "Backend/Backend.hpp"
-#include "App/Enums.hpp"
-#include "Renderer/Renderer.hpp"
 #include <iostream>
+
+#include "Define/Enums.hpp"
+#include "Backend/Backend.hpp"
+#include "Renderer/Renderer.hpp"
 
 int main() 
 {

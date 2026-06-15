@@ -1,6 +1,6 @@
 #pragma once
 
-#include "App/Types.hpp"
+#include "Define/Types.hpp"
 
 #include <glad/glad.h>
 
