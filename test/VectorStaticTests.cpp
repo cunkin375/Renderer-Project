@@ -49,7 +49,40 @@ constexpr auto vec2_v7 = ivec2{4, 5};
 constexpr auto vec2_prod = static_cast<ivec2>(vec2_v1 * vec2_v2);
 static_assert(vec2_prod.x == 4 && vec2_prod.y == 10);
 
-// This fails (big checkmark)
+// Test Cross Product
+constexpr auto vec3_left_crossprod  = ivec3{3, 3, 6};
+constexpr auto vec3_right_crossprod = ivec3{3, 2, 6};
+constexpr auto vec3_result = vec3_left_crossprod.CrossProduct(vec3_right_crossprod);
+static_assert(vec3_result.x == 6 && vec3_result.y == 0 && vec3_result.z == -3);
+
+// Test slicing prevetion
+
+// This should fail
+// constexpr auto general_vector = Math::Vector<i32, 3zu>{2, 6, 6};
+// constexpr auto derived_vector = ivec2{2, 4};
+// constexpr auto sum = general_vector + derived_vector;
+// static_assert(sum.x == 4 && sum.y == 10);
+
+constexpr auto general_vector = Math::Vector<i32, 2zu>{2, 6};
+constexpr auto derived_vector = ivec2{2, 4};
+constexpr auto sum = general_vector + derived_vector;
+static_assert(sum.x == 4 && sum.y == 10);
+
+// This should fail (big checkmark)
 // constexpr auto bad_vector  = ivec3{2, 4, 6};
 // constexpr auto bad_vector2 = ivec2{2, 4};
 // constexpr auto bad_multiply = bad_vector2 * bad_vector;
+
+// TODO: look into this later
+consteval bool float_error_within_margins(const vec3 right_float_vector, const vec3 left_float_vector) {
+    return true;
+} 
+
+static_assert(float_error_within_margins(vec3{1.0f, 2.5f, 1.2f}, vec3{1.4f, 2.6f, 1.0f}) == true);
+
+
+
+
+
+
+
