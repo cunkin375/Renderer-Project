@@ -161,4 +161,4 @@ struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu> {
 template <Number T> using Vector2D = Vector<T, 2zu>;
 template <Number T> using Vector3D = Vector<T, 3zu>;
 
-} // end namespace Math
+} // namespace Math
