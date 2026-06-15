@@ -1,4 +1,4 @@
-#include "App/Types.hpp"
+#include "Define/Types.hpp"
 
 static_assert(vec3(5.0f).x == 5.0f && vec3(5.0f).y == 5.0f && vec3(5.0f).z == 5.0f);
 static_assert(ivec3(5).x == 5 && ivec3(5).y == 5 && ivec3(5).z == 5);
