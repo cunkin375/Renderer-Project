@@ -26,4 +26,4 @@ namespace OpenGLRenderer {
     void LoadShaders();
 
     void Render();
-}
+} // namespaceOpenGLRenderer

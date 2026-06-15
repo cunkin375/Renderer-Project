@@ -46,6 +46,7 @@ public:
                  const std::string& sub_directory, 
                  const std::vector<std::string>& defines,
                  const std::string& base_path = OpenGL::Globals::shader_path);
+
     void Bind() const;
     bool Load(const std::vector<std::string>& shader_paths);
 };

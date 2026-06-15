@@ -7,7 +7,6 @@
 
 namespace OpenGL {
     namespace GLFW {
-        void FramebufferSizeCallback(GLFWwindow* window, i32 width, i32 height);
+        void FramebufferSizeCallback(GLFWwindow *window, i32 width, i32 height);
     }
-}
-
+} // namespace OpenGL

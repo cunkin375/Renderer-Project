@@ -17,5 +17,5 @@ private:
 
 public:
     void ReleaseBuffers();
-    void UpdateBuffers(std::vector<Vertex>& vertices);
+    void UpdateBuffers(std::vector<Vertex> &vertices);
 };
