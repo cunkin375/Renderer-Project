@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Define/Enums.hpp"
+#include "Util/Enums.hpp"
 #include "WindowHandle.hpp"
 
 namespace Backend {

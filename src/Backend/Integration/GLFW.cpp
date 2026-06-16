@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "API/OpenGL/GL_framebuffer.hpp"
-#include "Define/Types.hpp"
 
 namespace Backend::GLFW {
     const GLFWvidmode *g_mode;

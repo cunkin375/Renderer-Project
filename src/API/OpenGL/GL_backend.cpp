@@ -22,4 +22,6 @@ namespace OpenGLBackend {
     }
 
     void BeginFrame() {}
+
+
 } // namespace OpenGLBackend

@@ -1,7 +1,7 @@
 #pragma once
 #include "../WindowHandle.hpp"
-#include "Define/Enums.hpp"
-#include "Define/Types.hpp"
+#include "Util/Enums.hpp"
+#include "Util/Aliases.hpp"
 
 namespace Backend::GLFW {
     WindowHandle GetWindowPointer();

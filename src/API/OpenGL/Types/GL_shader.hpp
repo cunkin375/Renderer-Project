@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Define/Types.hpp"
+#include "Util/Aliases.hpp"
 #include "API/OpenGL/Globals.hpp"
 
 using ShaderHandle = i32;

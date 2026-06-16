@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Define/Types.hpp"
+#include "Util/Aliases.hpp"
 
+#include <cstddef>
 #include <glad/glad.h>
 
 using ObjectHandle = u32;

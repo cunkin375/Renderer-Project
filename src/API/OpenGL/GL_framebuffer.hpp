@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Define/Types.hpp"
+#include "Util/Aliases.hpp"
 
 namespace OpenGL {
     namespace GLFW {

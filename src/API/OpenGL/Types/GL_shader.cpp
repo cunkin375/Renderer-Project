@@ -17,9 +17,10 @@ struct ShaderParseContext {
 
 using BriefLog = bool;
 
-/*** === HELPER FUNCTIONS === ***/
+/*** ==== HELPER FUNCTIONS ============================================================================== ***/
 namespace {
     std::optional<std::string> GetLinkingErrors(ProgramHandle program, BriefLog brief) {
+
         i32 link_status;
         glGetProgramiv(program, GL_LINK_STATUS, &link_status);
         if (link_status != GL_FALSE) {
@@ -115,13 +116,10 @@ namespace {
             if (auto include_file = TryParseInclude(line)) {
                 using namespace std::filesystem;
                 std::string include_path =
-                    std::filesystem::weakly_canonical(path(base_directory) /
-                                                      path(*include_file))
-                        .string();
+                    std::filesystem::weakly_canonical(path(base_directory) / path(*include_file)).string();
 
                 if (context.included_paths.insert(include_path).second) {
-                    if (!ParseFile(include_path, output_string, line_to_file,
-                                   context, root_filepath)) {
+                    if (!ParseFile(include_path, output_string, line_to_file, context, root_filepath)) {
                         return false;
                     }
                 }
@@ -194,7 +192,7 @@ namespace {
 
 } // namespace
 
-/*** === UPPER SHADER FUNCTIONS === ***/
+/*** ==== UPPER SHADER FUNCTIONS ======================================================================== ***/
 
 OpenGLShader::OpenGLShader(const std::vector<std::string> &shader_paths,
                            const std::string &sub_directory,
@@ -268,7 +266,7 @@ bool OpenGLShader::Load(const std::vector<std::string> &shader_paths) {
 
 void OpenGLShader::Bind() const { glUseProgram(handle_); }
 
-/*** === SHADER MODULE FUNCTIONS === ***/
+/*** ==== SHADER MODULE FUNCTIONS ======================================================================= ***/
 
 OpenGLShaderModule::OpenGLShaderModule(const std::string &shader_path,
                                        const std::vector<std::string> &defines,

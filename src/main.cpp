@@ -1,8 +1,8 @@
 #include <iostream>
 
 #include "Backend/Backend.hpp"
-#include "Define/Enums.hpp"
 #include "Renderer/Renderer.hpp"
+#include "Util/Enums.hpp"
 
 int main() {
     std::cout << "Pre-Window\n";
