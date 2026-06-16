@@ -2,10 +2,12 @@
 
 #include <iostream>
 
-void AssetManager::Init() {
-    std::cout << "Initializing AssetManager...\n";
-    FindAssetPaths();
-}
+namespace AssetManager {
+    void Init() {
+        std::cout << "Initializing AssetManager...\n";
+        FindAssetPaths();
+    }
 
-void AssetManager::FindAssetPaths() {
-}
+    void FindAssetPaths() {}
+
+} // namespace AssetManager
