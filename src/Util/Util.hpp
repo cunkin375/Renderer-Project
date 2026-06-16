@@ -1,3 +1,2 @@
 
-namespace Util {
-}
+namespace Util {}
