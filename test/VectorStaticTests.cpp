@@ -73,12 +73,19 @@ static_assert(sum.x == 4 && sum.y == 10);
 // constexpr auto bad_vector2 = ivec2{2, 4};
 // constexpr auto bad_multiply = bad_vector2 * bad_vector;
 
+// Test Scalar Instantiation
+constexpr auto scalar_3dvector = ivec3{3};
+static_assert(scalar_3dvector.x == 3 && scalar_3dvector.y == 3 && scalar_3dvector.z == 3);
+
+constexpr auto scalar_2dvector = ivec2{3};
+static_assert(scalar_2dvector.x == 3 && scalar_2dvector.y == 3);
+
 // TODO: look into this later
-consteval bool float_error_within_margins(const vec3 right_float_vector, const vec3 left_float_vector) {
+consteval bool FloatErrorWithinMargins(const vec3 right_float_vector, const vec3 left_float_vector) {
     return true;
 } 
 
-static_assert(float_error_within_margins(vec3{1.0f, 2.5f, 1.2f}, vec3{1.4f, 2.6f, 1.0f}) == true);
+static_assert(FloatErrorWithinMargins(vec3{1.0f, 2.5f, 1.2f}, vec3{1.4f, 2.6f, 1.0f}));
 
 
 
