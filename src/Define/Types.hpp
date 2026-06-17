@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Aliases.hpp"
+#include "Math/Vector.hpp"
 #include "Util/Aliases.hpp"
 
 struct Resolution {

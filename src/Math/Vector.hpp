@@ -159,3 +159,13 @@ template <Number T> using Vector2D = Vector<T, 2zu>;
 template <Number T> using Vector3D = Vector<T, 3zu>;
 
 } // namespace Math
+
+/** Aliases */
+using ivec2 = Math::Vector2D<std::int32_t>;
+using ivec3 = Math::Vector3D<std::int32_t>;
+
+using uvec2 = Math::Vector2D<std::uint32_t>;
+using uvec3 = Math::Vector3D<std::uint32_t>;
+
+using vec2  = Math::Vector2D<float>;
+using vec3  = Math::Vector3D<float>;
