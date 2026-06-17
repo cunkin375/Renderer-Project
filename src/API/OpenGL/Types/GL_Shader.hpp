@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Util/Aliases.hpp"
-#include "API/OpenGL/Globals.hpp"
+#include "API/OpenGL/GL_Globals.hpp"
 
 using ShaderHandle = i32;
 using ProgramHandle = ShaderHandle;
