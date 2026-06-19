@@ -1,15 +1,15 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include "Util/Aliases.hpp"
+#include "Util/StringHash.hpp"
 #include "API/OpenGL/GL_Globals.hpp"
 
 using ShaderHandle = i32;
 using ProgramHandle = ShaderHandle;
-using GLUniformCache = std::unordered_map<std::string, i32>;
+using GLUniformCache = StringMap<i32>;
 
 struct OpenGLShaderModule {
 private:

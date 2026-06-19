@@ -7,10 +7,11 @@
 #include <optional>
 #include <ranges>
 #include <sstream>
-#include <unordered_set>
+
+#include "Util/StringHash.hpp"
 
 struct ShaderParseContext {
-    std::unordered_set<std::string> included_paths;
+    StringSet included_paths;
     bool version_inserted = false;
     bool root_version_seen = false;
 };
@@ -288,7 +289,7 @@ OpenGLShaderModule::OpenGLShaderModule(const std::string &shader_path,
 
     std::string extension = std::filesystem::path(shader_path).extension().string();
 
-    static const std::unordered_map<std::string, i32> shader_type_map = {
+    static const StringMap<i32> shader_type_map = {
         {".vert", GL_VERTEX_SHADER},
         {".frag", GL_FRAGMENT_SHADER},
     };

@@ -1,13 +1,13 @@
 #include "GL_Renderer.hpp"
 #include "Types/GL_SSBO.hpp"
 #include "Types/GL_Shader.hpp"
+#include "Util/StringHash.hpp"
 
 #include <iostream>
-#include <unordered_map>
 
 namespace OpenGLRenderer {
-    std::unordered_map<std::string, OpenGLShader> g_shaders;
-    std::unordered_map<std::string, OpenGLSSBO> g_shader_storage_buffer_objects;
+    StringMap<OpenGLShader> g_shaders;
+    StringMap<OpenGLSSBO>   g_shader_storage_buffer_objects;
 
     void Init() {
         LoadShaders();
