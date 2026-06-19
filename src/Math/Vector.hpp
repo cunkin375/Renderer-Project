@@ -154,7 +154,6 @@ struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu> {
 };
 
 // Type aliases using the specialization directly
-// This is needed for the defined aliases in Types.hpp
 template <Number T> using Vector2D = Vector<T, 2zu>;
 template <Number T> using Vector3D = Vector<T, 3zu>;
 
