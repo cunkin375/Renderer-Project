@@ -3,3 +3,4 @@ build/
 .clangd
 .vscode
 .clang-format
+.ignore
