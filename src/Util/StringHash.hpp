@@ -10,15 +10,15 @@
 // - dynamic copies will not be made during lookup with a const char *, string_view, or string regardless of declared type
 struct StringHash {
     using is_transparent = void;
-    size_t operator()(const char *str) const {
+    std::size_t operator()(const char *str) const {
         return std::hash<std::string_view>{}(str);
     }
 
-    size_t operator()(std::string_view str) const {
+    std::size_t operator()(std::string_view str) const {
         return std::hash<std::string_view>{}(str);
     }
 
-    size_t operator()(const std::string &str) const {
+    std::size_t operator()(const std::string &str) const {
         return std::hash<std::string_view>{}(str);
     }
 };
