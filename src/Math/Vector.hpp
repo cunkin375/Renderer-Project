@@ -2,6 +2,7 @@
 #include <array>
 #include <concepts>
 #include <utility>
+#include <cstdint>
 
 /** Linear Algebra Library made to experiment with template metaprogramming */
 // NOTE: <linalg> does a lot of this for you (See https://en.cppreference.com/cpp/numeric/linalg)
