@@ -8,7 +8,6 @@
 using ObjectHandle = u32;
 using ObjectBuffer = std::size_t;
 
-// TODO: implement this
 struct OpenGLSSBO {
 private:
     ObjectHandle handle_{};
