@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 using SubDirectory = std::string;
 using Filename = std::string;
@@ -14,16 +14,18 @@ using DefineDirectives = std::vector<std::string>;
 namespace OpenGLRenderer {
     void Init();
 
-    void LoadShader(const Filename& name,
-                    const ShaderPaths& shader_paths,
-                    const DefineDirectives& defines);
+    void LoadShader(const Filename &name, const ShaderPaths &shader_paths,
+                    const DefineDirectives &defines);
 
-    void LoadShader(const SubDirectory& sub_directory,
-                    const Filename& name, 
-                    const ShaderPaths& shader_paths,
-                    const DefineDirectives& defines);
+    void LoadShader(const SubDirectory &sub_directory, const Filename &name,
+                    const ShaderPaths &shader_paths, const DefineDirectives &defines);
 
     void LoadShaders();
 
+    void UploadVertexData();
+
     void Render();
-} // namespaceOpenGLRenderer
+
+    // Render passes
+    void RenderPass();
+} // namespace OpenGLRenderer

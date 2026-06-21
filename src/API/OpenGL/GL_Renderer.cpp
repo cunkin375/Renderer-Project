@@ -1,11 +1,16 @@
 #include "GL_Renderer.hpp"
+
+#include <iostream>
+
+#include "RenderPasses.hpp"
+#include "ResourceHandling/ResourceManager.hpp"
+#include "Types/GL_MeshBuffer.hpp"
 #include "Types/GL_SSBO.hpp"
 #include "Types/GL_Shader.hpp"
 #include "Util/StringHash.hpp"
 
-#include <iostream>
-
 namespace OpenGLRenderer {
+    std::vector<OpenGLMeshBuffer> g_meshes;
     StringMap<OpenGLShader> g_shaders;
     StringMap<OpenGLSSBO>   g_shader_storage_buffer_objects;
 
@@ -35,6 +40,21 @@ namespace OpenGLRenderer {
         LoadShader(Filename{"Test"}, ShaderPaths{"fragment_shader_460.frag", "vertex_shader_460.vert"});
     }
 
-    void Render() {}
+    void UploadVertexData() {
+        auto& models = ResourceManager::GetModelMap();
+        for (auto& [name, model] : models) {
+            if (!model.is_uploaded) {
+                g_meshes.emplace_back(ModelData{model.vertices, model.indices});
+                model.handle = g_meshes.size() - 1;
+                model.is_uploaded = true;
+                std::cout << "Uploaded " << name << " to GPU.\n";
+            }
+        }
+    }
 
+
+    void Render() {
+        g_shaders.find("Test")->second.Bind();
+        RenderPass();
+    }
 } // namespace OpenGLRenderer

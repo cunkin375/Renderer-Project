@@ -21,7 +21,8 @@ namespace OpenGLBackend {
         std::cout << "OpenGL version: " << major << "." << minor << "\n";
     }
 
-    void BeginFrame() {}
-
+    void BeginFrame() {
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
 
 } // namespace OpenGLBackend
