@@ -5,7 +5,6 @@
 #include <optional>
 
 #include "Types/Common.hpp"
-#include "Util/Enums.hpp"
 #include "Util/StringHash.hpp"
 
 namespace ResourceManager {
@@ -31,7 +30,7 @@ namespace ResourceManager {
     ModelData Triangle();
     ModelData Square();
 
-    void Init(API api);
+    void Init();
     void LoadResources();
 
     void LoadObjectModel(const std::string &filepath);

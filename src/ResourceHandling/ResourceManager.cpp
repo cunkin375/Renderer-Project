@@ -9,7 +9,6 @@
 
 #include "Math/Vector.hpp"
 #include "Types/Common.hpp"
-#include "Util/Enums.hpp"
 #include "Util/StringHash.hpp"
 
 namespace {
@@ -84,7 +83,7 @@ namespace ResourceManager {
                 .indices = new_item.first->second.indices};
     }
 
-    void Init(API api) { LoadResources(); }
+    void Init() { LoadResources(); }
 
     void LoadObjectModel(const std::string &filepath) {
         std::ifstream file(filepath);
