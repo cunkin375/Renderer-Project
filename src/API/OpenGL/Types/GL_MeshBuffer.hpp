@@ -3,19 +3,21 @@
 #include <glad/glad.h>
 #include <vector>
 
-#include "Define/Types.hpp"
+#include "ResourceHandling/Types/Common.hpp"
+#include "Util/AutoRelease.hpp"
 
 struct OpenGLMeshBuffer {
 private:
-    GLuint VAO_{};
-    GLuint VBO_{};
-    GLuint EBO_{};
-    GLsizei vertex_count_{};
-    GLsizei index_count_{};
-    GLsizei allocated_vertex_count_{};
-    GLsizei allocated_index_count_{};
+    AutoRelease<GLuint> vao_{};
+    AutoRelease<GLuint> vbo_{};
+    AutoRelease<GLuint> ebo_{};
+    GLsizei vertex_stride_{};
 
 public:
+    OpenGLMeshBuffer(const ModelData &data);
+    void Bind();
+    void Unbind();
     void ReleaseBuffers();
-    void UpdateBuffers(std::vector<Vertex> &vertices);
+    void UpdateBuffers(std::vector<VertexData> &vertices);
+
 };
