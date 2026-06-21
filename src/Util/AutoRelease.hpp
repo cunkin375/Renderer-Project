@@ -32,6 +32,10 @@ class AutoRelease {
 
     ~AutoRelease() { Reset(); }
 
+    T *operator&() {
+        return std::addressof(object_);
+    }
+
     auto Swap(AutoRelease &&other) {
         std::ranges::swap(object_, other.object_);
         std::ranges::swap(deleter_, other.deleter_);
@@ -44,7 +48,7 @@ class AutoRelease {
         object_ = Invalid;
     }
 
-    T get() { return object_; }
+    T Get() { return object_; }
 
     operator T() const { return object_; }
 
