@@ -2,11 +2,12 @@
 
 #include <iostream>
 
-#include "RenderPasses.hpp"
-#include "ResourceHandling/ResourceManager.hpp"
+#include "GL_RenderPasses.hpp"
 #include "Types/GL_MeshBuffer.hpp"
 #include "Types/GL_SSBO.hpp"
 #include "Types/GL_Shader.hpp"
+
+#include "ResourceHandling/ResourceManager.hpp"
 #include "Util/StringHash.hpp"
 
 namespace OpenGLRenderer {

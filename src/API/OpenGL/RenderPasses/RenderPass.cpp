@@ -1,4 +1,4 @@
-#include "../RenderPasses.hpp"
+#include "../GL_RenderPasses.hpp"
 
 #include <glad/glad.h>
 
