@@ -1,5 +1,6 @@
 #include "Renderer.hpp"
-#include "API/OpenGL/GL_renderer.hpp"
+
+#include "API/OpenGL/GL_Renderer.hpp"
 #include "Backend/Backend.hpp"
 
 namespace Renderer {
@@ -10,8 +11,12 @@ namespace Renderer {
     }
 
     void Init() {
+        UploadVertexData();
+    }
+
+    void UploadVertexData() {
         if (Backend::GetAPI() == API::OPENGL) {
-            OpenGLRenderer::Init();
+            OpenGLRenderer::UploadVertexData();
         }
     }
 } // namespace Renderer
