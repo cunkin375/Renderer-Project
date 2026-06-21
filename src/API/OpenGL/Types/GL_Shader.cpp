@@ -35,8 +35,7 @@ namespace {
                    "available).\n";
         }
 
-        auto log_buffer =
-            std::vector<char>(log_len + 1); // needs null terminator
+        auto log_buffer = std::vector<char>(log_len + 1); // needs null terminator
         glGetProgramInfoLog(program, log_len, NULL, log_buffer.data());
 
         if (!brief) {
@@ -172,8 +171,7 @@ namespace {
         }
     }
 
-    std::string
-    GetShaderCompileErrors(const ShaderHandle shader,
+    std::string GetShaderCompileErrors(const ShaderHandle shader,
                            const std::string &filename,
                            const std::vector<std::string> &line_map) 
     {

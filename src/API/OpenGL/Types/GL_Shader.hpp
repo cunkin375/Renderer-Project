@@ -3,37 +3,36 @@
 #include <string>
 #include <vector>
 
+#include "API/OpenGL/GL_Globals.hpp"
 #include "Util/Aliases.hpp"
 #include "Util/StringHash.hpp"
-#include "API/OpenGL/GL_Globals.hpp"
 
 using ShaderHandle = i32;
 using ProgramHandle = ShaderHandle;
 using GLUniformCache = StringMap<i32>;
 
 struct OpenGLShaderModule {
-private:
+  private:
     ShaderHandle handle_ = -1;
-    std::string filename_ = "";
-    std::string errors_ = "";
-    std::string final_source_ = "";
-    std::vector<std::string> line_map_;
+    std::string filename_{};
+    std::string errors_{};
+    std::string final_source_{};
+    std::vector<std::string> line_map_{};
 
-public:
-    OpenGLShaderModule(const std::string& filename, 
-                       const std::vector<std::string>& defines,
-                       const std::string& base_path = OpenGL::Globals::shader_path);
+  public:
+    OpenGLShaderModule(const std::string &filename, const std::vector<std::string> &defines,
+                       const std::string &base_path = OpenGL::Globals::shader_path);
 
     bool CompilationFailed() const { return errors_.length(); }
 
-    const ShaderHandle GetHandle()      const { return handle_; }
-    const std::string& GetFilename()    const { return filename_; }
-    const std::string& GetErrors()      const { return errors_; }
-    const std::string& GetFinalSource() const { return final_source_; }
+    const ShaderHandle GetHandle() const { return handle_; }
+    const std::string &GetFilename() const { return filename_; }
+    const std::string &GetErrors() const { return errors_; }
+    const std::string &GetFinalSource() const { return final_source_; }
 };
 
 struct OpenGLShader {
-private:
+  private:
     std::vector<std::string> defines_{};
     std::vector<std::string> shader_paths_{};
     std::string sub_directory_{};
@@ -41,12 +40,11 @@ private:
     GLUniformCache uniform_locations_{};
     ProgramHandle handle_ = -1;
 
-public:
-    OpenGLShader(const std::vector<std::string>& shader_paths, 
-                 const std::string& sub_directory, 
-                 const std::vector<std::string>& defines,
-                 const std::string& base_path = OpenGL::Globals::shader_path);
+  public:
+    OpenGLShader(const std::vector<std::string> &shader_paths, const std::string &sub_directory,
+                 const std::vector<std::string> &defines,
+                 const std::string &base_path = OpenGL::Globals::shader_path);
 
     void Bind() const;
-    bool Load(const std::vector<std::string>& shader_paths);
+    bool Load(const std::vector<std::string> &shader_paths);
 };
