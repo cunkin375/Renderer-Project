@@ -2,6 +2,7 @@
 
 #include "API/OpenGL/GL_Backend.hpp"
 #include "API/OpenGL/GL_Renderer.hpp"
+#include "ResourceHandling/ResourceManager.hpp"
 #include "Integration/GLFW.hpp"
 
 namespace Backend {
@@ -19,6 +20,8 @@ namespace Backend {
             OpenGLBackend::Init();
             OpenGLRenderer::Init();
         }
+
+        ResourceManager::Init();
 
         GLFW::ShowWindow(GetWindowPointer().asGLFW());
 
