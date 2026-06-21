@@ -12,6 +12,8 @@ int main() {
         std::exit(-1);
     }
 
+    Renderer::Init();
+
     while (Backend::WindowIsOpen()) {
         Backend::BeginFrame();
         Backend::Update();
