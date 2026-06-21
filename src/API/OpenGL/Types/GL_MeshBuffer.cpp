@@ -14,30 +14,18 @@ OpenGLMeshBuffer::OpenGLMeshBuffer(const ModelData &data)
         [](auto ebo) { glDeleteBuffers(1, &ebo); }
     }, vertex_stride_{sizeof(f32) * 3}
 {
-    if (false) { // TODO: Direct State Acccess
-        glEnableVertexArrayAttrib(vao_, 0);
-        glVertexArrayAttribFormat(vao_, 0, 1, GL_FLOAT, GL_FALSE, 0);
-        glEnableVertexArrayAttrib(vao_, 0);
-        // map attribute point 0, to "layout (location = 0)"
-        glVertexArrayAttribBinding(vao_, 0, 0);
-        // map actual buffer to 0
-        glVertexArrayVertexBuffer(vao_, 0, vbo_, 0, vertex_stride_);
-    }
-
-    glGenVertexArrays(1, &vao_);
-    glGenBuffers(1, &vbo_);
-    glGenBuffers(1, &ebo_);
+    glBindVertexArray(vao_);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, data.vertices.size_bytes(), &data.vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, ebo_);
-    glBufferData(GL_ARRAY_BUFFER, data.indices.size_bytes(), &data.indices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, data.vertices.size_bytes(), data.vertices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.indices.size_bytes(), data.indices.data(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glBindVertexArray(vao_);
-
+    glBindVertexArray(0);
 }
 
 

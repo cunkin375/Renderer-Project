@@ -19,5 +19,4 @@ public:
     void Unbind();
     void ReleaseBuffers();
     void UpdateBuffers(std::vector<VertexData> &vertices);
-
 };
