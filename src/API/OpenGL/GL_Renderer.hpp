@@ -26,6 +26,4 @@ namespace OpenGLRenderer {
 
     void Render();
 
-    // Render passes
-    void RenderPass();
 } // namespace OpenGLRenderer
