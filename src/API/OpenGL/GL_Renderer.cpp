@@ -45,7 +45,7 @@ namespace OpenGLRenderer {
         auto& models = ResourceManager::GetModelMap();
         for (auto& [name, model] : models) {
             if (!model.is_uploaded) {
-                g_meshes.emplace_back(ModelData{model.vertices, model.indices});
+                g_meshes.emplace_back(ModelData{model.vertices, model.indices}, name);
                 model.handle = g_meshes.size() - 1;
                 model.is_uploaded = true;
                 std::cout << "Uploaded " << name << " to GPU.\n";
@@ -55,7 +55,6 @@ namespace OpenGLRenderer {
 
 
     void Render() {
-        g_shaders.find("Test")->second.Bind();
         RenderPass();
     }
 } // namespace OpenGLRenderer

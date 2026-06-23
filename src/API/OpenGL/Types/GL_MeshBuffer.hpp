@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <vector>
+#include <string>
 
 #include "ResourceHandling/Types/Common.hpp"
 #include "Util/AutoRelease.hpp"
@@ -15,6 +16,8 @@ private:
 
 public:
     OpenGLMeshBuffer(const ModelData &data);
+    OpenGLMeshBuffer(const ModelData &data, const std::string &name);
+    void Load(const ModelData &data, const std::string &name = {});
     void Bind();
     void Unbind();
     void ReleaseBuffers();
