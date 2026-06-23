@@ -38,7 +38,8 @@ namespace OpenGLRenderer {
     }
 
     void LoadShaders() {
-        LoadShader(Filename{"Test"}, ShaderPaths{"fragment_shader_460.frag", "vertex_shader_460.vert"});
+        LoadShader(Filename{"Test"}, ShaderPaths{"test_fragment_shader_460.frag", "test_vertex_shader_460.vert"});
+        LoadShader(Filename{"ShaderToy"}, ShaderPaths{"shader_toy_460.frag", "shader_toy_460.vert"});
     }
 
     void UploadVertexData() {
@@ -55,6 +56,7 @@ namespace OpenGLRenderer {
 
 
     void Render() {
-        RenderPass();
+        // RenderPass();
+        ShaderToyPass();
     }
 } // namespace OpenGLRenderer
