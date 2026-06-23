@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <optional>
 
 #include "Types/Common.hpp"
 #include "Util/StringHash.hpp"
@@ -36,6 +35,6 @@ namespace ResourceManager {
     void LoadObjectModel(const std::string &filepath);
 
     StringMap<LoadedModelData> &GetModelMap();
-    std::optional<GPUModelInfo> GetGPUModelInfo(const std::string &filepath);
+    GPUModelInfo GetGPUModelInfo(const std::string &filepath);
 
 } // namespace ResourceManager
