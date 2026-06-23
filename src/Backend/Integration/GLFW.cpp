@@ -46,6 +46,7 @@ namespace Backend::GLFW {
         glfwWindowHint(GLFW_BLUE_BITS, g_mode->blueBits);
         glfwWindowHint(GLFW_GREEN_BITS, g_mode->greenBits);
         glfwWindowHint(GLFW_REFRESH_RATE, g_mode->refreshRate);
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         g_fullscreen_width = g_mode->width;
         g_fullscreen_height = g_mode->height;
         g_windowed_width = g_fullscreen_width * 0.75f;
