@@ -27,7 +27,7 @@ class AutoRelease {
     AutoRelease &operator=(AutoRelease &&other) noexcept {
         auto new_object = AutoRelease{std::move(other)};
         Swap(new_object);
-        return this;
+        return *this;
     }
 
     ~AutoRelease() { Reset(); }
