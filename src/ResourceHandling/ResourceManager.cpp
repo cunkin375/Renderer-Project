@@ -31,7 +31,7 @@ namespace ResourceManager {
         const auto loaded = loaded_model_cache.find("cube");
 
         if (loaded != std::ranges::cend(loaded_model_cache)) {
-            auto& [key, cube] = *loaded;
+            auto &[key, cube] = *loaded;
             return {.vertices = cube.vertices, .indices = cube.indices};
         }
 
@@ -51,7 +51,7 @@ namespace ResourceManager {
         const auto loaded = loaded_model_cache.find("triangle");
 
         if (loaded != std::ranges::cend(loaded_model_cache)) {
-            auto& [key, triangle] = *loaded;
+            auto &[key, triangle] = *loaded;
             return {.vertices = triangle.vertices, .indices = triangle.indices};
         }
 
@@ -66,20 +66,19 @@ namespace ResourceManager {
             std::cerr << "ResourceManger: Failed to insert triangle!\n";
         }
 
-        return {.vertices = new_item->second.vertices,
-                .indices = new_item->second.indices};
+        return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
     }
 
     ModelData Square() {
         const auto loaded = loaded_model_cache.find("square");
 
         if (loaded != std::ranges::cend(loaded_model_cache)) {
-            auto& [key, square] = *loaded;
+            auto &[key, square] = *loaded;
             return {.vertices = square.vertices, .indices = square.indices};
         }
 
-        vec3 positions[]{{0.5f, 0.5f, 0.0f},  {0.5f, -0.5f, 0.0f},  {-0.5f, 0.5f, 0.0f},
-                         {0.5f, -0.5f, 0.0f}, {-0.5f, -0.5f, 0.0f}, {-0.5f, 0.5f, 0.0f}};
+        vec3 positions[]{
+            {0.5f, 0.5f, 0.0f}, {0.5f, -0.5f, 0.0f}, {-0.5f, -0.5f, 0.0f}, {-0.5f, 0.5f, 0.0f}};
 
         auto indices = std::vector<IndexData>{0, 1, 3, 1, 2, 3};
 
@@ -90,8 +89,30 @@ namespace ResourceManager {
             std::cerr << "ResourceManger: Failed to insert square!\n";
         }
 
-        return {.vertices = new_item->second.vertices,
-                .indices = new_item->second.indices};
+        return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
+    }
+
+    ModelData ShaderToy() {
+        const auto loaded = loaded_model_cache.find("ShaderToy");
+
+        if (loaded != std::ranges::cend(loaded_model_cache)) {
+            auto &[key, square] = *loaded;
+            return {.vertices = square.vertices, .indices = square.indices};
+        }
+
+        vec3 positions[]{
+            {1.0f, 1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {-1.0f, -1.0f, 0.0f}, {-1.0f, 1.0f, 0.0f}};
+
+        auto indices = std::vector<IndexData>{0, 1, 3, 1, 2, 3};
+
+        auto [new_item, inserted] = loaded_model_cache.try_emplace(
+            "ShaderToy", LoadedModelData{vertices(positions), std::move(indices)});
+
+        if (!inserted) {
+            std::cerr << "ResourceManger: Failed to insert square!\n";
+        }
+
+        return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
     }
 
     void Init() { LoadResources(); }
@@ -100,6 +121,7 @@ namespace ResourceManager {
         // Cube();
         Triangle();
         Square();
+        ShaderToy();
     }
 
     void LoadObjectModel(const std::string &filepath) {
@@ -110,7 +132,7 @@ namespace ResourceManager {
         }
 
         auto object_vertices = std::vector<VertexData>{};
-        auto object_indices  = std::vector<IndexData>{};
+        auto object_indices = std::vector<IndexData>{};
 
         std::string line;
         while (std::getline(file, line)) {
@@ -146,7 +168,7 @@ namespace ResourceManager {
     GPUModelInfo GetGPUModelInfo(const std::string &filepath) {
         const auto loaded = loaded_model_cache.find(filepath);
         if (loaded != std::ranges::cend(loaded_model_cache) && loaded->second.is_uploaded) {
-            auto& [key, model] = *loaded;
+            auto &[key, model] = *loaded;
             return {model.handle, static_cast<u32>(model.indices.size())};
         }
         return {0, 0};
