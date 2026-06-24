@@ -9,4 +9,5 @@ TabWidth: 4
 UseTab: Never
 BreakBeforeBraces: Attach
 NamespaceIndentation: All
+BreakTemplateDeclarations: Yes
 ```
