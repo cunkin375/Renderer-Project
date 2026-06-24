@@ -3,7 +3,7 @@
 #include <functional>
 #include <utility>
 
-template <typename T, T Invalid = {}> 
+template <typename T, T Invalid = {}>
 class AutoRelease {
   private:
     T object_;
@@ -19,8 +19,7 @@ class AutoRelease {
     AutoRelease &operator=(const AutoRelease &) = delete;
 
     AutoRelease(AutoRelease &&other) noexcept
-        : object_{other.object_}, deleter_{std::move(other.deleter_)} 
-    {
+        : object_{other.object_}, deleter_{std::move(other.deleter_)} {
         other.object_ = Invalid;
     }
 
@@ -32,9 +31,7 @@ class AutoRelease {
 
     ~AutoRelease() { Reset(); }
 
-    T *operator&() {
-        return std::addressof(object_);
-    }
+    T *operator&() { return std::addressof(object_); }
 
     auto Swap(AutoRelease &&other) {
         std::ranges::swap(object_, other.object_);
@@ -51,7 +48,4 @@ class AutoRelease {
     T Get() { return object_; }
 
     operator T() const { return object_; }
-
-
-
 };
