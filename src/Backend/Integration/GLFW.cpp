@@ -93,10 +93,14 @@ namespace Backend::GLFW {
         }
     }
 
-    void Update() {
+    Events Update() {
         if (glfwGetKey(g_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(g_window, true);
         }
+        if (glfwGetKey(g_window, GLFW_KEY_R)) {
+            return Events::RELOAD_SHADERS;
+        }
+        return Events::NONE;
     }
 
     bool WindowIsOpen() {

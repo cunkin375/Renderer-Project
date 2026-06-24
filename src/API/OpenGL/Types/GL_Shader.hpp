@@ -47,4 +47,5 @@ struct OpenGLShader {
 
     void Bind() const;
     bool Load(const std::vector<std::string> &shader_paths);
+    bool HotLoad();
 };

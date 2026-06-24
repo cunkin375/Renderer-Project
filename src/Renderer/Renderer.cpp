@@ -10,13 +10,18 @@ namespace Renderer {
         }
     }
 
-    void Init() {
-        UploadVertexData();
-    }
+    void Init() { UploadVertexData(); }
 
     void UploadVertexData() {
         if (Backend::GetAPI() == API::OPENGL) {
             OpenGLRenderer::UploadVertexData();
         }
     }
+
+    void ReloadShaders() {
+        if (API::OPENGL == Backend::GetAPI()) {
+            OpenGLRenderer::ReloadShaders();
+        }
+    }
+
 } // namespace Renderer

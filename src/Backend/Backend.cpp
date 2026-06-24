@@ -1,5 +1,7 @@
 #include "Backend.hpp"
 
+#include "Renderer/Renderer.hpp"
+
 #include "API/OpenGL/GL_Backend.hpp"
 #include "API/OpenGL/GL_Renderer.hpp"
 #include "ResourceHandling/ResourceManager.hpp"
@@ -39,7 +41,12 @@ namespace Backend {
 
     void EndFrame() { GLFW::EndFrame(g_api); }
 
-    void Update() { GLFW::Update(); }
+    void Update() {
+        switch (GLFW::Update()) {
+            case Events::RELOAD_SHADERS: Renderer::ReloadShaders(); break;
+            case Events::NONE: break;
+        }
+    }
 
     void Destroy() { GLFW::Destroy(); }
 

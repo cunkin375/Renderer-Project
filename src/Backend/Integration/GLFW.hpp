@@ -9,7 +9,7 @@ namespace Backend::GLFW {
     void Destroy();
     void BeginFrame(API api);
     void EndFrame(API api);
-    void Update();
+    Events Update();
     bool WindowIsOpen();
     u32 GetTime();
     void MakeContextCurrent();

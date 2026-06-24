@@ -9,3 +9,8 @@ enum class WindowMode {
     WINDOWED,
     FULLSCREEN,
 };
+
+enum class Events {
+    NONE,
+    RELOAD_SHADERS
+};

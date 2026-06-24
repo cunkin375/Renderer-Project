@@ -1,5 +1,6 @@
 #include "GL_Shader.hpp"
 
+#include <cassert>
 #include <filesystem>
 #include <fstream>
 #include <glad/glad.h>
@@ -7,6 +8,7 @@
 #include <optional>
 #include <ranges>
 #include <sstream>
+#include <vector>
 
 #include "Util/StringHash.hpp"
 
@@ -18,8 +20,8 @@ struct ShaderParseContext {
 
 using BriefLog = bool;
 
-/*** ==== HELPER FUNCTIONS ============================================================================== ***/
 namespace {
+    /*** ==== HELPER FUNCTIONS ============================================================================== ***/
     std::optional<std::string> GetLinkingErrors(ProgramHandle program, BriefLog brief) {
 
         i32 link_status;
@@ -215,7 +217,7 @@ bool OpenGLShader::Load(const std::vector<std::string> &shader_paths) {
         modules.emplace_back(full_path, defines_, base_path_);
     }
 
-    for (auto &module : modules) {
+    for (const auto &module : modules) {
         if (module.CompilationFailed()) {
             std::cerr << "\n---------------------------------------------------------------\n\n";
             std::cerr << " COMPILATION ERROR: " + module.GetFilename() + "\n\n";
@@ -228,13 +230,13 @@ bool OpenGLShader::Load(const std::vector<std::string> &shader_paths) {
 
     // link shader modules
     ProgramHandle program_temp = glCreateProgram();
-    for (auto &module : modules) {
+    for (const auto &module : modules) {
         glAttachShader(program_temp, ShaderHandle{module.GetHandle()});
     }
 
     glLinkProgram(program_temp);
 
-    if (auto linking_errors = GetLinkingErrors(program_temp, BriefLog{true})) {
+    if (const auto linking_errors = GetLinkingErrors(program_temp, BriefLog{true})) {
         std::cerr << "\n---------------------------------------------------------------\n\n";
         std::cerr << " LINKING ERROR: ";
         for (auto [idx, module] : std::views::enumerate(modules)) {
@@ -263,6 +265,10 @@ bool OpenGLShader::Load(const std::vector<std::string> &shader_paths) {
     return true;
 } // OpenGLShader::Load
 
+bool OpenGLShader::HotLoad() {
+    return Load(shader_paths_);
+}
+
 void OpenGLShader::Bind() const { glUseProgram(handle_); }
 
 /*** ==== SHADER MODULE FUNCTIONS ======================================================================= ***/
@@ -271,13 +277,12 @@ OpenGLShaderModule::OpenGLShaderModule(const std::string &shader_path,
                                        const std::vector<std::string> &defines,
                                        const std::string &base_path) 
 {
-    ShaderParseContext context;
-    std::vector<std::string> line_map;
-    std::string parsed_shader_source = "";
+    auto context = ShaderParseContext{};
+    auto line_map = std::vector<std::string>{};
+    auto parsed_shader_source = std::string{};
     const std::string root_path = base_path + shader_path;
 
-    if (!ParseFile(root_path, parsed_shader_source, line_map, context,
-                   root_path)) {
+    if (!ParseFile(root_path, parsed_shader_source, line_map, context, root_path)) {
         errors_ = "Failed to open or parse shader file: " + root_path;
         filename_ = shader_path;
         return;
