@@ -20,7 +20,7 @@ namespace OpenGLRenderer {
         std::cout << "Shaders Loaded!\n";
     }
 
-    void LoadShader(const Name &name, 
+    void LoadShader(const ShaderName &name, 
                     const ShaderPaths &shader_paths,
                     const DefineDirectives &defines = {}) 
     {
@@ -29,7 +29,7 @@ namespace OpenGLRenderer {
     }
 
     void LoadShader(const SubDirectory &sub_directory, 
-                    const Name &name,
+                    const ShaderName &name,
                     const ShaderPaths &shader_paths,
                     const DefineDirectives &defines = {}) 
     {
@@ -38,8 +38,8 @@ namespace OpenGLRenderer {
     }
 
     void LoadShaders() {
-        LoadShader(Name{"Test"}, ShaderPaths{"test_fragment_shader_460.frag", "test_vertex_shader_460.vert"});
-        LoadShader(Name{"ShaderToy"}, ShaderPaths{"shader_toy_460.frag", "shader_toy_460.vert"});
+        LoadShader(ShaderName{"Test"}, ShaderPaths{"test_fragment_shader_460.frag", "test_vertex_shader_460.vert"});
+        LoadShader(ShaderName{"ShaderToy"}, ShaderPaths{"shader_toy_460.frag", "shader_toy_460.vert"});
     }
 
     void ReloadShaders() {
@@ -50,17 +50,13 @@ namespace OpenGLRenderer {
         const auto found = g_shaders.find(shader_name);
         if (found != std::ranges::cend(g_shaders)) {
             auto &[key, shader] = *found;
-            if (shader.HotLoad()) {
-                std::cout << "Reloaded " << shader_name << "\n";
-            } else {
-                std::cout << "FAILED to reload " << shader_name << "!\n";
-            }
+            shader.HotLoad();
         }
     }
 
     void UploadVertexData() {
-        auto& models = ResourceManager::GetModelMap();
-        for (auto& [name, model] : models) {
+        auto &models = ResourceManager::GetModelMap();
+        for (auto &[name, model] : models) {
             if (!model.is_uploaded) {
                 g_meshes.emplace_back(ModelData{model.vertices, model.indices}, name);
                 model.handle = g_meshes.size() - 1;

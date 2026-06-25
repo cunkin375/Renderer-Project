@@ -12,5 +12,6 @@ enum class WindowMode {
 
 enum class Events {
     NONE,
-    RELOAD_SHADERS
+    RELOAD_SHADERS,
+    ENABLE_AUTO_RELOAD_SHADERS
 };
