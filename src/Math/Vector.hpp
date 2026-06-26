@@ -1,8 +1,8 @@
 #pragma once
 #include <array>
 #include <concepts>
-#include <utility>
 #include <cstdint>
+#include <utility>
 
 /** Linear Algebra Library made to experiment with template metaprogramming */
 // NOTE: As of C++26, <linalg> does a lot of this for you (See https://en.cppreference.com/cpp/numeric/linalg)
@@ -17,8 +17,8 @@ concept Number = std::floating_point<T> || std::integral<T>;
 template <typename Derived, Number T, std::size_t N>
 struct VectorOperations {
     /* vector += vector using the [] operator of the derived class */
-    constexpr Derived& operator+=(const Derived& other) {
-        auto& self = static_cast<Derived&>(*this);
+    constexpr Derived &operator+=(const Derived &other) {
+        auto &self = static_cast<Derived &>(*this);
         auto add_vector = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
             ((self[Is] += other[Is]), ...);
         };
@@ -27,8 +27,8 @@ struct VectorOperations {
     }
 
     /* vector *= vector */
-    constexpr Derived& operator*=(const Derived& other) {
-        auto& self = static_cast<Derived&>(*this);
+    constexpr Derived &operator*=(const Derived &other) {
+        auto &self = static_cast<Derived &>(*this);
         auto add_vector = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
             ((self[Is] *= other[Is]), ...);
         };
@@ -37,18 +37,18 @@ struct VectorOperations {
     }
 
     /* vector += scalar */
-    constexpr Derived& operator+=(T scalar) {
-        auto& self = static_cast<Derived&>(*this);
-        auto add_vector = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
+    constexpr Derived &operator+=(T scalar) {
+        auto &self = static_cast<Derived &>(*this);
+        auto add_scalar = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
             ((self[Is] += scalar), ...);
         };
-        add_vector(std::make_index_sequence<N>{});
+        add_scalar(std::make_index_sequence<N>{});
         return self;
     }
 
     /* vector *= scalar */
-    constexpr Derived& operator*=(T scalar) {
-        auto& self = static_cast<Derived&>(*this);
+    constexpr Derived &operator*=(T scalar) {
+        auto &self = static_cast<Derived &>(*this);
         auto multiply_scalar = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
             ((self[Is] *= scalar), ...);
         };
@@ -58,13 +58,13 @@ struct VectorOperations {
 
     // Binary operators (Hidden friends)
     /* vector + vector */
-    friend constexpr Derived operator+(Derived left_vector, const Derived& right_vector) {
+    friend constexpr Derived operator+(Derived left_vector, const Derived &right_vector) {
         left_vector += right_vector;
         return left_vector;
     }
 
     /* vector * vector */
-    friend constexpr Derived operator*(Derived left_vector, const Derived& right_vector) {
+    friend constexpr Derived operator*(Derived left_vector, const Derived &right_vector) {
         left_vector *= right_vector;
         return left_vector;
     }
@@ -74,7 +74,7 @@ struct VectorOperations {
         left_vector += scalar;
         return left_vector;
     }
-    
+
     /* scalar + vector */
     friend constexpr Derived operator+(T scalar, Derived right_vector) {
         right_vector += scalar;
@@ -86,7 +86,7 @@ struct VectorOperations {
         left_vector *= scalar;
         return left_vector;
     }
-    
+
     /* scalar * vector */
     friend constexpr Derived operator*(T scalar, Derived right_vector) {
         right_vector *= scalar;
@@ -101,28 +101,26 @@ struct Vector : public VectorOperations<Vector<T, N>, T, N> {
 
     constexpr Vector() = default;
 
-    constexpr Vector(T scalar) {
-        data.fill(scalar);
-    }
+    constexpr Vector(T scalar) { data.fill(scalar); }
 
-    template<typename Self>
-    constexpr auto&& operator[](this Self&& self, std::size_t i) {
+    template <typename Self>
+    constexpr auto &&operator[](this Self &&self, std::size_t i) {
         return std::forward_like<Self>(self).data[i];
     }
 };
 
 /*** Specialization for N = 2 ***/
 // putting "using Vector2 = Vector<T, 2zu>" near "template<Number T>" makes the compiler fucking scream and try to kill you, DO NOT DO IT!!!!
-template<Number T>
+template <Number T>
 struct Vector<T, 2zu> : public VectorOperations<Vector<T, 2zu>, T, 2zu> {
     T x{}, y{};
 
     constexpr Vector() = default;
-    constexpr Vector(T _x, T _y) : x{ _x }, y{ _y } {}
-    constexpr Vector(T scalar) : x{ scalar }, y{ scalar } {}
+    constexpr Vector(T _x, T _y) : x{_x}, y{_y} {}
+    constexpr Vector(T scalar) : x{scalar}, y{scalar} {}
 
-    template<typename Self>
-    constexpr auto&& operator[](this Self&& self, std::size_t i) {
+    template <typename Self>
+    constexpr auto &&operator[](this Self &&self, std::size_t i) {
         if (i == 0) return std::forward_like<Self>(self).x;
         return std::forward_like<Self>(self).y;
     }
@@ -130,27 +128,27 @@ struct Vector<T, 2zu> : public VectorOperations<Vector<T, 2zu>, T, 2zu> {
 
 /*** Specialization for N = 3 ***/
 // - See using Vector2 comment above
-template<Number T>
+template <Number T>
 struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu> {
     T x{}, y{}, z{};
 
     constexpr Vector() = default;
-    constexpr Vector(T _x, T _y, T _z) : x{ _x }, y{ _y }, z{ _z } {}
-    constexpr Vector(T scalar) : x{ scalar }, y{ scalar }, z{ scalar } {}
+    constexpr Vector(T _x, T _y, T _z) : x{_x}, y{_y}, z{_z} {}
+    constexpr Vector(T scalar) : x{scalar}, y{scalar}, z{scalar} {}
 
-    template<typename Self>
-    constexpr auto&& operator[](this Self&& self, std::size_t i) {
+    template <typename Self>
+    constexpr auto &&operator[](this Self &&self, std::size_t i) {
         if (i == 0) return std::forward_like<Self>(self).x;
         if (i == 1) return std::forward_like<Self>(self).y;
         return std::forward_like<Self>(self).z;
     }
 
     using Vector3 = Vector<T, 3zu>; // this is ok, allegedly
-    constexpr Vector3 CrossProduct(const Vector3& other) const {
+    constexpr Vector3 CrossProduct(const Vector3 &other) const {
         auto x_param = y * other.z - z * other.y;
         auto y_param = z * other.x - x * other.z;
         auto z_param = x * other.y - y * other.x;
-        return { x_param, y_param, z_param };
+        return {x_param, y_param, z_param};
     }
 };
 
@@ -167,5 +165,5 @@ using ivec3 = Math::Vector3D<std::int32_t>;
 using uvec2 = Math::Vector2D<std::uint32_t>;
 using uvec3 = Math::Vector3D<std::uint32_t>;
 
-using vec2  = Math::Vector2D<float>;
-using vec3  = Math::Vector3D<float>;
+using vec2 = Math::Vector2D<float>;
+using vec3 = Math::Vector3D<float>;

@@ -46,8 +46,7 @@ namespace {
 
         std::string line;
         auto log_stream = std::stringstream{log_buffer.data()};
-        const std::string assembly_start_delim =
-            "--- internal assmebly text ---";
+        const std::string assembly_start_delim = "--- internal assmebly text ---";
 
         std::string result = "\n";
 
@@ -84,7 +83,7 @@ namespace {
             return std::nullopt;
         }
 
-        std::string include_file =trimmed.substr(first_quote + 1, second_quote - first_quote - 1);
+        std::string include_file = trimmed.substr(first_quote + 1, second_quote - first_quote - 1);
         return (include_file.empty()) ? std::nullopt : std::make_optional(trimmed);
     }
 
@@ -265,9 +264,7 @@ bool OpenGLShader::Load(const std::vector<std::string> &shader_paths) {
     return true;
 } // OpenGLShader::Load
 
-bool OpenGLShader::HotLoad() {
-    return Load(shader_paths_);
-}
+bool OpenGLShader::HotLoad() { return Load(shader_paths_); }
 
 void OpenGLShader::Bind() const { glUseProgram(handle_); }
 

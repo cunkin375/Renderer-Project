@@ -20,18 +20,18 @@ namespace OpenGLRenderer {
         std::cout << "Shaders Loaded!\n";
     }
 
-    void LoadShader(const ShaderName &name, 
+    void LoadShader(const ShaderName &name,
                     const ShaderPaths &shader_paths,
-                    const DefineDirectives &defines = {}) 
+                    const DefineDirectives &defines)
     {
         const auto [it, inserted] = g_shaders.try_emplace(name, shader_paths, "", defines);
         if (!inserted) { std::cerr << "Renderer::LoadShader() failed: '" << name << "' already exists\n!"; }
     }
 
-    void LoadShader(const SubDirectory &sub_directory, 
+    void LoadShader(const SubDirectory &sub_directory,
                     const ShaderName &name,
                     const ShaderPaths &shader_paths,
-                    const DefineDirectives &defines = {}) 
+                    const DefineDirectives &defines)
     {
         const auto [it, inserted] = g_shaders.try_emplace(name, shader_paths, sub_directory, defines);
         if (!inserted) { std::cerr << "Renderer::LoadShader() failed: '" << name << "' already exists\n!"; }

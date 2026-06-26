@@ -15,10 +15,10 @@ namespace OpenGLRenderer {
     void Init();
 
     void LoadShader(const ShaderName &name, const ShaderPaths &shader_paths,
-                    const DefineDirectives &defines);
+                    const DefineDirectives &defines = {});
 
     void LoadShader(const SubDirectory &sub_directory, const ShaderName &name,
-                    const ShaderPaths &shader_paths, const DefineDirectives &defines);
+                    const ShaderPaths &shader_paths, const DefineDirectives &defines = {});
 
     void LoadShaders();
 
