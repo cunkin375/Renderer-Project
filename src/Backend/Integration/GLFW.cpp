@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include "API/OpenGL/GL_framebuffer.hpp"
+#include "API/OpenGL/GL_Framebuffer.hpp"
 
 namespace Backend::GLFW {
     const GLFWvidmode *g_mode;
