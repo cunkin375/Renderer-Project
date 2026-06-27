@@ -44,6 +44,7 @@ namespace Backend {
     void Update() {
         switch (GLFW::Update()) {
             case Events::RELOAD_SHADERS: Renderer::ReloadShaders(); break;
+            case Events::ENABLE_AUTO_RELOAD_SHADERS: break; // not implemented
             case Events::NONE: break;
         }
     }
