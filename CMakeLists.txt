@@ -10,4 +10,4 @@ set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendor)
 set(CMAKE_CXX_STANDARD_PREFIX ${PROJECT_SOURCE_DIR})
 
 add_subdirectory(src)
-add_subdirectory(${VENDOR_DIR}/assimp)
+# add_subdirectory(${VENDOR_DIR}/assimp)
