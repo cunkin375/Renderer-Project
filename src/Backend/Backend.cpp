@@ -1,14 +1,18 @@
 #include "Backend.hpp"
 
+#include "API/OpenGL/GL_Globals.hpp"
 #include "Renderer/Renderer.hpp"
 
 #include "API/OpenGL/GL_Backend.hpp"
 #include "API/OpenGL/GL_Renderer.hpp"
-#include "ResourceHandling/ResourceManager.hpp"
 #include "Integration/GLFW.hpp"
+#include "ResourceHandling/ResourceManager.hpp"
+#include "Util/DirectoryWatcher.hpp"
 
 namespace Backend {
-    API g_api = API::UNDEFINED;
+    auto g_api = API::UNDEFINED;
+    auto g_auto_reload_enabled = bool{false};
+    std::unique_ptr<DirectoryWatcher> g_shader_watcher;
 
     bool Init(API api, WindowMode window_mode) {
         g_api = api;
@@ -21,6 +25,14 @@ namespace Backend {
             GLFW::MakeContextCurrent();
             OpenGLBackend::Init();
             OpenGLRenderer::Init();
+            g_shader_watcher = std::make_unique<DirectoryWatcher>(
+                OpenGL::Globals::shader_path,
+                [](const DirectoryWatcher::FileEvent &event) -> void {
+                    if (event.action == DirectoryWatcher::FileAction::Modified) {
+                        Renderer::ReloadShaders();
+                    }
+                });
+            g_shader_watcher->SetEnabled(false);
         }
 
         ResourceManager::Init();
@@ -36,6 +48,9 @@ namespace Backend {
         GLFW::BeginFrame(g_api);
         if (GetAPI() == API::OPENGL) {
             OpenGLBackend::BeginFrame();
+            if (g_shader_watcher) {
+                g_shader_watcher->PollEvents();
+            }
         }
     }
 
@@ -43,9 +58,15 @@ namespace Backend {
 
     void Update() {
         switch (GLFW::Update()) {
-            case Events::RELOAD_SHADERS: Renderer::ReloadShaders(); break;
-            case Events::ENABLE_AUTO_RELOAD_SHADERS: break; // not implemented
-            case Events::NONE: break;
+        case Events::RELOAD_SHADERS:
+            Renderer::ReloadShaders();
+            break;
+        case Events::ENABLE_AUTO_RELOAD_SHADERS:
+            g_auto_reload_enabled = !g_auto_reload_enabled;
+            g_shader_watcher->SetEnabled(g_auto_reload_enabled);
+            break;
+        case Events::NONE:
+            break;
         }
     }
 

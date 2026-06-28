@@ -4,13 +4,8 @@
 #include <functional>
 
 class DirectoryWatcher {
-    enum class FileAction {
-        MODIFIED,
-        CREATED,
-        DELETED,
-        RENAMED_FROM,
-        RENAMED_TO
-    };
+public:
+    enum class FileAction { Modified, Created, Deleted, RenamedFrom, RenamedTo };
 
     struct FileEvent {
         FileAction action;
@@ -19,9 +14,8 @@ class DirectoryWatcher {
 
     using Callback = std::function<void(const FileEvent &)>;
 
-    constexpr explicit DirectoryWatcher(const std::filesystem::path &watch_dir,
-                                        Callback on_change,
-                                        bool recursive = true);
+    explicit DirectoryWatcher(const std::filesystem::path &watch_dir, Callback on_change,
+                              bool recursive = true);
 
     ~DirectoryWatcher();
 

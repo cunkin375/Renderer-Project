@@ -100,6 +100,9 @@ namespace Backend::GLFW {
         if (glfwGetKey(g_window, GLFW_KEY_R)) {
             return Events::RELOAD_SHADERS;
         }
+        if (glfwGetKey(g_window, GLFW_KEY_F5)) {
+            return Events::ENABLE_AUTO_RELOAD_SHADERS;
+        }
         return Events::NONE;
     }
 
