@@ -33,7 +33,7 @@ class AutoRelease {
 
     T *operator&() { return std::addressof(object_); }
 
-    auto Swap(AutoRelease &&other) {
+    auto Swap(AutoRelease &other) {
         std::ranges::swap(object_, other.object_);
         std::ranges::swap(deleter_, other.deleter_);
     }
