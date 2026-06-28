@@ -59,7 +59,10 @@ namespace Backend::GLFW {
             g_current_window_height = g_windowed_height;
             g_window = glfwCreateWindow(g_windowed_width, g_windowed_height,
                                         "GLFW Window", nullptr, nullptr);
-            glfwSetWindowPos(g_window, 0, 0);
+            // stops initial "Wayland: the platform does not support setting the window position"
+            if (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND) {
+                glfwSetWindowPos(g_window, 0, 0);
+            }
         } else if (g_window_mode == WindowMode::FULLSCREEN) {
             g_current_window_width = g_fullscreen_width;
             g_current_window_height = g_fullscreen_height;
