@@ -20,6 +20,12 @@ namespace OpenGLRenderer {
         std::cout << "Shaders Loaded!\n";
     }
 
+    void Destroy() {
+        g_meshes.clear();
+        g_shaders.clear();
+        g_shader_storage_buffer_objects.clear();
+    }
+
     void LoadShader(const ShaderName &name,
                     const ShaderPaths &shader_paths,
                     const DefineDirectives &defines)

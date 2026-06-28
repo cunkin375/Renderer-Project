@@ -70,7 +70,12 @@ namespace Backend {
         }
     }
 
-    void Destroy() { GLFW::Destroy(); }
+    void Destroy() {
+        if (GetAPI() == API::OPENGL) {
+            OpenGLRenderer::Destroy();
+        }
+        GLFW::Destroy();
+    }
 
     API GetAPI() { return g_api; }
 
