@@ -14,6 +14,7 @@ namespace {
         std::cerr << "---------------\n";
         std::cerr << "OpenGL Debug Message (" << id << "): " << message << "\n";
 
+        // clang-format off
         switch (source) {
             case GL_DEBUG_SOURCE_API:             std::cerr << "Source: API"; break;
             case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cerr << "Source: Window System"; break;
@@ -41,6 +42,7 @@ namespace {
             case GL_DEBUG_SEVERITY_LOW:          std::cerr << "Severity: Low"; break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: std::cerr << "Severity: Notification"; break;
         } std::cerr << "\n\n";
+        // clang-format on
 
         // Automatically trigger breakpoint in IDE when high-severity error
         if (severity == GL_DEBUG_SEVERITY_HIGH) {

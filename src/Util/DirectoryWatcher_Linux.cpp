@@ -182,25 +182,18 @@ struct DirectoryWatcher::Implementation {
                     AddWatch(full_path);
                 }
 
+                // clang-format off
                 std::cout << "DirectoryWatcher: " << full_path << "\n";
                 std::cout << "\t detected action: ";
                 switch (action) {
-                case FileAction::Created:
-                    std::cout << "Created\n";
-                    break;
-                case FileAction::Deleted:
-                    std::cout << "Deleted\n";
-                    break;
-                case FileAction::RenamedFrom:
-                    std::cout << "RenamedFrom\n";
-                    break;
-                case FileAction::RenamedTo:
-                    std::cout << "RenamedTo\n";
-                    break;
-                case FileAction::Modified:
-                    std::cout << "Modified\n";
-                    break;
-                }
+                    case FileAction::Created:     std::cout << "Created"; break;
+                    case FileAction::Deleted:     std::cout << "Deleted"; break;
+                    case FileAction::RenamedFrom: std::cout << "RenamedFrom"; break;
+                    case FileAction::RenamedTo:   std::cout << "RenamedTo"; break;
+                    case FileAction::Modified:    std::cout << "Modified"; break;
+                } std::cout << "\n";
+                // clang-format on
+
                 callback_function(FileEvent{action, full_path});
             }
 

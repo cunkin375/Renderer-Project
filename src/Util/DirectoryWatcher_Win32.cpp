@@ -175,46 +175,28 @@ struct DirectoryWatcher::Implementation {
             if (!ShouldDebounce(filename)) {
                 std::filesystem::path full_path = root_directory / relative_path;
 
+                // clang-format off
                 // map Win32 actions to FileAction
                 FileAction action = FileAction::Modified;
                 switch (info->Action) {
-                case FILE_ACTION_ADDED:
-                    action = FileAction::Created;
-                    break;
-                case FILE_ACTION_REMOVED:
-                    action = FileAction::Deleted;
-                    break;
-                case FILE_ACTION_MODIFIED:
-                    action = FileAction::Modified;
-                    break;
-                case FILE_ACTION_RENAMED_OLD_NAME:
-                    action = FileAction::RenamedFrom;
-                    break;
-                case FILE_ACTION_RENAMED_NEW_NAME:
-                    action = FileAction::RenamedTo;
-                    break;
+                    case FILE_ACTION_ADDED:            action = FileAction::Created; break;
+                    case FILE_ACTION_REMOVED:          action = FileAction::Deleted; break;
+                    case FILE_ACTION_MODIFIED:         action = FileAction::Modified; break;
+                    case FILE_ACTION_RENAMED_OLD_NAME: action = FileAction::RenamedFrom; break;
+                    case FILE_ACTION_RENAMED_NEW_NAME: action = FileAction::RenamedTo; break;
                 }
 
                 // log action
                 std::cout << "DirectoryWatcher: " << full_path << "\n";
                 std::cout << "\t detected action: ";
                 switch (action) {
-                case FileAction::Created:
-                    std::cout << "Created\n";
-                    break;
-                case FileAction::Deleted:
-                    std::cout << "Deleted\n";
-                    break;
-                case FileAction::RenamedFrom:
-                    std::cout << "RenamedFrom\n";
-                    break;
-                case FileAction::RenamedTo:
-                    std::cout << "RenamedTo\n";
-                    break;
-                case FileAction::Modified:
-                    std::cout << "Modified\n";
-                    break;
-                }
+                    case FileAction::Created:     std::cout << "Created"; break;
+                    case FileAction::Deleted:     std::cout << "Deleted"; break;
+                    case FileAction::RenamedFrom: std::cout << "RenamedFrom"; break;
+                    case FileAction::RenamedTo:   std::cout << "RenamedTo"; break;
+                    case FileAction::Modified:    std::cout << "Modified"; break;
+                } std::cout << "\n";
+                // clang-format on
 
                 callback_function(FileEvent{action, full_path});
             }
