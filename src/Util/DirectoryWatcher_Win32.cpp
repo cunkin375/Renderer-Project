@@ -17,7 +17,6 @@ namespace {
 
 struct DirectoryWatcher::Implementation {
     // Win32 specific
-    static constexpr DWORD PASS_THESE_ERRORS{ERROR_IO_INCOMPLETE | ERROR_IO_PENDING};
     HANDLE directory_handle{INVALID_HANDLE_VALUE};
     HANDLE event_handle{nullptr}; // manual reset event for OVERLAPPED
     OVERLAPPED overlapped{};
@@ -119,6 +118,7 @@ struct DirectoryWatcher::Implementation {
             &bytes_returned, &overlapped, nullptr);
 
         DWORD errors = GetLastError();
+        DWORD PASS_THESE_ERRORS = ERROR_IO_INCOMPLETE | ERROR_IO_PENDING;
         if (!success && !(errors & PASS_THESE_ERRORS)) {
             std::cerr << "DirectoryWatcher: ReadDirectoryChangesW failed!\n";
             pending_read = false;
