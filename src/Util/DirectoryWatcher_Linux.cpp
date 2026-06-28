@@ -105,7 +105,7 @@ struct DirectoryWatcher::Implementation {
 
         if (auto it = file_timers.find(filename); it != std::ranges::cend(file_timers)) {
             using namespace std::chrono;
-            auto [key, last_event_time] = *it;
+            auto &[key, last_event_time] = *it;
             auto time_elapsed = duration_cast<milliseconds>(now - last_event_time);
 
             if (time_elapsed < debounce_time_milliseconds) {
