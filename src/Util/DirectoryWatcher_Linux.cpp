@@ -1,29 +1,36 @@
 #ifdef __linux__
 #include "DirectoryWatcher.hpp"
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <unordered_map>
 
 #include <sys/inotify.h>
 #include <unistd.h>
 
 #include "Util/Aliases.hpp"
+#include "Util/StringHash.hpp"
+
+namespace {
+    using DebounceInfo = std::chrono::steady_clock::time_point;
+} // namespace
 
 struct DirectoryWatcher::Implementation {
     i32 inotify_fd{-1};
-    std::unordered_map<i32, std::filesystem::path> watch_descriptor_to_path;
-    std::filesystem::path root_directory;
-    Callback callback_function;
+    std::unordered_map<i32, std::filesystem::path> watch_descriptor_to_path{};
+    std::filesystem::path root_directory{};
+    Callback callback_function{};
     bool enabled{false};
     bool recursive{true};
 
+    StringMap<DebounceInfo> file_timers;
+    std::chrono::milliseconds debounce_time_milliseconds{250};
+
     Implementation(const std::filesystem::path &_watch_dir, Callback _on_change, bool _recursive)
-        : root_directory{_watch_dir}, callback_function{std::move(_on_change)}, recursive{_recursive}
-    {
+        : root_directory{_watch_dir}, callback_function{std::move(_on_change)}, recursive{_recursive} {
         inotify_fd = inotify_init1(IN_NONBLOCK);
         if (-1 == inotify_fd) {
-            std::cerr << "inotify failed to initialize in DirectoryWatcher!\n";
+            std::cerr << "DirectoryWatcher: inotify failed to initialize!\n";
             std::exit(EXIT_FAILURE);
         }
 
@@ -52,7 +59,7 @@ struct DirectoryWatcher::Implementation {
 
         auto [it, inserted] = watch_descriptor_to_path.try_emplace(wd, directory);
         if (!inserted) {
-            std::cerr << "watch_descriptor already present in watch_descriptor_to_path!\n";
+            std::cerr << "DirectoryWatcher: watch_descriptor already present in watch_descriptor_to_path!\n";
         }
     }
 
@@ -62,6 +69,57 @@ struct DirectoryWatcher::Implementation {
                 AddWatch(entry.path());
             }
         }
+    }
+
+    bool ShouldDebounce(std::string_view filename) {
+        bool should_debounce = true;
+        bool should_not_debounce = false;
+
+        // reject editor temporary/backup files
+        if (filename.ends_with('~')                             // vim backup
+            || filename.starts_with('.')                        // hidden / editor dotfiles
+            || filename.find(".swp") != std::string_view::npos  // vim swap
+            || filename.find(".swx") != std::string_view::npos  // vim swap
+            || filename.find(".tmp") != std::string_view::npos) // generic temp
+        {
+            return should_debounce;
+        }
+
+        auto has_shader_extension = [](std::string_view name) -> bool {
+            constexpr std::string_view extensions[] = {".vert", ".frag", ".geom", ".tesc",
+                                                       ".tese", ".comp", ".glsl"};
+            for (auto extension : extensions) {
+                if (name.size() >= extension.size() &&
+                    name.substr(name.size() - extension.size()) == extension) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        if (!has_shader_extension(filename)) {
+            return should_debounce;
+        }
+
+        auto now = std::chrono::steady_clock::now();
+
+        if (auto it = file_timers.find(filename); it != std::ranges::cend(file_timers)) {
+            using namespace std::chrono;
+            auto [key, last_event_time] = *it;
+            auto time_elapsed = duration_cast<milliseconds>(now - last_event_time);
+
+            if (time_elapsed < debounce_time_milliseconds) {
+                last_event_time = now;
+                return should_debounce;
+            }
+
+            // cooldown expired, event is valid
+            last_event_time = now;
+            return should_not_debounce;
+        }
+
+        file_timers.emplace(std::string{filename}, DebounceInfo{now});
+        return should_not_debounce;
     }
 
     void RemoveWatch(i32 wd) {
@@ -84,17 +142,24 @@ struct DirectoryWatcher::Implementation {
         char *ptr = buffer;
 
         while (ptr < buffer + bytes_read) {
-            inotify_event event;
-            std::memcpy(&event, ptr, sizeof(inotify_event));
+            // why reinterpret_cast exists here:
+            // - inotify_event has a flexible array member (name[]) whose data follows the struct header in
+            //   the buffer
+            // - using memcpy with only sizeof(inotify_event) into a local loses name data
+            auto *event = reinterpret_cast<struct inotify_event *>(ptr);
 
-            if (event.len > 0) {
-                std::string filename = event.name;
+            if (event->len > 0) {
+                std::string_view filename{event->name, std::strlen(event->name)};
 
-                // sesolve the directory this watch descriptor corresponds to
+                if (ShouldDebounce(filename)) {
+                    ptr += sizeof(struct inotify_event) + event->len;
+                    continue;
+                }
+
+                // resolve the directory this watch descriptor belongs to
                 std::filesystem::path dir = root_directory;
-                if (auto it = watch_descriptor_to_path.find(event.wd);
-                    it != std::ranges::cend(watch_descriptor_to_path))
-                {
+                if (auto it = watch_descriptor_to_path.find(event->wd);
+                    it != std::ranges::cend(watch_descriptor_to_path)) {
                     dir = it->second;
                 }
 
@@ -102,30 +167,52 @@ struct DirectoryWatcher::Implementation {
 
                 // map inotify mask to FileAction
                 FileAction action = FileAction::Modified;
-                if      (event.mask & IN_CREATE)     { action = FileAction::Created; }
-                else if (event.mask & IN_DELETE)     { action = FileAction::Deleted; }
-                else if (event.mask & IN_MOVED_FROM) { action = FileAction::RenamedFrom; }
-                else if (event.mask & IN_MOVED_TO)   { action = FileAction::RenamedTo; }
+                if (event->mask & IN_CREATE) {
+                    action = FileAction::Created;
+                } else if (event->mask & IN_DELETE) {
+                    action = FileAction::Deleted;
+                } else if (event->mask & IN_MOVED_FROM) {
+                    action = FileAction::RenamedFrom;
+                } else if (event->mask & IN_MOVED_TO) {
+                    action = FileAction::RenamedTo;
+                }
 
                 // if a new subdirectory was created and we're recursive, watch it
-                if ((event.mask & IN_CREATE) && (event.mask & IN_ISDIR) && recursive) {
+                if ((event->mask & IN_CREATE) && (event->mask & IN_ISDIR) && recursive) {
                     AddWatch(full_path);
                 }
 
                 std::cout << "DirectoryWatcher: " << full_path << "\n";
+                std::cout << "\t detected action: ";
+                switch (action) {
+                case FileAction::Created:
+                    std::cout << "Created\n";
+                    break;
+                case FileAction::Deleted:
+                    std::cout << "Deleted\n";
+                    break;
+                case FileAction::RenamedFrom:
+                    std::cout << "RenamedFrom\n";
+                    break;
+                case FileAction::RenamedTo:
+                    std::cout << "RenamedTo\n";
+                    break;
+                case FileAction::Modified:
+                    std::cout << "Modified\n";
+                    break;
+                }
                 callback_function(FileEvent{action, full_path});
             }
 
-            // advance pointer to next event
-            ptr += sizeof(struct inotify_event) + event.len;
+            // Advance pointer to next event
+            ptr += sizeof(struct inotify_event) + event->len;
         }
     }
 };
 
 // === PUBLIC METHODS ===
 
-DirectoryWatcher::DirectoryWatcher(const std::filesystem::path &watch_dir, Callback on_change,
-                                   bool recursive)
+DirectoryWatcher::DirectoryWatcher(const std::filesystem::path &watch_dir, Callback on_change, bool recursive)
     : impl_{std::make_unique<Implementation>(watch_dir, std::move(on_change), recursive)} {}
 
 DirectoryWatcher::~DirectoryWatcher() = default;
