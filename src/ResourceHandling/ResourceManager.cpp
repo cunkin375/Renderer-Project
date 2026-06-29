@@ -9,6 +9,7 @@
 
 #include "Math/Vector.hpp"
 #include "Types/Common.hpp"
+#include "Util/Log.hpp"
 #include "Util/StringHash.hpp"
 
 namespace {
@@ -35,14 +36,14 @@ namespace ResourceManager {
             return {.vertices = cube.vertices, .indices = cube.indices};
         }
 
-        vec3 positions[]{{0.5f, 0.5f, 0.0f},  {0.5f, -0.5f, 0.0f},  {-0.5f, 0.5f, 0.0f},
+        [[maybe_unused]] vec3 positions[]{{0.5f, 0.5f, 0.0f},  {0.5f, -0.5f, 0.0f},  {-0.5f, 0.5f, 0.0f},
                          {0.5f, -0.5f, 0.0f}, {-0.5f, -0.5f, 0.0f}, {-0.5f, 0.5f, 0.0f}};
 
         auto indices = std::vector<IndexData>{};
 
-        vec3 normals[]{};
+        [[maybe_unused]] vec3 normals[]{};
 
-        vec2 uvs[]{};
+        [[maybe_unused]] vec2 uvs[]{};
 
         return {};
     }
@@ -63,7 +64,7 @@ namespace ResourceManager {
             "triangle", LoadedModelData{vertices(positions), std::move(indices)});
 
         if (!inserted) {
-            std::cerr << "ResourceManger: Failed to insert triangle!\n";
+            Log::Error("Failed to insert triangle!");
         }
 
         return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
@@ -86,7 +87,7 @@ namespace ResourceManager {
             "square", LoadedModelData{vertices(positions), std::move(indices)});
 
         if (!inserted) {
-            std::cerr << "ResourceManger: Failed to insert square!\n";
+            Log::Error("Failed to insert square!");
         }
 
         return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
@@ -109,7 +110,7 @@ namespace ResourceManager {
             "ShaderToy", LoadedModelData{vertices(positions), std::move(indices)});
 
         if (!inserted) {
-            std::cerr << "ResourceManger: Failed to insert square!\n";
+            Log::Error("Failed to insert square!");
         }
 
         return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
@@ -127,7 +128,7 @@ namespace ResourceManager {
     void LoadObjectModel(const std::string &filepath) {
         std::ifstream file(filepath);
         if (!file.is_open()) {
-            std::cerr << "Failed to open model: " << filepath << "\n";
+            Log::Error("Failed to open model: {}", filepath);
             return;
         }
 
@@ -157,7 +158,7 @@ namespace ResourceManager {
     }
 
     void LoadResources() {
-        std::cout << "Loading resources...\n";
+        Log::Info("Loading Resources...");
         LoadHardCoded();
         // LoadObjectModel("resources/models/square.obj");
         LoadObjectModel("resources/models/triangle.obj");

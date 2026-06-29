@@ -2,9 +2,9 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 
 #include "API/OpenGL/GL_Framebuffer.hpp"
+#include "Util/Log.hpp"
 
 namespace Backend::GLFW {
     const GLFWvidmode *g_mode;
@@ -22,7 +22,7 @@ namespace Backend::GLFW {
 
     bool Init(API api, WindowMode window_mode) {
         glfwSetErrorCallback([](i32 error, const char *description) {
-            std::cerr << "GLFW Error " << error << ": " << description << "\n";
+            Log::Error("GLFW Error Code {}: {}", error, description);
         });
 
         glfwInit();
@@ -70,7 +70,7 @@ namespace Backend::GLFW {
                                         "GLFW Window", g_monitor, nullptr);
         }
         if (g_window == nullptr) {
-            std::cerr << "Failed to create GLFW window\n";
+            Log::Error("Failed to create GLFW window");
             glfwTerminate();
             return false;
         }

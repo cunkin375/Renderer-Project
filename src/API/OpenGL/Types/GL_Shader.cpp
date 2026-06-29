@@ -239,7 +239,7 @@ bool OpenGLShader::Load(const std::vector<std::string> &shader_paths) {
         std::cerr << "\n---------------------------------------------------------------\n\n";
         std::cerr << " LINKING ERROR: ";
         for (auto [idx, module] : std::views::enumerate(modules)) {
-            auto split = (idx < modules.size() - 1) ? "/" : "";
+            auto split = (static_cast<std::size_t>(idx) < modules.size() - 1) ? "/" : "";
             std::cerr << module.GetFilename() << split;
             glDeleteShader(module.GetHandle());
         }

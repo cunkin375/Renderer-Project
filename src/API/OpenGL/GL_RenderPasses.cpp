@@ -24,6 +24,7 @@ namespace OpenGLRenderer {
             g_shaders.find(shader_name)->second.Bind();
             g_meshes[info.handle].Bind();
             glDrawElements(GL_TRIANGLES, info.index_count, GL_UNSIGNED_INT, nullptr);
+            g_meshes[info.handle].Unbind();
         } else {
             std::cerr << "ERROR::OpenGLRenderer::RenderPass failed to fetch from GetGPUModelInfo!\n";
         }

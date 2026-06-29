@@ -9,10 +9,11 @@
 #include <iostream>
 #include <memory>
 
+#include "Util/Log.hpp"
 #include "Util/StringHash.hpp"
 
 namespace {
-    using DebounceInfo = std::chrono::steady_clock::time_point;
+using DebounceInfo = std::chrono::steady_clock::time_point;
 } // namespace
 
 struct DirectoryWatcher::Implementation {
@@ -39,13 +40,13 @@ struct DirectoryWatcher::Implementation {
                         FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, nullptr);
 
         if (INVALID_HANDLE_VALUE == directory_handle) {
-            std::cerr << "DirectoryWatcher: CreateFileW failed!\n";
+            Log::Fatal("CreateFileW failed!");
             std::exit(EXIT_FAILURE);
         }
 
         event_handle = CreateEventW(nullptr, TRUE, FALSE, nullptr);
         if (!event_handle) {
-            std::cerr << "DirectoryWatcher: CreateEventW failed!\n";
+            Log::Fatal("CreateEventW failed!");
             CloseHandle(directory_handle);
             std::exit(EXIT_FAILURE);
         }
@@ -120,7 +121,7 @@ struct DirectoryWatcher::Implementation {
         DWORD errors = GetLastError();
         DWORD PASS_THESE_ERRORS = ERROR_IO_INCOMPLETE | ERROR_IO_PENDING;
         if (!success && !(errors & PASS_THESE_ERRORS)) {
-            std::cerr << "DirectoryWatcher: ReadDirectoryChangesW failed!\n";
+            Log::Error("ReadDirectoryChangesW failed with code: {}", errors);
             pending_read = false;
             return;
         }
@@ -146,8 +147,7 @@ struct DirectoryWatcher::Implementation {
             }
 
             // actual error
-            std::cerr << "DirectoryWatcher: GetOverlappedResult failed!\n";
-            std::cout << "Error Code: " << error << "\n";
+            Log::Error("GetOverlappedResult failed with code: {}", error);
             pending_read = false;
             return;
         }

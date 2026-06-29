@@ -26,10 +26,10 @@ namespace Backend {
             OpenGLBackend::Init();
             OpenGLRenderer::Init();
             g_shader_watcher = std::make_unique<DirectoryWatcher>(
-                OpenGL::Globals::shader_path,
-                [](const DirectoryWatcher::FileEvent &event) -> void {
+                OpenGL::Globals::shader_path, [](const DirectoryWatcher::FileEvent &event) -> void {
                     // this is fired on every event because vim never produces IN_MODIFY
-                    // it should fire on every event, as an event is only meant to fire when a shader is modified
+                    // it should fire on every event, as an event is only meant to fire when a shader is
+                    // modified
                     Renderer::ReloadShaders();
                 });
             g_shader_watcher->SetEnabled(false);
@@ -58,15 +58,12 @@ namespace Backend {
 
     void Update() {
         switch (GLFW::Update()) {
-        case Events::RELOAD_SHADERS:
-            Renderer::ReloadShaders();
-            break;
+        case Events::RELOAD_SHADERS: Renderer::ReloadShaders(); break;
         case Events::ENABLE_AUTO_RELOAD_SHADERS:
             g_auto_reload_enabled = !g_auto_reload_enabled;
             g_shader_watcher->SetEnabled(g_auto_reload_enabled);
             break;
-        case Events::NONE:
-            break;
+        case Events::NONE: break;
         }
     }
 

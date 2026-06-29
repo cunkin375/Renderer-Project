@@ -1,7 +1,5 @@
 #include "GL_Renderer.hpp"
 
-#include <iostream>
-
 #include "GL_RenderPasses.hpp"
 #include "Types/GL_MeshBuffer.hpp"
 #include "Types/GL_SSBO.hpp"
@@ -9,6 +7,7 @@
 
 #include "ResourceHandling/ResourceManager.hpp"
 #include "Util/StringHash.hpp"
+#include "Util/Log.hpp"
 
 namespace OpenGLRenderer {
     std::vector<OpenGLMeshBuffer> g_meshes;
@@ -17,7 +16,7 @@ namespace OpenGLRenderer {
 
     void Init() {
         LoadShaders();
-        std::cout << "Shaders Loaded!\n";
+        Log::Info("Shaders Loaded!");
     }
 
     void Destroy() {
@@ -31,7 +30,7 @@ namespace OpenGLRenderer {
                     const DefineDirectives &defines)
     {
         const auto [it, inserted] = g_shaders.try_emplace(name, shader_paths, "", defines);
-        if (!inserted) { std::cerr << "Renderer::LoadShader() failed: '" << name << "' already exists\n!"; }
+        if (!inserted) { Log::Error("Renderer::LoadShader() failed: '{}' already exists\n!", name); }
     }
 
     void LoadShader(const SubDirectory &sub_directory,
@@ -40,7 +39,7 @@ namespace OpenGLRenderer {
                     const DefineDirectives &defines)
     {
         const auto [it, inserted] = g_shaders.try_emplace(name, shader_paths, sub_directory, defines);
-        if (!inserted) { std::cerr << "Renderer::LoadShader() failed: '" << name << "' already exists\n!"; }
+        if (!inserted) { Log::Error("Renderer::LoadShader() failed: '{}' already exists\n!", name); }
     }
 
     void LoadShaders() {
@@ -67,7 +66,7 @@ namespace OpenGLRenderer {
                 g_meshes.emplace_back(ModelData{model.vertices, model.indices}, name);
                 model.handle = g_meshes.size() - 1;
                 model.is_uploaded = true;
-                std::cout << "Uploaded " << name << " to GPU.\n";
+                Log::Info("Uploaded {} to GPU", name);
             }
         }
     }

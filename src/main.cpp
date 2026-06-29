@@ -1,14 +1,11 @@
-#include <iostream>
-
 #include "Backend/Backend.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Util/Enums.hpp"
+#include "Util/Log.hpp"
 
 int main() {
-    std::cout << "Pre-Window\n";
-
     if (!Backend::Init(API::OPENGL, WindowMode::WINDOWED)) {
-        std::cerr << "Backend failed to initialize!\n";
+        Log::Error("Backend failed to initialize!");
         std::exit(-1);
     }
 
@@ -23,5 +20,5 @@ int main() {
 
     Backend::Destroy();
 
-    std::cout << "Hello, world!\n";
+    Log::Info("Hello, world!");
 }

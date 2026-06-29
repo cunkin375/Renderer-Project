@@ -1,20 +1,26 @@
 #include "GL_Backend.hpp"
 
+// clang-format off
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+// clang-format on
+
 #include <iostream>
 
+#include "Util/Log.hpp"
+
 namespace {
-    void APIENTRY OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
-                                    GLsizei length, const GLchar* message, const void* userParam)
-    {
-        // Ignore non-significant error/warning codes
-        if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+void APIENTRY OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
+                                  const GLchar *message, const void *userParam) {
 
-        std::cerr << "---------------\n";
-        std::cerr << "OpenGL Debug Message (" << id << "): " << message << "\n";
+    // Ignore non-significant error/warning codes
+    if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
+        return;
 
-        // clang-format off
+    std::cerr << "---------------\n";
+    std::cerr << "OpenGL Debug Message (" << id << "): " << message << "\n";
+
+    // clang-format off
         switch (source) {
             case GL_DEBUG_SOURCE_API:             std::cerr << "Source: API"; break;
             case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cerr << "Source: Window System"; break;
@@ -42,48 +48,48 @@ namespace {
             case GL_DEBUG_SEVERITY_LOW:          std::cerr << "Severity: Low"; break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: std::cerr << "Severity: Notification"; break;
         } std::cerr << "\n\n";
-        // clang-format on
+    // clang-format on
 
-        // Automatically trigger breakpoint in IDE when high-severity error
-        if (severity == GL_DEBUG_SEVERITY_HIGH) {
-            #ifdef _MSC_VER
-                __debugbreak(); // Visual Studio
-            #else
-                __builtin_trap(); // GCC/Clang
-            #endif
-        }
+    // Automatically trigger breakpoint in IDE when high-severity error
+    if (severity == GL_DEBUG_SEVERITY_HIGH) {
+#ifdef _MSC_VER
+        __debugbreak(); // Visual Studio
+#else
+        __builtin_trap(); // GCC/Clang
+#endif
     }
-
 }
 
+} // namespace
+
 namespace OpenGLBackend {
-    void Init() {
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-            std::cerr << "Failed to initialize GLAD\n";
-            return;
-        }
-
-        GLint major, minor;
-        glGetIntegerv(GL_MAJOR_VERSION, &major);
-        glGetIntegerv(GL_MINOR_VERSION, &minor);
-        const GLubyte *vendor = glGetString(GL_VENDOR);
-        const GLubyte *renderer = glGetString(GL_RENDERER);
-        std::cout << "GPU: " << renderer << "\n";
-        std::cout << "OpenGL vendor: " << vendor << "\n";
-        std::cout << "OpenGL version: " << major << "." << minor << "\n";
-
-        // Debug information
-        GLint flags;
-        glGetIntegerv(GL_CONTEXT_FLAG_DEBUG_BIT, &flags);
-
-        if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-            glEnable(GL_DEBUG_OUTPUT);
-            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-            glDebugMessageCallback(OpenGLDebugCallback, nullptr);
-            glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-        }
+void Init() {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cerr << "Failed to initialize GLAD\n";
+        return;
     }
 
-    void BeginFrame() { glClear(GL_COLOR_BUFFER_BIT); }
+    GLint major, minor;
+    glGetIntegerv(GL_MAJOR_VERSION, &major);
+    glGetIntegerv(GL_MINOR_VERSION, &minor);
+    const GLubyte *vendor = glGetString(GL_VENDOR);
+    const GLubyte *renderer = glGetString(GL_RENDERER);
+    Log::Info("GPU: {}", reinterpret_cast<const char *>(renderer));
+    Log::Info("OpenGL Vendor: {}", reinterpret_cast<const char *>(vendor));
+    Log::Info("OpenGL Version: {}.{}", major, minor);
+
+    // Debug information
+    GLint flags;
+    glGetIntegerv(GL_CONTEXT_FLAG_DEBUG_BIT, &flags);
+
+    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(OpenGLDebugCallback, nullptr);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+    }
+}
+
+void BeginFrame() { glClear(GL_COLOR_BUFFER_BIT); }
 
 } // namespace OpenGLBackend
