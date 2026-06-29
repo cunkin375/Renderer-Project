@@ -21,6 +21,11 @@ set(VENDOR_SOURCE ${GLAD_SOURCE})
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${VENDOR_SOURCE})
 
+target_compile_options(${PROJECT_NAME} PRIVATE
+    $<$<CXX_COMPILER_ID:Clang>:-fexperimental-library>
+    -Wall
+)
+
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${CMAKE_SOURCE_DIR}/vendor
     ${CMAKE_SOURCE_DIR}/src
@@ -33,6 +38,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     $<$<PLATFORM_ID:Windows>:${MINGW_LIBS}/libglfw3.a>
     $<$<PLATFORM_ID:Linux>:${LINUX_LIBS}/libglfw3.a>
     # assimp
+    # these MUST be the last arguments or else the linker will throw a fit
+    $<$<CXX_COMPILER_ID:Clang>:-fexperimental-library>
+    $<$<CXX_COMPILER_ID:GNU>:stdc++exp>
 )
 
 # GLFW dependencies for linux
