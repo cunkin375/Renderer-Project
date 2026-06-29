@@ -39,9 +39,7 @@ struct VectorOperations {
     /* vector += scalar */
     constexpr Derived &operator+=(T scalar) {
         auto &self = static_cast<Derived &>(*this);
-        auto add_scalar = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
-            ((self[Is] += scalar), ...);
-        };
+        auto add_scalar = [&]<std::size_t... Is>(std::index_sequence<Is...>) { ((self[Is] += scalar), ...); };
         add_scalar(std::make_index_sequence<N>{});
         return self;
     }
@@ -110,7 +108,8 @@ struct Vector : public VectorOperations<Vector<T, N>, T, N> {
 };
 
 /*** Specialization for N = 2 ***/
-// putting "using Vector2 = Vector<T, 2zu>" near "template<Number T>" makes the compiler fucking scream and try to kill you, DO NOT DO IT!!!!
+// putting "using Vector2 = Vector<T, 2zu>" near "template<Number T>" makes the compiler fucking scream and
+// try to kill you, DO NOT DO IT!!!!
 template <Number T>
 struct Vector<T, 2zu> : public VectorOperations<Vector<T, 2zu>, T, 2zu> {
     T x{}, y{};
@@ -121,7 +120,8 @@ struct Vector<T, 2zu> : public VectorOperations<Vector<T, 2zu>, T, 2zu> {
 
     template <typename Self>
     constexpr auto &&operator[](this Self &&self, std::size_t i) {
-        if (i == 0) return std::forward_like<Self>(self).x;
+        if (i == 0)
+            return std::forward_like<Self>(self).x;
         return std::forward_like<Self>(self).y;
     }
 };
@@ -138,8 +138,10 @@ struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu> {
 
     template <typename Self>
     constexpr auto &&operator[](this Self &&self, std::size_t i) {
-        if (i == 0) return std::forward_like<Self>(self).x;
-        if (i == 1) return std::forward_like<Self>(self).y;
+        if (i == 0)
+            return std::forward_like<Self>(self).x;
+        if (i == 1)
+            return std::forward_like<Self>(self).y;
         return std::forward_like<Self>(self).z;
     }
 
@@ -153,17 +155,21 @@ struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu> {
 };
 
 // Type aliases using the specialization directly
-template <Number T> using Vector2D = Vector<T, 2zu>;
-template <Number T> using Vector3D = Vector<T, 3zu>;
+template <Number T>
+using Vector2D = Vector<T, 2zu>;
+template <Number T>
+using Vector3D = Vector<T, 3zu>;
 
 } // namespace Math
 
 /** Aliases */
-using ivec2 = Math::Vector2D<std::int32_t>;
-using ivec3 = Math::Vector3D<std::int32_t>;
+using iVector2 = Math::Vector2D<std::int32_t>;
+using iVector3 = Math::Vector3D<std::int32_t>;
 
-using uvec2 = Math::Vector2D<std::uint32_t>;
-using uvec3 = Math::Vector3D<std::uint32_t>;
+using uVector2 = Math::Vector2D<std::uint32_t>;
+using uVector3 = Math::Vector3D<std::uint32_t>;
 
-using vec2 = Math::Vector2D<float>;
-using vec3 = Math::Vector3D<float>;
+using Vector2 = Math::Vector2D<float>;
+using Vector3 = Math::Vector3D<float>;
+
+using Color = Vector3;

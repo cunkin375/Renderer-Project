@@ -1,5 +1,4 @@
 namespace OpenGLRenderer {
-    void RenderPass();
-    void ShaderToyPass();
+void RenderPass();
+void ShaderToyPass();
 } // namespace OpenGLRenderer
-

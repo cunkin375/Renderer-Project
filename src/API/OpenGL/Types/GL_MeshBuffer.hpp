@@ -1,20 +1,20 @@
 #pragma once
 
 #include <glad/glad.h>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "ResourceHandling/Types/Common.hpp"
 #include "Util/AutoRelease.hpp"
 
 struct OpenGLMeshBuffer {
-private:
+  private:
     AutoRelease<GLuint> vao_{};
     AutoRelease<GLuint> vbo_{};
     AutoRelease<GLuint> ebo_{};
     GLsizei vertex_stride_{};
 
-public:
+  public:
     OpenGLMeshBuffer(const ModelData &data);
     OpenGLMeshBuffer(const ModelData &data, const std::string &name);
     void Load(const ModelData &data, const std::string &name = {});

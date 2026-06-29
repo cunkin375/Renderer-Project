@@ -11,12 +11,12 @@ enum class Level { Debug, Info, Warn, Error, Fatal };
 
 constexpr const char *GetLevel(Level level) {
     switch (level) {
-        case Level::Debug: return "DEBUG";
-        case Level::Info:  return "INFO";
-        case Level::Warn:  return "WARN";
-        case Level::Error: return "ERROR";
-        case Level::Fatal: return "FATAL";
-        default: return "UNKNOWN";
+    case Level::Debug: return "DEBUG";
+    case Level::Info: return "INFO";
+    case Level::Warn: return "WARN";
+    case Level::Error: return "ERROR";
+    case Level::Fatal: return "FATAL";
+    default: return "UNKNOWN";
     }
 }
 

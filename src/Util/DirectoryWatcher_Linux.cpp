@@ -12,7 +12,7 @@
 #include "Util/StringHash.hpp"
 
 namespace {
-    using DebounceInfo = std::chrono::steady_clock::time_point;
+using DebounceInfo = std::chrono::steady_clock::time_point;
 } // namespace
 
 struct DirectoryWatcher::Implementation {

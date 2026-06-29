@@ -9,12 +9,12 @@ using ObjectHandle = u32;
 using ObjectBuffer = std::size_t;
 
 struct OpenGLSSBO {
-private:
+  private:
     ObjectHandle handle_{};
     ObjectBuffer buffer_size_{};
     GLbitfield flags_bitmask_{};
 
-public:
+  public:
     OpenGLSSBO() = default;
     OpenGLSSBO(ObjectBuffer size, GLbitfield flags_bitmask);
 

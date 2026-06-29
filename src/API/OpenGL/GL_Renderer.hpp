@@ -12,23 +12,23 @@ using ShaderPaths = std::vector<std::string>;
 using DefineDirectives = std::vector<std::string>;
 
 namespace OpenGLRenderer {
-    void Init();
-    void Destroy();
+void Init();
+void Destroy();
 
-    void LoadShader(const ShaderName &name, const ShaderPaths &shader_paths,
-                    const DefineDirectives &defines = {});
+void LoadShader(const ShaderName &name, const ShaderPaths &shader_paths,
+                const DefineDirectives &defines = {});
 
-    void LoadShader(const SubDirectory &sub_directory, const ShaderName &name,
-                    const ShaderPaths &shader_paths, const DefineDirectives &defines = {});
+void LoadShader(const SubDirectory &sub_directory, const ShaderName &name, const ShaderPaths &shader_paths,
+                const DefineDirectives &defines = {});
 
-    void LoadShaders();
+void LoadShaders();
 
-    void ReloadShader(std::string_view shader_name);
+void ReloadShader(std::string_view shader_name);
 
-    void ReloadShaders();
+void ReloadShaders();
 
-    void UploadVertexData();
+void UploadVertexData();
 
-    void Render();
+void Render();
 
 } // namespace OpenGLRenderer

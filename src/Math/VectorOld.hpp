@@ -14,7 +14,7 @@ struct Vector;
 
 // 3D Vector of some Number Type
 // NOTE: Number is used to declare a template that contains only Number Types
-template<Number T>
+template <Number T>
 struct Vector<3zu, T> {
     T x{}, y{}, z{};
 
@@ -28,14 +28,14 @@ struct Vector<3zu, T> {
     constexpr Vector(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
 
     // returns reference to modified vector type
-    constexpr Vector& operator+=(const Vector& right_vector) {
+    constexpr Vector &operator+=(const Vector &right_vector) {
         x += right_vector.x;
         y += right_vector.y;
         z += right_vector.z;
         return *this; // <- do not change, this prevents undefined behavior
     }
 
-    constexpr Vector& operator*=(const T right_number) {
+    constexpr Vector &operator*=(const T right_number) {
         x *= right_number;
         y *= right_number;
         z *= right_number;
@@ -45,18 +45,15 @@ struct Vector<3zu, T> {
     // Hidden friend
     // - Only evaluated if used
     // - Ex of Argument-Dependeint Lookup (ADL)
-    friend constexpr Vector operator+(Vector left_vector, const Vector& right_vector) { 
+    friend constexpr Vector operator+(Vector left_vector, const Vector &right_vector) {
         return left_vector += right_vector;
     }
 
-    friend constexpr Vector operator*(Vector vector, T scalar) {
-        return vector *= scalar;
-    }
-
+    friend constexpr Vector operator*(Vector vector, T scalar) { return vector *= scalar; }
 };
 
 // 2D Vector of some Number Type
-template<Number T>
+template <Number T>
 struct Vector<2zu, T> {
     T x{}, y{};
 
@@ -64,26 +61,23 @@ struct Vector<2zu, T> {
     constexpr Vector(T scalar) : x(scalar), y(scalar) {}
     constexpr Vector(T _x, T _y) : x(_x), y(_y) {}
 
-    constexpr Vector& operator+=(const Vector& right) {
+    constexpr Vector &operator+=(const Vector &right) {
         x += right.x;
         y += right.y;
         return *this;
     }
 
-    constexpr Vector& operator*=(const T right) {
+    constexpr Vector &operator*=(const T right) {
         x *= right;
         y *= right;
         return *this;
     }
 
-    friend constexpr Vector operator+(Vector left, const Vector& right) {
-        return left += right;
-    }
+    friend constexpr Vector operator+(Vector left, const Vector &right) { return left += right; }
 
     friend constexpr Vector operator*(Vector vector, T scalar) {
         return Vector(vector.x * scalar, vector.y * scalar);
     }
-
 };
 
-}
+} // namespace Old_Math

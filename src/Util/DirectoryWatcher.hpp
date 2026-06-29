@@ -4,7 +4,7 @@
 #include <functional>
 
 class DirectoryWatcher {
-public:
+  public:
     enum class FileAction { Modified, Created, Deleted, RenamedFrom, RenamedTo };
 
     struct FileEvent {
@@ -31,7 +31,7 @@ public:
     void SetEnabled(bool enabled);
     bool IsEnabled() const;
 
-private:
+  private:
     struct Implementation;
     std::unique_ptr<Implementation> impl_;
 };

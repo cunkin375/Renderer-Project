@@ -10,71 +10,71 @@
 #include "Util/DirectoryWatcher.hpp"
 
 namespace Backend {
-    auto g_api = API::UNDEFINED;
-    auto g_auto_reload_enabled = bool{false};
-    std::unique_ptr<DirectoryWatcher> g_shader_watcher;
+auto g_api = API::UNDEFINED;
+auto g_auto_reload_enabled = bool{false};
+std::unique_ptr<DirectoryWatcher> g_shader_watcher;
 
-    bool Init(API api, WindowMode window_mode) {
-        g_api = api;
+bool Init(API api, WindowMode window_mode) {
+    g_api = api;
 
-        if (!GLFW::Init(api, window_mode)) {
-            return false;
-        }
-
-        if (GetAPI() == API::OPENGL) {
-            GLFW::MakeContextCurrent();
-            OpenGLBackend::Init();
-            OpenGLRenderer::Init();
-            g_shader_watcher = std::make_unique<DirectoryWatcher>(
-                OpenGL::Globals::shader_path, [](const DirectoryWatcher::FileEvent &event) -> void {
-                    // this is fired on every event because vim never produces IN_MODIFY
-                    // it should fire on every event, as an event is only meant to fire when a shader is
-                    // modified
-                    Renderer::ReloadShaders();
-                });
-            g_shader_watcher->SetEnabled(false);
-        }
-
-        ResourceManager::Init();
-
-        GLFW::ShowWindow(GetWindowPointer().asGLFW());
-
-        return true;
+    if (!GLFW::Init(api, window_mode)) {
+        return false;
     }
 
-    bool WindowIsOpen() { return GLFW::WindowIsOpen(); }
-
-    void BeginFrame() {
-        GLFW::BeginFrame(g_api);
-        if (GetAPI() == API::OPENGL) {
-            OpenGLBackend::BeginFrame();
-            if (g_shader_watcher) {
-                g_shader_watcher->PollEvents();
-            }
-        }
+    if (GetAPI() == API::OPENGL) {
+        GLFW::MakeContextCurrent();
+        OpenGLBackend::Init();
+        OpenGLRenderer::Init();
+        g_shader_watcher = std::make_unique<DirectoryWatcher>(
+            OpenGL::Globals::shader_path, [](const DirectoryWatcher::FileEvent &event) -> void {
+                // this is fired on every event because vim never produces IN_MODIFY
+                // it should fire on every event, as an event is only meant to fire when a shader is
+                // modified
+                Renderer::ReloadShaders();
+            });
+        g_shader_watcher->SetEnabled(false);
     }
 
-    void EndFrame() { GLFW::EndFrame(g_api); }
+    ResourceManager::Init();
 
-    void Update() {
-        switch (GLFW::Update()) {
-        case Events::RELOAD_SHADERS: Renderer::ReloadShaders(); break;
-        case Events::ENABLE_AUTO_RELOAD_SHADERS:
-            g_auto_reload_enabled = !g_auto_reload_enabled;
-            g_shader_watcher->SetEnabled(g_auto_reload_enabled);
-            break;
-        case Events::NONE: break;
+    GLFW::ShowWindow(GetWindowPointer().asGLFW());
+
+    return true;
+}
+
+bool WindowIsOpen() { return GLFW::WindowIsOpen(); }
+
+void BeginFrame() {
+    GLFW::BeginFrame(g_api);
+    if (GetAPI() == API::OPENGL) {
+        OpenGLBackend::BeginFrame();
+        if (g_shader_watcher) {
+            g_shader_watcher->PollEvents();
         }
     }
+}
 
-    void Destroy() {
-        if (GetAPI() == API::OPENGL) {
-            OpenGLRenderer::Destroy();
-        }
-        GLFW::Destroy();
+void EndFrame() { GLFW::EndFrame(g_api); }
+
+void Update() {
+    switch (GLFW::Update()) {
+    case Events::RELOAD_SHADERS: Renderer::ReloadShaders(); break;
+    case Events::ENABLE_AUTO_RELOAD_SHADERS:
+        g_auto_reload_enabled = !g_auto_reload_enabled;
+        g_shader_watcher->SetEnabled(g_auto_reload_enabled);
+        break;
+    case Events::NONE: break;
     }
+}
 
-    API GetAPI() { return g_api; }
+void Destroy() {
+    if (GetAPI() == API::OPENGL) {
+        OpenGLRenderer::Destroy();
+    }
+    GLFW::Destroy();
+}
 
-    WindowHandle GetWindowPointer() { return GLFW::GetWindowPointer(); }
+API GetAPI() { return g_api; }
+
+WindowHandle GetWindowPointer() { return GLFW::GetWindowPointer(); }
 } // namespace Backend

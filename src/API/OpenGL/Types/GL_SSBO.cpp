@@ -1,8 +1,7 @@
 #include "GL_SSBO.hpp"
 
 OpenGLSSBO::OpenGLSSBO(const ObjectBuffer size, const GLbitfield flags_bitmask)
-    : flags_bitmask_{ flags_bitmask }
-{
+    : flags_bitmask_{flags_bitmask} {
     Reserve(size);
 }
 
@@ -15,8 +14,7 @@ void OpenGLSSBO::Reserve(const ObjectBuffer size) {
     CleanUp();
 
     glCreateBuffers(1, &handle_);
-    glNamedBufferStorage(handle_, static_cast<GLsizeiptr>(size), nullptr,
-                         flags_bitmask_);
+    glNamedBufferStorage(handle_, static_cast<GLsizeiptr>(size), nullptr, flags_bitmask_);
     buffer_size_ = size;
 }
 
@@ -66,8 +64,7 @@ void OpenGLSSBO::Clear() const {
     }
 
     u32 zero = 0;
-    glClearNamedBufferData(handle_, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT,
-                           &zero);
+    glClearNamedBufferData(handle_, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, &zero);
 }
 
 void OpenGLSSBO::ClearRange(std::size_t offset, ObjectBuffer size) {
@@ -75,11 +72,8 @@ void OpenGLSSBO::ClearRange(std::size_t offset, ObjectBuffer size) {
         return;
     }
 
-    std::size_t actual_size =
-        (offset + size > buffer_size_) ? (buffer_size_ - offset) : size;
+    std::size_t actual_size = (offset + size > buffer_size_) ? (buffer_size_ - offset) : size;
     u32 zero = 0;
-    glClearNamedBufferSubData(handle_, GL_R32UI, 
-                              static_cast<GLintptr>(offset),
-                              static_cast<GLsizeiptr>(actual_size),
-                              GL_RED_INTEGER, GL_UNSIGNED_INT, &zero);
+    glClearNamedBufferSubData(handle_, GL_R32UI, static_cast<GLintptr>(offset),
+                              static_cast<GLsizeiptr>(actual_size), GL_RED_INTEGER, GL_UNSIGNED_INT, &zero);
 }

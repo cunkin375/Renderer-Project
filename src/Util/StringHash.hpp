@@ -7,20 +7,15 @@
 
 // Functor functor functor!!! operator() lets StringHash behave like a function object (like lambdas)
 // Overloads allow for heterogeneous lookup
-// - dynamic copies will not be made during lookup with a const char *, string_view, or string regardless of declared type
+// - dynamic copies will not be made during lookup with a const char *, string_view, or string regardless of
+// declared type
 struct StringHash {
     using is_transparent = void;
-    std::size_t operator()(const char *str) const {
-        return std::hash<std::string_view>{}(str);
-    }
+    std::size_t operator()(const char *str) const { return std::hash<std::string_view>{}(str); }
 
-    std::size_t operator()(std::string_view str) const {
-        return std::hash<std::string_view>{}(str);
-    }
+    std::size_t operator()(std::string_view str) const { return std::hash<std::string_view>{}(str); }
 
-    std::size_t operator()(const std::string &str) const {
-        return std::hash<std::string_view>{}(str);
-    }
+    std::size_t operator()(const std::string &str) const { return std::hash<std::string_view>{}(str); }
 };
 
 template <typename T>
