@@ -126,8 +126,8 @@ void LoadHardCoded() {
     ShaderToy();
 }
 
-void LoadObjectModel(const std::string &filepath) {
-    std::ifstream file(filepath);
+void LoadObjectModel(std::string_view filepath) {
+    auto file = std::ifstream{std::filesystem::path{filepath}};
     if (!file.is_open()) {
         Log::Error("Failed to open model: {}", filepath);
         return;
@@ -154,20 +154,22 @@ void LoadObjectModel(const std::string &filepath) {
         }
     }
 
-    loaded_model_cache.try_emplace(filepath,
+    if (auto it = loaded_model_cache.find(filepath); it == std::ranges::cend(loaded_model_cache)) {
+        loaded_model_cache.emplace(filepath,
                                    LoadedModelData{std::move(object_vertices), std::move(object_indices)});
+    }
 }
 
 void LoadResources() {
     Log::Info("Loading Resources...");
     LoadHardCoded();
     // LoadObjectModel("resources/models/square.obj");
-    LoadObjectModel("resources/models/triangle.obj");
+    // LoadObjectModel("resources/models/triangle.obj");
 }
 
 StringMap<LoadedModelData> &GetModelMap() { return loaded_model_cache; }
 
-GPUModelInfo GetGPUModelInfo(const std::string &filepath) {
+GPUModelInfo GetGPUModelInfo(std::string_view filepath) {
     const auto loaded = loaded_model_cache.find(filepath);
     if (loaded != std::ranges::cend(loaded_model_cache) && loaded->second.is_uploaded) {
         auto &[key, model] = *loaded;

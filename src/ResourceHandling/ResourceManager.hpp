@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <string_view>
 #include <vector>
 
 #include "Types/Common.hpp"
@@ -32,9 +32,9 @@ ModelData Square();
 void Init();
 void LoadResources();
 
-void LoadObjectModel(const std::string &filepath);
+void LoadObjectModel(std::string_view filepath);
 
 StringMap<LoadedModelData> &GetModelMap();
-GPUModelInfo GetGPUModelInfo(const std::string &filepath);
+GPUModelInfo GetGPUModelInfo(std::string_view filepath);
 
 } // namespace ResourceManager
