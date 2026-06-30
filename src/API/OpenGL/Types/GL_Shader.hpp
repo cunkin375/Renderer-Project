@@ -12,14 +12,14 @@ using ProgramHandle = ShaderHandle;
 using GLUniformCache = StringMap<i32>;
 
 struct OpenGLShaderModule {
-  private:
+private:
     ShaderHandle handle_ = -1;
     std::string filename_{};
     std::string errors_{};
     std::string final_source_{};
     std::vector<std::string> line_map_{};
 
-  public:
+public:
     OpenGLShaderModule(const std::string &filename, const std::vector<std::string> &defines,
                        const std::string &base_path = OpenGL::Globals::shader_path);
 
@@ -32,7 +32,7 @@ struct OpenGLShaderModule {
 };
 
 struct OpenGLShader {
-  private:
+private:
     std::vector<std::string> defines_{};
     std::vector<std::string> shader_paths_{};
     std::string sub_directory_{};
@@ -40,12 +40,14 @@ struct OpenGLShader {
     GLUniformCache uniform_locations_{};
     ProgramHandle handle_ = -1;
 
-  public:
+public:
     OpenGLShader(const std::vector<std::string> &shader_paths, const std::string &sub_directory,
                  const std::vector<std::string> &defines,
                  const std::string &base_path = OpenGL::Globals::shader_path);
 
-    void Bind() const;
+    // name cannot be a string_view because GetUniformLocation uses it to interact with OpenGL's C library
+    i32 GetUniformLocation(const std::string &name);
     bool Load(const std::vector<std::string> &shader_paths);
     bool HotLoad();
+    void Bind() const;
 };

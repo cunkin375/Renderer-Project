@@ -197,6 +197,13 @@ OpenGLShader::OpenGLShader(const std::vector<std::string> &shader_paths, const s
     Load(shader_paths_);
 }
 
+i32 OpenGLShader::GetUniformLocation(const std::string &name) {
+    if (uniform_locations_.find(name) == std::ranges::cend(uniform_locations_)) {
+        uniform_locations_.emplace(name, glGetUniformLocation(handle_, name.c_str()));
+    }
+    return uniform_locations_.find(name)->second;
+}
+
 bool OpenGLShader::Load(const std::vector<std::string> &shader_paths) {
     // compile shader modules
     std::vector<OpenGLShaderModule> modules;
