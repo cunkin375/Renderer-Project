@@ -6,3 +6,4 @@ build/
 .ignore
 AutoBuildAndRun.ps1
 .log
+vendor/googletest
