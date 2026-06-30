@@ -51,13 +51,22 @@ void RenderPass() {
         auto &shader = g_shaders.find("Test")->second;
         shader.Bind();
 
+        static auto x = 2.0f;
+        static auto z = 0.0f;
+        static auto t = 0.0f;
+
+        x = std::sin(t) * 2.0f;
+        z = std::cos(t) * 2.0f;
+
+        t += 0.02f;
+
         // NOTE: This approach is temporary. These matrices should be constructed in an API agnostic abstraction, THEN passed into the target API.
         static constexpr auto model = Matrix4{Vector3{0.0f, 0.0f, 0.0f}};
         const auto model_uniform = shader.GetUniformLocation("model");
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
 
-        static const auto view =
-            Matrix4::LookAt(Eye{0.0f, 0.0f, 3.0f}, LookAt{0.0f, 0.0f, 0.0f}, Up{0.0f, 1.0f, 0.0f});
+        const auto view =
+            Matrix4::LookAt(Eye{x, 0.0f, z}, LookAt{0.0f, 0.0f, 0.0f}, Up{0.0f, 1.0f, 0.0f});
         const auto view_uniform = shader.GetUniformLocation("view");
         glUniformMatrix4fv(view_uniform, 1, GL_FALSE, view.GetSpan().data());
 
