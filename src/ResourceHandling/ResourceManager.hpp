@@ -11,7 +11,7 @@ namespace ResourceManager {
 using ModelHandle = u32;
 
 struct GPUModelInfo {
-    ModelHandle handle;
+    u32 handle;
     u32 index_count;
 };
 
