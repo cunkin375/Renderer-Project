@@ -44,6 +44,12 @@ namespace Math {
 template <typename T>
 concept Number = std::floating_point<T> || std::integral<T>;
 
+template <Number T, std::size_t N>
+struct Vector;
+
+template <Number T, std::size_t N>
+struct Color;
+
 /** Base operations for any vector type using Curiously Recurring Template Pattern (CRTP) */
 template <typename Derived, Number T, std::size_t N>
 struct VectorOperations {
@@ -106,6 +112,19 @@ struct VectorOperations {
     }
 
     // Binary operators (Hidden friends)
+    /* vector != vector, vector == vector */
+    [[nodiscard]] friend constexpr bool operator==(const Derived &left_vector, const Derived &right_vector) {
+        auto downcast_left = static_cast<const Derived &>(left_vector);
+        auto downcast_right = static_cast<const Derived &>(right_vector);
+        return downcast_left.is_equal(downcast_right);
+    }
+
+    [[nodiscard]] friend constexpr bool operator<=>(const Derived &left_vector, const Derived &right_vector) {
+        auto downcast_left = static_cast<const Derived &>(left_vector);
+        auto downcast_right = static_cast<const Derived &>(right_vector);
+        return downcast_left.three_way_compare(downcast_right);
+    }
+
     /* vector + vector */
     friend constexpr Derived operator+(const Derived &left_vector, const Derived &right_vector) {
         auto result = left_vector;
@@ -209,6 +228,12 @@ struct Vector : public VectorOperations<Vector<T, N>, T, N> {
 
     constexpr Vector(T scalar) { data.fill(scalar); }
 
+    [[nodiscard]] constexpr bool is_equal(const Vector &other) const noexcept { return data == other.data; }
+
+    [[nodiscard]] constexpr bool three_way_compare(const Vector &other) const noexcept {
+        return data <=> other.data;
+    }
+
     template <typename Self>
     constexpr auto &&operator[](this Self &&self, std::size_t i) {
         return std::forward_like<Self>(self).data[i];
@@ -226,54 +251,99 @@ struct Vector<T, 2zu> : public VectorOperations<Vector<T, 2zu>, T, 2zu> {
     constexpr Vector(T _x, T _y) : x{_x}, y{_y} {}
     constexpr Vector(T scalar) : x{scalar}, y{scalar} {}
 
+    [[nodiscard]] constexpr bool is_equal(const Vector &other) const noexcept {
+        return (x == other.x && y == other.y);
+    }
+
+    [[nodiscard]] constexpr bool three_way_compare(const Vector &other) const noexcept {
+        return (x <=> other.x && y <=> other.y);
+    }
+
     template <typename Self>
     constexpr auto &&operator[](this Self &&self, std::size_t i) {
-        if (i == 0)
-            return std::forward_like<Self>(self).x;
+        if (i == 0) return std::forward_like<Self>(self).x;
         return std::forward_like<Self>(self).y;
     }
 };
 
 /*** Specialization for N = 3 ***/
-// - See using Vector2 comment above
-template <Number T>
-struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu> {
-    T x{}, y{}, z{};
 
-    constexpr Vector() = default;
-    constexpr Vector(T _x, T _y, T _z) : x{_x}, y{_y}, z{_z} {}
-    constexpr Vector(T scalar) : x{scalar}, y{scalar}, z{scalar} {}
-
-    template <typename Self>
-    constexpr auto &&operator[](this Self &&self, std::size_t i) {
-        if (i == 0)
-            return std::forward_like<Self>(self).x;
-        if (i == 1)
-            return std::forward_like<Self>(self).y;
-        return std::forward_like<Self>(self).z;
-    }
-
-    using Vector3 = Vector<T, 3zu>; // this is ok, allegedly
-    static constexpr Vector3 CrossProduct(const Vector3 &right, const Vector3 &left) {
+template <typename Derived, Number T>
+struct Math3D {
+    static constexpr Derived CrossProduct(const Derived &right, const Derived &left) {
         auto x_param = left.y * right.z - left.z * right.y;
         auto y_param = left.z * right.x - left.x * right.z;
         auto z_param = left.x * right.y - left.y * right.x;
         return {x_param, y_param, z_param};
     }
 
-    constexpr Vector3 CrossProduct(const Vector3 &other) const {
-        auto x_param = y * other.z - z * other.y;
-        auto y_param = z * other.x - x * other.z;
-        auto z_param = x * other.y - y * other.x;
-        return {x_param, y_param, z_param};
+    // x: 0, y: 1, z: 2
+    constexpr Derived CrossProduct(const Derived &other) const {
+        const auto self = static_cast<const Derived &>(*this);
+        auto x_param = self[1] * other[2] - self[2] * other[1];
+        auto y_param = self[2] * other[0] - self[0] * other[2];
+        auto z_param = self[0] * other[1] - self[1] * other[0];
+        return Derived{x_param, y_param, z_param};
+    }
+};
+
+// - See using Vector2 comment above
+template <Number T>
+struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu>, public Math3D<Vector<T, 3zu>, T> {
+    T x{}, y{}, z{};
+
+    constexpr Vector() = default;
+    constexpr Vector(T _x, T _y, T _z) : x{_x}, y{_y}, z{_z} {}
+    constexpr Vector(T scalar) : x{scalar}, y{scalar}, z{scalar} {}
+
+    [[nodiscard]] constexpr bool is_equal(const Vector &other) const noexcept {
+        return (x == other.x && y == other.y && z == other.z);
+    }
+
+    [[nodiscard]] constexpr bool three_way_compare(const Vector &other) const noexcept {
+        return (x <=> other.x && y <=> other.y && z <=> other.z);
+    }
+
+    template <typename Self>
+    constexpr auto &&operator[](this Self &&self, std::size_t i) {
+        if (i == 0) return std::forward_like<Self>(self).x;
+        if (i == 1) return std::forward_like<Self>(self).y;
+        return std::forward_like<Self>(self).z;
+    }
+};
+
+template <Number T>
+struct Color<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu>, public Math3D<Vector<T, 3zu>, T> {
+    T r{}, g{}, b{};
+
+    constexpr Color() = default;
+    constexpr Color(T _r, T _g, T _b) : r{_r}, g{_g}, b{_b} {}
+
+    [[nodiscard]] constexpr bool is_equal(const Color &other) const noexcept {
+        return (r == other.r && g == other.g && b == other.b);
+    }
+
+    [[nodiscard]] constexpr bool three_way_compare(const Color &other) const noexcept {
+        return (r <=> other.r && g <=> other.g && b <=> other.b);
+    }
+
+    template <typename Self>
+    constexpr auto &&operator[](this Self &&self, std::size_t i) {
+        if (i == 0) return std::forward_like<Self>(self).r;
+        if (i == 1) return std::forward_like<Self>(self).g;
+        return std::forward_like<Self>(self).b;
     }
 };
 
 // Type aliases using the specialization directly
 template <Number T>
 using Vector2D = Vector<T, 2zu>;
+
 template <Number T>
 using Vector3D = Vector<T, 3zu>;
+
+template <Number T>
+using Color3D = Color<T, 3zu>;
 
 } // namespace Math
 
@@ -299,4 +369,4 @@ using uVector3 = Math::Vector3D<std::uint32_t>;
 using Vector2 = Math::Vector2D<float>;
 using Vector3 = Math::Vector3D<float>;
 
-using Color = Vector3;
+using Color = Math::Color3D<float>;

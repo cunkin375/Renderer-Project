@@ -9,15 +9,19 @@
 namespace Math {
 
 // NOTE: this matrix implementation is column-major
-struct Matrix4D {
+struct alignas(64) Matrix4D {
 public:
     constexpr Matrix4D()
         : data_{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f} {}
 
-    constexpr Matrix4D(const std::array<float, 16zu> &array) : data_{array} {}
+    constexpr Matrix4D(const std::array<float, 16zu> &array) = delete;
+
+    constexpr Matrix4D(const std::array<float, 16zu> &&array) : data_{std::move(array)} {}
 
     /* matrix *= matrix */
+    // Matrix4 should be 64-bytes, which fits into an entire cache line
+    // - cache friendly setups don't really matter here
     constexpr Matrix4D &operator*=(const Matrix4D &right) {
         std::array<float, 16zu> result_data{};
         for (auto column{0zu}; column < 4; ++column) {
@@ -28,7 +32,7 @@ public:
                 }
             }
         }
-        data_ = result_data;
+        data_ = std::move(result_data);
         return *this;
     }
 
@@ -38,6 +42,12 @@ public:
         product *= right_matrix;
         return product;
     }
+
+    /* matrix != matrix, matrix == matrix */
+    [[nodiscard]] friend constexpr bool operator==(const Matrix4D &left_matrix, const Matrix4D &right_matrix) = default;
+
+    /* matrix <=> matrix */
+    [[nodiscard]] friend constexpr bool operator<=>(const Matrix4D &left_matrix, const Matrix4D &right_matrix) = default;
 
     constexpr Matrix4D(Vector3 translation)
         : data_{1.0f, 0.0f, 0.0f, 0.0f, 0.0f,          1.0f,          0.0f,          0.0f,
@@ -49,10 +59,8 @@ public:
         const auto forward = Vector3::Normalize(eye - look_at);
         const auto right = Vector3::CrossProduct(up, forward).Normalize();
         const auto true_up = Vector3::CrossProduct(forward, right).Normalize();
-        auto matrix =
-            Matrix4D{}.data_ = {right.x, true_up.x, forward.x, 0.0f, right.y, true_up.y, forward.y, 0.0f,
-                                right.z, true_up.z, forward.z, 0.0f, 0.0f,    0.0f,      0.0f,      1.0f};
-
+        auto matrix = Matrix4D{{right.x, true_up.x, forward.x, 0.0f, right.y, true_up.y, forward.y, 0.0f,
+                                right.z, true_up.z, forward.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}};
         return matrix * Matrix4D{-eye};
     }
 
@@ -65,11 +73,10 @@ public:
         const auto b = -t;
         const auto r = t * aspect_ratio;
         const auto l = b * aspect_ratio;
-        auto m = Matrix4D{}.data_ = {
-            {(2.0f * near_plane) / (r - l), 0.0f, 0.0f, 0.0f, 0.0f, (2.0f * near_plane) / (t - b), 0.0f, 0.0f,
-             (r + l) / (r - l), (t + b) / (t - b), -(far_plane + near_plane) / (far_plane - near_plane),
-             -1.0f, 0.0f, 0.0f, -(2.0f * far_plane * near_plane) / (far_plane - near_plane), 0.0f}};
-        return m;
+        return Matrix4D{{(2.0f * near_plane) / (r - l), 0.0f, 0.0f, 0.0f, 0.0f, (2.0f * near_plane) / (t - b),
+                         0.0f, 0.0f, (r + l) / (r - l), (t + b) / (t - b),
+                         -(far_plane + near_plane) / (far_plane - near_plane), -1.0f, 0.0f, 0.0f,
+                         -(2.0f * far_plane * near_plane) / (far_plane - near_plane), 0.0f}};
     }
 
     constexpr std::span<const float> GetSpan() const { return data_; }
@@ -82,13 +89,15 @@ private:
 
 using Matrix4 = Math::Matrix4D;
 
+
 template <>
 struct std::formatter<Matrix4> {
     constexpr auto parse(std::format_parse_context &context) const { return std::begin(context); }
     constexpr auto format(const Matrix4 &object, std::format_context &context) const {
         const auto *data = object.GetSpan().data();
+                                              /* 0  4  8  12  1  5  9  13  2  6  10 14  3  7  11 15 */
         return std::format_to(context.out(), "[\n{} {} {} {}\n{} {} {} {}\n{} {} {} {}\n{} {} {} {}\n]",
-                              data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8],
-                              data[9], data[10], data[11], data[12], data[13], data[14], data[15]);
+                              data[0], data[4], data[8], data[12], data[1], data[5], data[9], data[13],
+                              data[2], data[6], data[10], data[14], data[3], data[7], data[11], data[15]);
     }
 };
