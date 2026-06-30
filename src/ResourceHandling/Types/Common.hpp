@@ -7,7 +7,7 @@
 
 using IndexData = u32;
 
-struct VertexData {
+struct alignas(16) VertexData {
     Vector3 position{};
     Color color{};
 
