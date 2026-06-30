@@ -1,11 +1,42 @@
 #pragma once
 #include <array>
+#include <cmath>
 #include <concepts>
 #include <cstdint>
+#include <format>
+#include <immintrin.h>
 #include <utility>
 
 /** Linear Algebra Library made to experiment with template metaprogramming */
 // NOTE: As of C++26, <linalg> does a lot of this for you (See https://en.cppreference.com/cpp/numeric/linalg)
+
+// <immintrin.h> requires x86 or x64 architecture
+// clang-format off
+#if defined(_WIN32)
+    // Windows 32-bit (x86)
+    #if defined(_M_IX86)
+        static_assert(sizeof(void*) == 4, "Expected x86 architecture");
+    // Windows 64-bit (x64 / AMD64)
+    #elif defined(_M_X64)
+        static_assert(sizeof(void*) == 8, "Expected x64 architecture");
+    #else
+        static_assert(false, "Unsupported Windows architecture");
+    #endif
+
+#elif defined(__unix__) || defined(__APPLE__)
+    // Linux / macOS 32-bit (x86)
+    #if defined(__i386__)
+        static_assert(sizeof(void*) == 4, "Expected x86 architecture");
+    // Linux / macOS 64-bit (x64)
+    #elif defined(__x86_64__)
+        static_assert(sizeof(void*) == 8, "Expected x64 architecture");
+    #else
+        static_assert(false, "Unsupported Unix/Apple architecture");
+    #endif
+#else
+    static_assert(false, "Unsupported operating system");
+#endif
+// clang-format on
 
 namespace Math {
 
@@ -21,6 +52,16 @@ struct VectorOperations {
         auto &self = static_cast<Derived &>(*this);
         auto add_vector = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
             ((self[Is] += other[Is]), ...);
+        };
+        add_vector(std::make_index_sequence<N>{});
+        return self;
+    }
+
+    /* vector -= vector */
+    constexpr Derived &operator-=(const Derived &other) {
+        auto &self = static_cast<Derived &>(*this);
+        auto add_vector = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
+            ((self[Is] -= other[Is]), ...);
         };
         add_vector(std::make_index_sequence<N>{});
         return self;
@@ -44,6 +85,16 @@ struct VectorOperations {
         return self;
     }
 
+    /* vector += scalar */
+    constexpr Derived &operator-=(T scalar) {
+        auto &self = static_cast<Derived &>(*this);
+        auto subtract_scalar = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
+            ((self[Is] -= scalar), ...);
+        };
+        subtract_scalar(std::make_index_sequence<N>{});
+        return self;
+    }
+
     /* vector *= scalar */
     constexpr Derived &operator*=(T scalar) {
         auto &self = static_cast<Derived &>(*this);
@@ -56,39 +107,96 @@ struct VectorOperations {
 
     // Binary operators (Hidden friends)
     /* vector + vector */
-    friend constexpr Derived operator+(Derived left_vector, const Derived &right_vector) {
-        left_vector += right_vector;
-        return left_vector;
+    friend constexpr Derived operator+(const Derived &left_vector, const Derived &right_vector) {
+        auto result = left_vector;
+        result += right_vector;
+        return result;
+    }
+
+    /* vector - vector */
+    friend constexpr Derived operator-(const Derived &left_vector, const Derived &right_vector) {
+        auto result = left_vector;
+        result -= right_vector;
+        return result;
     }
 
     /* vector * vector */
-    friend constexpr Derived operator*(Derived left_vector, const Derived &right_vector) {
-        left_vector *= right_vector;
-        return left_vector;
+    friend constexpr Derived operator*(const Derived &left_vector, const Derived &right_vector) {
+        auto result = left_vector;
+        result *= right_vector;
+        return result;
     }
 
     /* vector + scalar */
-    friend constexpr Derived operator+(Derived left_vector, T scalar) {
-        left_vector += scalar;
-        return left_vector;
+    friend constexpr Derived operator+(const Derived &left_vector, T scalar) {
+        auto result = left_vector;
+        result += scalar;
+        return result;
     }
 
     /* scalar + vector */
-    friend constexpr Derived operator+(T scalar, Derived right_vector) {
-        right_vector += scalar;
-        return right_vector;
+    friend constexpr Derived operator+(T scalar, const Derived &right_vector) {
+        auto result = right_vector;
+        result += scalar;
+        return result;
+    }
+
+    /* vector - scalar */
+    friend constexpr Derived operator-(const Derived &left_vector, T scalar) {
+        auto result = left_vector;
+        result -= scalar;
+        return result;
     }
 
     /* vector * scalar */
-    friend constexpr Derived operator*(Derived left_vector, T scalar) {
-        left_vector *= scalar;
-        return left_vector;
+    friend constexpr Derived operator*(const Derived &left_vector, T scalar) {
+        auto result = left_vector;
+        result *= scalar;
+        return result;
     }
 
     /* scalar * vector */
-    friend constexpr Derived operator*(T scalar, Derived right_vector) {
-        right_vector *= scalar;
-        return right_vector;
+    friend constexpr Derived operator*(T scalar, const Derived &right_vector) {
+        auto result = right_vector;
+        result *= scalar;
+        return result;
+    }
+
+    /* -vector */
+    friend constexpr Derived operator-(const Derived &right_vector) {
+        auto result{right_vector};
+        return -1 * result;
+    }
+
+    /*** Actual Functions ***/
+    constexpr T MagnitudeSquared() const {
+        const auto &self = static_cast<const Derived &>(*this);
+        T sum{};
+        auto accumulate = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
+            ((sum += self[Is] * self[Is]), ...);
+        };
+        accumulate(std::make_index_sequence<N>{});
+        return sum;
+    }
+
+    constexpr T Magnitude() const { return std::sqrt(MagnitudeSquared()); }
+
+    constexpr T InverseMagnitude() const { return static_cast<T>(1.0) / std::sqrt(MagnitudeSquared()); }
+
+    constexpr Derived &Normalize() {
+        auto &self = static_cast<Derived &>(*this);
+        const T inverse_magnitude = self.InverseMagnitude();
+        auto scale = [&]<std::size_t... Is>(std::index_sequence<Is...>) {
+            ((self[Is] *= inverse_magnitude), ...);
+        };
+        scale(std::make_index_sequence<N>{});
+        return self;
+    }
+
+    static constexpr Derived Normalize(const Derived &vector) {
+        Derived result = vector;
+        result.Normalize();
+        return result;
     }
 };
 
@@ -146,6 +254,13 @@ struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu> {
     }
 
     using Vector3 = Vector<T, 3zu>; // this is ok, allegedly
+    static constexpr Vector3 CrossProduct(const Vector3 &right, const Vector3 &left) {
+        auto x_param = left.y * right.z - left.z * right.y;
+        auto y_param = left.z * right.x - left.x * right.z;
+        auto z_param = left.x * right.y - left.y * right.x;
+        return {x_param, y_param, z_param};
+    }
+
     constexpr Vector3 CrossProduct(const Vector3 &other) const {
         auto x_param = y * other.z - z * other.y;
         auto y_param = z * other.x - x * other.z;
@@ -161,6 +276,18 @@ template <Number T>
 using Vector3D = Vector<T, 3zu>;
 
 } // namespace Math
+
+template <Math::Number T, std::size_t N>
+struct std::formatter<Math::Vector<T, N>> {
+    constexpr auto parse(std::format_parse_context &context) const { return std::begin(context); }
+    constexpr auto format(const Math::Vector<T, N> &object, std::format_context &context) const {
+        auto out = std::format_to(context.out(), "[");
+        for (auto i{0zu}; i < N; ++i) {
+            out = std::format_to(out, "{}{}", object[i], (i < N - 1) ? ", " : "");
+        }
+        return std::format_to(out, "]");
+    }
+};
 
 /** Aliases */
 using iVector2 = Math::Vector2D<std::int32_t>;
