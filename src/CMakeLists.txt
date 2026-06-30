@@ -1,8 +1,4 @@
-cmake_minimum_required(VERSION 4.1.0)
-
 file(GLOB_RECURSE SOURCE_FILES  ./*.cpp)
-
-set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendor)
 
 # Glad files
 set(GLAD_INCLUDE_DIR ${VENDOR_DIR}/glad/include)
