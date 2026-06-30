@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 
+#include <numbers>
 #include <string_view>
 
 #include "Types/GL_MeshBuffer.hpp"
@@ -21,6 +22,9 @@ using ShaderName = std::string_view;
 // ShaderName cannot be string_view because GetUniformLocation uses it to interact with OpenGL's C library
 using ShaderUniform = std::string;
 using ShaderUniformList = std::vector<ShaderUniform>;
+using Eye = Vector3;
+using LookAt = Vector3;
+using Up = Vector3;
 } // namespace
 
 namespace OpenGLRenderer {
@@ -39,17 +43,28 @@ void GenericPass(std::string_view model_name, std::string_view shader_name) {
     }
 }
 
-void RenderPass() { 
+void RenderPass() {
     auto info = ResourceManager::GetGPUModelInfo("triangle");
-    static constexpr auto translation = Matrix4{Vector3{0.5f, 0.0f, 0.0f}};
     // static constexpr auto translation = Matrix4{};
 
     if (info.index_count > 0) {
         auto &shader = g_shaders.find("Test")->second;
         shader.Bind();
 
-        const auto translation_uniform = shader.GetUniformLocation("translation");
-        glUniformMatrix4fv(translation_uniform, 1, GL_FALSE, translation.GetView().data());
+        static constexpr auto model = Matrix4{Vector3{0.0f, 0.0f, 0.0f}};
+        const auto model_uniform = shader.GetUniformLocation("model");
+        glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
+
+        static const auto view =
+            Matrix4::LookAt(Eye{0.0f, 0.0f, 5.0f}, LookAt{0.0f, 0.0f, 0.0f}, Up{0.0f, 1.0f, 0.0f});
+        const auto view_uniform = shader.GetUniformLocation("view");
+        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, view.GetSpan().data());
+
+        // NOTE: hacky please fix next time you get here
+        static const auto projection =
+            Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
+        const auto projection_uniform = shader.GetUniformLocation("projection");
+        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, projection.GetSpan().data());
 
         g_meshes[info.handle].Bind();
 

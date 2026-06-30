@@ -44,18 +44,35 @@ public:
                 0.0f, 0.0f, 1.0f, 0.0f, translation.x, translation.y, translation.z, 1.0f} {}
 
     // TODO: optimize this
+    // - also currently not true constexpr
     static constexpr Matrix4D LookAt(const Vector3 &eye, const Vector3 &look_at, const Vector3 &up) {
-        const auto forward = Vector3::Normalize(look_at - eye);
+        const auto forward = Vector3::Normalize(eye - look_at);
         const auto right = Vector3::CrossProduct(up, forward).Normalize();
         const auto true_up = Vector3::CrossProduct(forward, right).Normalize();
-        auto matrix = Matrix4D{}.data_ = {right.x,   right.y, right.z,   0.0f,      true_up.x, true_up.y,
-                                   true_up.z, 0.0f,    forward.x, forward.y, forward.z, 0.0f,
-                                   0.0f,      0.0f,    0.0f,      1.0f};
+        auto matrix =
+            Matrix4D{}.data_ = {right.x, true_up.x, forward.x, 0.0f, right.y, true_up.y, forward.y, 0.0f,
+                                right.z, true_up.z, forward.z, 0.0f, 0.0f,    0.0f,      0.0f,      1.0f};
 
         return matrix * Matrix4D{-eye};
     }
 
-    constexpr std::span<const float> GetView() const { return data_; }
+    // NOTE: hacky please fix next time you get here
+    static constexpr Matrix4D Perspective(float fov, float width, float height, float near_plane,
+                                          float far_plane) {
+        const auto aspect_ratio = width / height;
+        const auto temp = std::tan(fov / 2.0f);
+        const auto t = temp * near_plane;
+        const auto b = -t;
+        const auto r = t * aspect_ratio;
+        const auto l = b * aspect_ratio;
+        auto m = Matrix4D{}.data_ = {
+            {(2.0f * near_plane) / (r - l), 0.0f, 0.0f, 0.0f, 0.0f, (2.0f * near_plane) / (t - b), 0.0f, 0.0f,
+             (r + l) / (r - l), (t + b) / (t - b), -(far_plane + near_plane) / (far_plane - near_plane),
+             -1.0f, 0.0f, 0.0f, -(2.0f * far_plane * near_plane) / (far_plane - near_plane), 0.0f}};
+        return m;
+    }
+
+    constexpr std::span<const float> GetSpan() const { return data_; }
 
 private:
     std::array<float, 16zu> data_;
@@ -69,9 +86,9 @@ template <>
 struct std::formatter<Matrix4> {
     constexpr auto parse(std::format_parse_context &context) const { return std::begin(context); }
     constexpr auto format(const Matrix4 &object, std::format_context &context) const {
-        const auto *data = object.GetView().data();
-        return std::format_to(context.out(), "[\n{} {} {} {}\n{} {} {} {}\n{} {} {} {}\n{} {} {} {}\n]", data[0],
-                              data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9],
-                              data[10], data[11], data[12], data[13], data[14], data[15]);
+        const auto *data = object.GetSpan().data();
+        return std::format_to(context.out(), "[\n{} {} {} {}\n{} {} {} {}\n{} {} {} {}\n{} {} {} {}\n]",
+                              data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8],
+                              data[9], data[10], data[11], data[12], data[13], data[14], data[15]);
     }
 };
