@@ -270,7 +270,7 @@ struct Vector<T, 2zu> : public VectorOperations<Vector<T, 2zu>, T, 2zu> {
 
 template <typename Derived, Number T>
 struct Math3D {
-    static constexpr Derived CrossProduct(const Derived &right, const Derived &left) {
+    static constexpr Derived CrossProduct(const Derived &left, const Derived &right) {
         auto x_param = left.y * right.z - left.z * right.y;
         auto y_param = left.z * right.x - left.x * right.z;
         auto z_param = left.x * right.y - left.y * right.x;

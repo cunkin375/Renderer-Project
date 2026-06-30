@@ -64,7 +64,6 @@ public:
         return matrix * Matrix4D{-eye};
     }
 
-    // NOTE: hacky please fix next time you get here
     static constexpr Matrix4D Perspective(float fov, float width, float height, float near_plane,
                                           float far_plane) {
         const auto aspect_ratio = width / height;
