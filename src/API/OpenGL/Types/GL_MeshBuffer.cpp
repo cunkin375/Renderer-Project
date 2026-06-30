@@ -93,7 +93,7 @@ void OpenGLMeshBuffer::Load(const ModelData &data, const std::string &name) {
     glEnableVertexArrayAttrib(vao_, Index{1});
     glVertexArrayAttribFormat(vao_, AttributeIndex{1}, Size{3}, GL_FLOAT, GL_FALSE,
                               offsetof(VertexData, color));
-    glVertexArrayAttribBinding(vao_, AttributeIndex{1}, BindingIndex{1});
+    glVertexArrayAttribBinding(vao_, AttributeIndex{1}, BindingIndex{0});
 
     if (name.length()) {
         glObjectLabel(GL_BUFFER, vbo_, static_cast<GLsizei>(name.length()), name.c_str());
