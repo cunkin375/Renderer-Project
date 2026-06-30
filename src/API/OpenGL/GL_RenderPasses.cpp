@@ -60,13 +60,13 @@ void RenderPass() {
 
         t += 0.02f;
 
-        // NOTE: This approach is temporary. These matrices should be constructed in an API agnostic abstraction, THEN passed into the target API.
+        // NOTE: This approach is temporary. These matrices should be constructed in an API agnostic
+        // abstraction, THEN passed into the target API.
         static constexpr auto model = Matrix4{Vector3{0.0f, 0.0f, 0.0f}};
         const auto model_uniform = shader.GetUniformLocation("model");
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
 
-        const auto view =
-            Matrix4::LookAt(Eye{x, 0.0f, z}, LookAt{0.0f, 0.0f, 0.0f}, Up{0.0f, 1.0f, 0.0f});
+        const auto view = Matrix4::LookAt(Eye{x, 0.0f, z}, LookAt{0.0f, 0.0f, 0.0f}, Up{0.0f, 1.0f, 0.0f});
         const auto view_uniform = shader.GetUniformLocation("view");
         glUniformMatrix4fv(view_uniform, 1, GL_FALSE, view.GetSpan().data());
 
