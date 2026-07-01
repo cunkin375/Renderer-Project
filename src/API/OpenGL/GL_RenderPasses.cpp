@@ -70,7 +70,6 @@ void RenderPass() {
         const auto view_uniform = shader.GetUniformLocation("view");
         glUniformMatrix4fv(view_uniform, 1, GL_FALSE, view.GetSpan().data());
 
-        // NOTE: hacky please fix next time you get here
         static const auto projection =
             Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
         const auto projection_uniform = shader.GetUniformLocation("projection");
@@ -83,6 +82,49 @@ void RenderPass() {
         g_meshes[info.handle].Unbind();
     } else {
         Log::Error("GenericPass failed to fetch from GetGPUModelInfo!");
+    }
+}
+
+void CubePass() {
+    auto info = ResourceManager::GetGPUModelInfo("cube");
+
+    if (info.index_count > 0) {
+        auto &shader = g_shaders.find("Test")->second;
+        shader.Bind();
+
+        static auto x = 2.0f;
+        static auto y = 0.0f;
+        static auto z = 0.0f;
+        static auto t = 0.0f;
+
+        x = std::sin(t) * 2.0f;
+        z = std::cos(t) * 2.0f;
+        y = std::sin(t) * 2.0f;
+
+        t += 0.02f;
+
+        // NOTE: This approach is temporary. These matrices should be constructed in an API agnostic
+        // abstraction, THEN passed into the target API.
+        static constexpr auto model = Matrix4{Vector3{0.0f, 0.0f, 0.0f}};
+        const auto model_uniform = shader.GetUniformLocation("model");
+        glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
+
+        const auto view = Matrix4::LookAt(Eye{x, y, z}, LookAt{0.0f, 0.0f, 0.0f}, Up{0.0f, 1.0f, 0.0f});
+        const auto view_uniform = shader.GetUniformLocation("view");
+        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, view.GetSpan().data());
+
+        static const auto projection =
+            Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
+        const auto projection_uniform = shader.GetUniformLocation("projection");
+        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, projection.GetSpan().data());
+
+        g_meshes[info.handle].Bind();
+
+        glDrawElements(GL_TRIANGLES, info.index_count, GL_UNSIGNED_INT, nullptr);
+
+        g_meshes[info.handle].Unbind();
+    } else {
+        Log::Error("CubePass failed to fetch from GetGPUModelInfo!");
     }
 }
 

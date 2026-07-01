@@ -88,6 +88,11 @@ void Init() {
         glDebugMessageCallback(OpenGLDebugCallback, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
+
+    // Enable backface culling
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 }
 
 void BeginFrame() { glClear(GL_COLOR_BUFFER_BIT); }
