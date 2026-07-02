@@ -119,6 +119,7 @@ struct VectorOperations {
         return downcast_left.is_equal(downcast_right);
     }
 
+    /* vector <=> vector */
     [[nodiscard]] friend constexpr bool operator<=>(const Derived &left_vector, const Derived &right_vector) {
         auto downcast_left = static_cast<const Derived &>(left_vector);
         auto downcast_right = static_cast<const Derived &>(right_vector);

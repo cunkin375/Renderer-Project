@@ -10,6 +10,9 @@ namespace Math {
 
 // NOTE: this matrix implementation is column-major
 struct alignas(64) Matrix4D {
+private:
+    std::array<float, 16zu> data_;
+
 public:
     constexpr Matrix4D()
         : data_{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -53,13 +56,12 @@ public:
         : data_{1.0f, 0.0f, 0.0f, 0.0f, 0.0f,          1.0f,          0.0f,          0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f, translation.x, translation.y, translation.z, 1.0f} {}
 
-    // TODO: optimize this
-    // - also currently not true constexpr
+    // TODO: make this constexpr? Not a priority
     static constexpr Matrix4D LookAt(const Vector3 &eye, const Vector3 &look_at, const Vector3 &up) {
         const auto forward = Vector3::Normalize(eye - look_at);
         const auto right = Vector3::CrossProduct(up, forward).Normalize();
         const auto true_up = Vector3::CrossProduct(forward, right).Normalize();
-        auto matrix = Matrix4D{{right.x, true_up.x, forward.x, 0.0f, right.y, true_up.y, forward.y, 0.0f,
+        const auto matrix = Matrix4D{{right.x, true_up.x, forward.x, 0.0f, right.y, true_up.y, forward.y, 0.0f,
                                 right.z, true_up.z, forward.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}};
         return matrix * Matrix4D{-eye};
     }
@@ -79,9 +81,6 @@ public:
     }
 
     constexpr std::span<const float> GetSpan() const { return data_; }
-
-private:
-    std::array<float, 16zu> data_;
 };
 
 } // namespace Math
