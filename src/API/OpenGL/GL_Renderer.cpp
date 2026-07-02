@@ -72,7 +72,7 @@ void UploadVertexData() {
     }
 }
 
-void Render() {
+void Render(Viewport viewport) {
     // RenderPass();
     CubePass();
     // ShaderToyPass();
