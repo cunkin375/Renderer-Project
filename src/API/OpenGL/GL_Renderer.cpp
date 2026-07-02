@@ -48,8 +48,8 @@ void LoadShaders() {
 
 // ReloadShader recompiles an entire shader program, KEEP THIS LIGHT
 void ReloadShaders() {
-    // ReloadShader("Test");
-    // ReloadShader("ShaderToy");
+    ReloadShader("Test");
+    ReloadShader("ShaderToy");
 }
 
 void ReloadShader(std::string_view shader_name) {
