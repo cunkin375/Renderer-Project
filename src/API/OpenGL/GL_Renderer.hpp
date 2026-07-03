@@ -3,10 +3,6 @@
 #include <string>
 #include <vector>
 
-// TODO: remove this after implementing SSBO
-#include "Renderer/Viewport.hpp"
-#include "World/Scene.hpp"
-
 using SubDirectory = std::string;
 using ShaderName = std::string;
 using ShaderPaths = std::vector<std::string>;
@@ -31,8 +27,6 @@ void ReloadShader(std::string_view shader_name);
 
 void ReloadShaders();
 
-void UploadVertexData();
-
-void Render(const Renderer::Viewport &viewport, const World::Scene &scene);
+void Render();
 
 } // namespace OpenGLRenderer

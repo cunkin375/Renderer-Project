@@ -3,17 +3,18 @@
 #include "API/OpenGL/GL_Renderer.hpp"
 #include "Backend/Backend.hpp"
 #include "Viewport.hpp"
-#include "World/Scene.hpp"
+
+#include "Util/StringHash.hpp"
 
 namespace Renderer {
 auto g_viewport = Viewport{};
-auto g_scene = World::Scene{};
+auto g_meshes = StringMap<u64>{};
 
 void Render() {
     if (API::OPENGL == Backend::GetAPI()) {
         // TODO: THIS IS TEMPORARY AND ONLY MEANT TO PROTOTYPE, VIEWPORT INFORMATION SHOULD BE STORED AND USED
         // IN AN SSBO
-        OpenGLRenderer::Render(g_viewport, g_scene);
+        OpenGLRenderer::Render();
     }
 }
 
@@ -24,7 +25,7 @@ void Init() {
 }
 
 void UploadVertexData() {
-    if (Backend::GetAPI() == API::OPENGL) { OpenGLRenderer::UploadVertexData(); }
+    if (Backend::GetAPI() == API::OPENGL) {}
 }
 
 void ReloadShaders() {

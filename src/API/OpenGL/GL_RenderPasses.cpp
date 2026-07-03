@@ -8,13 +8,11 @@
 #include "Types/GL_MeshBuffer.hpp"
 #include "Types/GL_Shader.hpp"
 
-#include "ResourceHandling/ResourceManager.hpp"
 #include "Util/Log.hpp"
 
 // temporary
 #include "Math/Matrix.hpp"
 #include "Math/Vector.hpp"
-#include "Renderer/Viewport.hpp"
 
 namespace {
 using Indices = GLvoid *;
@@ -33,18 +31,9 @@ extern std::vector<OpenGLMeshBuffer> g_meshes;
 extern StringMap<OpenGLShader> g_shaders;
 
 void GenericPass(std::string_view model_name, std::string_view shader_name) {
-    auto info = ResourceManager::GetGPUModelInfo(model_name);
-    if (info.index_count > 0) {
-        g_shaders.find(shader_name)->second.Bind();
-        g_meshes[info.handle].Bind();
-        glDrawElements(GL_TRIANGLES, info.index_count, GL_UNSIGNED_INT, nullptr);
-        g_meshes[info.handle].Unbind();
-    } else {
-        Log::Error("GenericPass failed to fetch from GetGPUModelInfo!");
-    }
 }
 
-void RenderPass(const Renderer::Viewport &viewport, const World::Scene &scene) {
+void RenderPass() {
     auto info = ResourceManager::GetGPUModelInfo("cube");
     // static constexpr auto translation = Matrix4{};
 
@@ -78,8 +67,7 @@ void RenderPass(const Renderer::Viewport &viewport, const World::Scene &scene) {
     }
 }
 
-void CubePass(Renderer::Viewport viewport) {
-    auto info = ResourceManager::GetGPUModelInfo("cube");
+void CubePass() {
 
     if (info.index_count > 0) {
         auto &shader = g_shaders.find("Test")->second;

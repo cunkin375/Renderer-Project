@@ -21,8 +21,6 @@ struct LoadedModelData {
         : vertices{_vertices}, indices{_indices} {}
     std::vector<VertexData> vertices{};
     std::vector<IndexData> indices{};
-    ModelHandle handle{};
-    bool is_uploaded{false};
 };
 
 ModelData Cube();
@@ -35,6 +33,5 @@ void LoadResources();
 void LoadObjectModel(std::string_view filepath);
 
 StringMap<LoadedModelData> &GetModelMap();
-GPUModelInfo GetGPUModelInfo(std::string_view filepath);
 
 } // namespace ResourceManager

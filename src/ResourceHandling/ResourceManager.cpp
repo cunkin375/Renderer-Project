@@ -179,13 +179,4 @@ void LoadResources() {
 
 StringMap<LoadedModelData> &GetModelMap() { return loaded_model_cache; }
 
-GPUModelInfo GetGPUModelInfo(std::string_view filepath) {
-    const auto loaded = loaded_model_cache.find(filepath);
-    if (loaded != std::ranges::cend(loaded_model_cache) && loaded->second.is_uploaded) {
-        auto &[key, model] = *loaded;
-        return {model.handle, static_cast<u32>(model.indices.size())};
-    }
-    return {0, 0};
-}
-
 } // namespace ResourceManager

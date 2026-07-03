@@ -60,20 +60,8 @@ void ReloadShader(std::string_view shader_name) {
     }
 }
 
-void UploadVertexData() {
-    auto &models = ResourceManager::GetModelMap();
-    for (auto &[name, model] : models) {
-        if (!model.is_uploaded) {
-            g_meshes.emplace_back(ModelData{model.vertices, model.indices}, name);
-            model.handle = g_meshes.size() - 1;
-            model.is_uploaded = true;
-            Log::Info("Uploaded {} to GPU", name);
-        }
-    }
-}
-
-void Render(const Renderer::Viewport &viewport, const World::Scene &scene) {
-    RenderPass(viewport, scene);
+void Render() {
+    RenderPass();
     // CubePass(viewport);
     // ShaderToyPass();
 }
