@@ -74,7 +74,7 @@ void UploadVertexData() {
 
 void Render(Viewport viewport) {
     // RenderPass();
-    CubePass();
+    CubePass(viewport);
     // ShaderToyPass();
 }
 } // namespace OpenGLRenderer
