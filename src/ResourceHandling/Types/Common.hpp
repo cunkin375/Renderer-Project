@@ -20,3 +20,12 @@ struct ModelData {
     std::span<const VertexData> vertices{};
     std::span<const u32> indices{};
 };
+
+struct TextureData {
+
+};
+
+struct MaterialData {
+
+};
+

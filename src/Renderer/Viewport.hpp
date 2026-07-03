@@ -12,7 +12,7 @@ public:
     Viewport() = default;
     Viewport(const World::Camera &camera);
 
-    World::Camera &GetCamera() { return camera_; }
+    const World::Camera &GetCamera() const { return camera_; }
 };
 
 

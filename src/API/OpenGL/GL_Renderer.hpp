@@ -5,6 +5,7 @@
 
 // TODO: remove this after implementing SSBO
 #include "Renderer/Viewport.hpp"
+#include "World/Scene.hpp"
 
 using SubDirectory = std::string;
 using ShaderName = std::string;
@@ -32,6 +33,6 @@ void ReloadShaders();
 
 void UploadVertexData();
 
-void Render(Renderer::Viewport viewport);
+void Render(const Renderer::Viewport &viewport, const World::Scene &scene);
 
 } // namespace OpenGLRenderer

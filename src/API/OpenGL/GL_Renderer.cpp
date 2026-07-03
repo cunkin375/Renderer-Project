@@ -72,9 +72,9 @@ void UploadVertexData() {
     }
 }
 
-void Render(Renderer::Viewport viewport) {
-    // RenderPass();
-    CubePass(viewport);
+void Render(const Renderer::Viewport &viewport, const World::Scene &scene) {
+    RenderPass(viewport, scene);
+    // CubePass(viewport);
     // ShaderToyPass();
 }
 } // namespace OpenGLRenderer
