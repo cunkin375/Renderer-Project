@@ -4,5 +4,5 @@
 namespace OpenGLRenderer {
 void RenderPass();
 void ShaderToyPass();
-void CubePass(Viewport viewport);
+void CubePass(Renderer::Viewport viewport);
 } // namespace OpenGLRenderer

@@ -66,6 +66,7 @@ public:
         return matrix * Matrix4D{-eye};
     }
 
+    // NOTE: jesus christ this is ugly, but it runs!
     static constexpr Matrix4D Perspective(float fov, float width, float height, float near_plane,
                                           float far_plane) {
         const auto aspect_ratio = width / height;
@@ -80,7 +81,7 @@ public:
                          -(2.0f * far_plane * near_plane) / (far_plane - near_plane), 0.0f}};
     }
 
-    constexpr std::span<const float> GetSpan() const { return data_; }
+    constexpr std::span<const float> GetSpan() const noexcept { return data_; }
 };
 
 } // namespace Math

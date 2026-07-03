@@ -86,7 +86,7 @@ void RenderPass() {
     }
 }
 
-void CubePass(Viewport viewport) {
+void CubePass(Renderer::Viewport viewport) {
     auto info = ResourceManager::GetGPUModelInfo("cube");
 
     if (info.index_count > 0) {
