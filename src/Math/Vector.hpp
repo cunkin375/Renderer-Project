@@ -231,6 +231,7 @@ struct Vector : public VectorOperations<Vector<T, N>, T, N> {
 
     [[nodiscard]] constexpr bool is_equal(const Vector &other) const noexcept { return data == other.data; }
 
+    // NOTE: this is not a complete implementation, especially for floating point types, but will likely not be used / is not a priority
     [[nodiscard]] constexpr bool three_way_compare(const Vector &other) const noexcept {
         return data <=> other.data;
     }
@@ -256,6 +257,7 @@ struct Vector<T, 2zu> : public VectorOperations<Vector<T, 2zu>, T, 2zu> {
         return (x == other.x && y == other.y);
     }
 
+    // NOTE: this is not a complete implementation, especially for floating point types, but will likely not be used / is not a priority
     [[nodiscard]] constexpr bool three_way_compare(const Vector &other) const noexcept {
         return (x <=> other.x && y <=> other.y);
     }
@@ -301,6 +303,7 @@ struct Vector<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu>, public 
         return (x == other.x && y == other.y && z == other.z);
     }
 
+    // NOTE: this is not a complete implementation, especially for floating point types, but will likely not be used / is not a priority
     [[nodiscard]] constexpr bool three_way_compare(const Vector &other) const noexcept {
         return (x <=> other.x && y <=> other.y && z <=> other.z);
     }
@@ -324,6 +327,7 @@ struct Color<T, 3zu> : public VectorOperations<Vector<T, 3zu>, T, 3zu>, public M
         return (r == other.r && g == other.g && b == other.b);
     }
 
+    // NOTE: this is not a complete implementation, especially for floating point types, but will likely not be used / is not a priority
     [[nodiscard]] constexpr bool three_way_compare(const Color &other) const noexcept {
         return (r <=> other.r && g <=> other.g && b <=> other.b);
     }
