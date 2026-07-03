@@ -3,6 +3,8 @@
 #include "Math/Matrix.hpp"
 #include "ResourceHandling/Types/Common.hpp"
 
+#include <string_view>
+
 namespace World {
 
 // This is an object to be rendered
@@ -21,6 +23,9 @@ public:
     Object(const ModelData *model, const MaterialData *material);
 
     Object(const ModelData *model, const MaterialData *material, const TextureData *texture);
+
+    std::string_view GetModelName();
+    Matrix4 &GetTransform();
 };
 
 } // namespace World

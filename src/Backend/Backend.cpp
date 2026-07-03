@@ -62,14 +62,18 @@ void BeginFrame() {
 void EndFrame() { GLFW::EndFrame(g_api); }
 
 void Update() {
+    // clang-format off
     switch (GLFW::Update()) {
-    case Events::RELOAD_SHADERS: Renderer::ReloadShaders(); break;
-    case Events::ENABLE_AUTO_RELOAD_SHADERS:
-        g_auto_reload_enabled = !g_auto_reload_enabled;
-        g_shader_watcher->SetEnabled(g_auto_reload_enabled);
-        break;
-    case Events::NONE: break;
+        case Events::RELOAD_SHADERS: Renderer::ReloadShaders(); break;
+        case Events::ENABLE_AUTO_RELOAD_SHADERS:
+            g_auto_reload_enabled = !g_auto_reload_enabled;
+            g_shader_watcher->SetEnabled(g_auto_reload_enabled);
+            break;
+        case Events::NONE: break;
     }
+    // clang-format on
+
+
 }
 
 void Destroy() {

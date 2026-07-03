@@ -9,7 +9,7 @@
 namespace Math {
 
 // NOTE: this matrix implementation is column-major
-struct alignas(64) Matrix4D {
+struct Matrix4D {
 private:
     std::array<float, 16zu> data_;
 
@@ -87,6 +87,7 @@ public:
 } // namespace Math
 
 using Matrix4 = Math::Matrix4D;
+static_assert(sizeof(Matrix4) == 64, "Matrix4 not properly aligned.");
 
 
 template <>

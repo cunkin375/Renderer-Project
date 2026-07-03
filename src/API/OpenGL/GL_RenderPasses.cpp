@@ -10,6 +10,8 @@
 
 #include "Util/Log.hpp"
 
+#include "World/Scene.hpp"
+
 // temporary
 #include "Math/Matrix.hpp"
 #include "Math/Vector.hpp"
@@ -29,6 +31,7 @@ using Up = Vector3;
 namespace OpenGLRenderer {
 extern std::vector<OpenGLMeshBuffer> g_meshes;
 extern StringMap<OpenGLShader> g_shaders;
+extern World::Scene g_current_scene;
 
 void GenericPass(std::string_view model_name, std::string_view shader_name) {
 }

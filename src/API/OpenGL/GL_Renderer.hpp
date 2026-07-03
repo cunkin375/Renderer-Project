@@ -23,6 +23,10 @@ void LoadShader(const SubDirectory &sub_directory, const ShaderName &name, const
 
 void LoadShaders();
 
+void CreateSSBO(const std::string &name, std::size_t buffer_size, const void *data);
+
+void CreateSSBOs();
+
 void ReloadShader(std::string_view shader_name);
 
 void ReloadShaders();
