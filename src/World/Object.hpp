@@ -3,8 +3,6 @@
 #include "Math/Matrix.hpp"
 #include "ResourceHandling/Types/Common.hpp"
 
-#include <string_view>
-
 namespace World {
 
 // This is an object to be rendered
@@ -13,19 +11,18 @@ namespace World {
 class Object {
 private:
     // the pointers may change, but the underlying data must never be changed by a World::Object
-    const ModelData *model_view_;
+    const LoadedModelData *model_view_;
     const MaterialData *material_view_;
     const TextureData *texture_view_;
 
     Matrix4 transform_;
 
 public:
-    Object(const ModelData *model, const MaterialData *material);
+    Object(const LoadedModelData *model);
+    Object(const LoadedModelData *model, const MaterialData *material);
+    Object(const LoadedModelData *model, const MaterialData *material, const TextureData *texture);
 
-    Object(const ModelData *model, const MaterialData *material, const TextureData *texture);
-
-    std::string_view GetModelName();
-    Matrix4 &GetTransform();
+    const Matrix4 &GetTransform() const noexcept { return transform_; }
 };
 
 } // namespace World

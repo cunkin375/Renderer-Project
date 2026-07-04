@@ -2,6 +2,9 @@
 
 namespace World {
 
+Object::Object(const ModelData *model)
+    : model_view_{model} {}
+
 Object::Object(const ModelData *model, const MaterialData *material)
     : model_view_{model}, material_view_{material} {}
 

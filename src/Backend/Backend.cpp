@@ -1,13 +1,14 @@
 #include "Backend.hpp"
 
-#include "API/OpenGL/GL_Globals.hpp"
-#include "Renderer/Renderer.hpp"
-
 #include "API/OpenGL/GL_Backend.hpp"
+#include "API/OpenGL/GL_Globals.hpp"
 #include "API/OpenGL/GL_Renderer.hpp"
+
 #include "Integration/GLFW.hpp"
+#include "Renderer/Renderer.hpp"
 #include "ResourceHandling/ResourceManager.hpp"
 #include "Util/DirectoryWatcher.hpp"
+#include "World/World.hpp"
 
 namespace Backend {
 auto g_api = API::UNDEFINED;
@@ -43,6 +44,7 @@ bool Init(API api, WindowMode window_mode) {
     // order of these matters
     ResourceManager::Init();
     Renderer::Init();
+    World::Init();
 
     GLFW::ShowWindow(GetWindowPointer().asGLFW());
 
@@ -72,8 +74,6 @@ void Update() {
         case Events::NONE: break;
     }
     // clang-format on
-
-
 }
 
 void Destroy() {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <span>
+#include <vector>
 
 #include "Math/Vector.hpp"
 #include "Util/Aliases.hpp"
@@ -20,6 +21,17 @@ struct ModelData {
     std::span<const VertexData> vertices{};
     std::span<const u32> indices{};
 };
+
+struct LoadedModelData {
+    LoadedModelData() = default;
+    LoadedModelData(std::vector<VertexData> _vertices, std::vector<IndexData> _indices)
+        : vertices{_vertices}, indices{_indices} {}
+    std::vector<VertexData> vertices{};
+    std::vector<IndexData> indices{};
+    i32 handle{-1};
+    bool is_uploaded{false};
+};
+
 
 struct TextureData {
 

@@ -8,21 +8,9 @@
 
 namespace ResourceManager {
 
-using ModelHandle = u32;
-
 struct GPUModelInfo {
-    u32 handle;
+    i32 handle;
     u32 index_count;
-};
-
-struct LoadedModelData {
-    LoadedModelData() = default;
-    LoadedModelData(std::vector<VertexData> _vertices, std::vector<IndexData> _indices)
-        : vertices{_vertices}, indices{_indices} {}
-    std::vector<VertexData> vertices{};
-    std::vector<IndexData> indices{};
-    ModelHandle handle{};
-    bool is_uploaded{false};
 };
 
 ModelData Cube();

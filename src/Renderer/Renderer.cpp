@@ -22,11 +22,16 @@ void Init() {
 }
 
 void UploadVertexData() {
-    if (Backend::GetAPI() == API::OPENGL) {}
+    if (Backend::GetAPI() == API::OPENGL) {
+    }
 }
 
 void ReloadShaders() {
     if (API::OPENGL == Backend::GetAPI()) { OpenGLRenderer::ReloadShaders(); }
+}
+
+void UpdateSceneContext(const World::Scene &new_scene_context) {
+    if (API::OPENGL == Backend::GetAPI()) { OpenGLRenderer::UpdateSceneContext(new_scene_context); }
 }
 
 } // namespace Renderer

@@ -61,9 +61,9 @@ ModelData Cube() {
 
     if (!inserted) { Log::Error("Failed to insert cube!"); }
 
-    Log::Info("cube information");
+    Log::Info("cube information uploaded to the GPU");
 
-    return {};
+    return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
 }
 
 ModelData Triangle() {
@@ -85,6 +85,8 @@ ModelData Triangle() {
 
     if (!inserted) { Log::Error("Failed to insert triangle!"); }
 
+    Log::Info("triangle information uploaded to the GPU");
+
     return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
 }
 
@@ -104,6 +106,8 @@ ModelData Square() {
         loaded_model_cache.try_emplace("square", LoadedModelData{vertices(positions), std::move(indices)});
 
     if (!inserted) { Log::Error("Failed to insert square!"); }
+
+    Log::Info("square information uploaded to the GPU");
 
     return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
 }
@@ -125,6 +129,8 @@ ModelData ShaderToy() {
         loaded_model_cache.try_emplace("ShaderToy", LoadedModelData{vertices(positions), std::move(indices)});
 
     if (!inserted) { Log::Error("Failed to insert square!"); }
+
+    Log::Info("ShaderToy information uploaded to the GPU");
 
     return {.vertices = new_item->second.vertices, .indices = new_item->second.indices};
 }

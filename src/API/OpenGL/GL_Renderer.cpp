@@ -10,6 +10,8 @@
 
 #include "Renderer/Viewport.hpp"
 
+#include "ResourceHandling/ResourceManager.hpp"
+
 namespace OpenGLRenderer {
 std::vector<OpenGLMeshBuffer> g_meshes;
 StringMap<OpenGLShader> g_shaders;
@@ -79,4 +81,17 @@ void Render() {
     // CubePass(viewport);
     // ShaderToyPass();
 }
+
+void UploadVertexData() {
+    auto cached_models = ResourceManager::GetModelMap();
+    for (auto &[name, model] : cached_models) {
+        if (!model.is_uploaded) {
+            g_meshes.emplace_back(ModelData{model.vertices, model.indices}, name);
+            model.handle = g_meshes.size() - 1;
+            model.is_uploaded = true;
+            Log::Info("Uploaded {} to GPU", name);
+        }
+    }
+}
+
 } // namespace OpenGLRenderer

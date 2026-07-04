@@ -1,10 +1,11 @@
 #include "Backend/Backend.hpp"
-#include "Math/Matrix.hpp"
-#include "Math/Vector.hpp"
 #include "Renderer/Renderer.hpp"
-#include "ResourceHandling/Types/Common.hpp"
 #include "Util/Enums.hpp"
 #include "Util/Log.hpp"
+
+#include "ResourceHandling/Types/Common.hpp"
+#include "Math/Matrix.hpp"
+#include "Math/Vector.hpp"
 
 namespace {
 void LogDataInformation();

@@ -33,4 +33,6 @@ void ReloadShaders();
 
 void Render();
 
+void UploadVertexData();
+
 } // namespace OpenGLRenderer

@@ -33,8 +33,8 @@ public:
     std::span<const f32> View() const;
     std::span<const f32> Projection() const;
 
-    Matrix4 &ViewMatrix() const;
-    Matrix4 &ProjectionMatrix(f32 aspect_ratio) const;
+    Matrix4 ViewMatrix() const;
+    Matrix4 ProjectionMatrix(f32 aspect_ratio) const;
 
     Vector3 Position() const noexcept { return position_; }
     Vector3 LookAt() const noexcept { return look_at_; }
