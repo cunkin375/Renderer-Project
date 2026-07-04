@@ -7,7 +7,6 @@
 #include "Util/StringHash.hpp"
 
 namespace Renderer {
-auto g_viewport = Viewport{};
 auto g_meshes = StringMap<u64>{};
 
 void Render() {
@@ -20,8 +19,6 @@ void Render() {
 
 void Init() {
     UploadVertexData();
-    g_viewport = Viewport{World::Camera{Vector3{0.0f, 0.0f, 3.0f}, Vector3{0.0f, 0.0f, 0.0f},
-                                        Vector3{0.0f, 1.0f, 0.0f}, 45.0f, 800.0f, 600.0f, 0.0001f, 100.0f}};
 }
 
 void UploadVertexData() {

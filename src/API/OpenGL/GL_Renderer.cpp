@@ -10,13 +10,11 @@
 
 #include "Renderer/Viewport.hpp"
 
-#include "World/Scene.hpp"
-
 namespace OpenGLRenderer {
 std::vector<OpenGLMeshBuffer> g_meshes;
 StringMap<OpenGLShader> g_shaders;
 StringMap<OpenGLSSBO> g_ssbos;
-World::Scene g_current_scene;
+Renderer::Viewport g_viewport_context;
 
 void Init() {
     LoadShaders();
@@ -55,7 +53,7 @@ void CreateSSBO(const std::string &name, std::size_t buffer_size, GLbitfield fla
 }
 
 void CreateSSBOs() {
-    GLbitfield static_flags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
+    [[maybe_unused]] GLbitfield static_flags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
     GLbitfield dynamic_flags = GL_DYNAMIC_STORAGE_BIT | GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
 
     CreateSSBO("Viewport", sizeof(Renderer::ViewportGPUData), dynamic_flags);

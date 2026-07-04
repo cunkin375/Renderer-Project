@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 
-#include <numbers>
 #include <string_view>
 
 #include "Types/GL_MeshBuffer.hpp"
@@ -10,11 +9,8 @@
 
 #include "Util/Log.hpp"
 
-#include "World/Scene.hpp"
-
-// temporary
-#include "Math/Matrix.hpp"
-#include "Math/Vector.hpp"
+#include "Renderer/Viewport.hpp"
+#include "ResourceHandling/ResourceManager.hpp"
 
 namespace {
 using Indices = GLvoid *;
@@ -31,47 +27,44 @@ using Up = Vector3;
 namespace OpenGLRenderer {
 extern std::vector<OpenGLMeshBuffer> g_meshes;
 extern StringMap<OpenGLShader> g_shaders;
-extern World::Scene g_current_scene;
+extern Renderer::Viewport g_viewport_context;
 
 void GenericPass(std::string_view model_name, std::string_view shader_name) {
 }
 
 void RenderPass() {
-    auto info = ResourceManager::GetGPUModelInfo("cube");
-    // static constexpr auto translation = Matrix4{};
+    auto &shader = g_shaders.find("Test")->second;
+    shader.Bind();
 
-    if (info.index_count > 0) {
-        auto &shader = g_shaders.find("Test")->second;
-        shader.Bind();
-
-        for (const auto &object : scene.objects) {
-            static constexpr auto model = Matrix4{Vector3{0.0f, 0.0f, 0.0f}};
-            const auto model_uniform = shader.GetUniformLocation("model");
-            glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
-
-            // const auto view = Matrix4::LookAt(Eye{x, y, z}, LookAt{0.0f, 0.0f, 0.0f}, Up{0.0f, 1.0f, 0.0f});
-            const auto view_uniform = shader.GetUniformLocation("view");
-            glUniformMatrix4fv(view_uniform, 1, GL_FALSE, viewport.GetCamera().View().data());
-
-            // static const auto projection =
-            //     Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
-            const auto projection_uniform = shader.GetUniformLocation("projection");
-            glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, viewport.GetCamera().Projection().data());
-
-            g_meshes[info.handle].Bind();
-
-            glDrawElements(GL_TRIANGLES, info.index_count, GL_UNSIGNED_INT, nullptr);
-
-            g_meshes[info.handle].Unbind();
+    for (const auto &object : g_viewport_context.GetScene()->objects) {
+        auto model_info = ResourceManager::GetGPUModelInfo(object->GetModelName());
+        if (model_info.index_count < 0) {
+            Log::Error("Failed to fetch {} from ResourceManager!", object->GetModelName());
+            continue;
         }
 
-    } else {
-        Log::Error("GenericPass failed to fetch from GetGPUModelInfo!");
+        // static constexpr auto model = Matrix4{Vector3{0.0f, 0.0f, 0.0f}};
+        // const auto model_uniform = shader.GetUniformLocation("model");
+        // glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
+
+        const auto view_uniform = shader.GetUniformLocation("view");
+        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, g_viewport_context.GetCamera()->View().data());
+
+        // static const auto projection =
+        //     Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
+        const auto projection_uniform = shader.GetUniformLocation("projection");
+        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, g_viewport_context.GetCamera()->Projection().data());
+
+        g_meshes[model_info.handle].Bind();
+
+        glDrawElements(GL_TRIANGLES, model_info.index_count, GL_UNSIGNED_INT, nullptr);
+
+        g_meshes[model_info.handle].Unbind();
     }
 }
 
 void CubePass() {
-
+    auto info = ResourceManager::GetGPUModelInfo("cube");
     if (info.index_count > 0) {
         auto &shader = g_shaders.find("Test")->second;
         shader.Bind();
@@ -95,12 +88,12 @@ void CubePass() {
 
         // const auto view = Matrix4::LookAt(Eye{x, y, z}, LookAt{0.0f, 0.0f, 0.0f}, Up{0.0f, 1.0f, 0.0f});
         const auto view_uniform = shader.GetUniformLocation("view");
-        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, viewport.GetCamera().View().data());
+        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, g_viewport_context.GetCamera()->View().data());
 
         // static const auto projection =
         //     Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
         const auto projection_uniform = shader.GetUniformLocation("projection");
-        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, viewport.GetCamera().Projection().data());
+        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, g_viewport_context.GetCamera()->Projection().data());
 
         g_meshes[info.handle].Bind();
 
