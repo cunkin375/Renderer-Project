@@ -35,4 +35,6 @@ void Render();
 
 void UploadVertexData();
 
+void UpdateViewportBuffers(const World::Scene &new_scene_context, const World::Camera &new_camera_context);
+
 } // namespace OpenGLRenderer

@@ -1,13 +1,14 @@
 #include "Renderer.hpp"
 
-#include "API/OpenGL/GL_Renderer.hpp"
-#include "Backend/Backend.hpp"
-#include "Viewport.hpp"
+#include "Renderer/DataManager.hpp"
 
-#include "Util/StringHash.hpp"
+#include "API/OpenGL/GL_Renderer.hpp"
+
+#include "Backend/Backend.hpp"
+#include "World/Scene.hpp"
+
 
 namespace Renderer {
-auto g_meshes = StringMap<u64>{};
 
 void Render() {
     if (API::OPENGL == Backend::GetAPI()) {
@@ -17,21 +18,20 @@ void Render() {
     }
 }
 
-void Init() {
-    UploadVertexData();
+void Init() { 
+    DataManager::UploadVertexData(); 
 }
 
 void UploadVertexData() {
-    if (Backend::GetAPI() == API::OPENGL) {
-    }
+    if (Backend::GetAPI() == API::OPENGL) {}
 }
 
 void ReloadShaders() {
     if (API::OPENGL == Backend::GetAPI()) { OpenGLRenderer::ReloadShaders(); }
 }
 
-void UpdateSceneContext(const World::Scene &new_scene_context) {
-    if (API::OPENGL == Backend::GetAPI()) { OpenGLRenderer::UpdateSceneContext(new_scene_context); }
+void UpdateViewportBuffers(const World::Scene &new_scene_context, const World::Camera &new_camera_context) {
+    if (API::OPENGL == Backend::GetAPI()) { OpenGLRenderer::UpdateViewportBuffers(new_scene_context, new_camera_context); }
 }
 
 } // namespace Renderer

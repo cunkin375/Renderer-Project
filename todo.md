@@ -1,0 +1,2 @@
+- [x] implement camera
+- [] organize and finish up SSBO situation
