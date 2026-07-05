@@ -31,7 +31,7 @@ public:
            f32 far_plane);
 
     std::span<const f32> View() const;
-    std::span<const f32> Projection() const;
+    std::span<const f32> Projection(f32 aspect_ratio) const;
 
     Matrix4 ViewMatrix() const;
     Matrix4 ProjectionMatrix(f32 aspect_ratio) const;
@@ -42,6 +42,7 @@ public:
     f32 FOV() const noexcept { return fov_; }
     f32 NearPlane() const noexcept { return near_plane_; }
     f32 FarPlane() const noexcept { return far_plane_; }
+
 };
 
 } // namespace World
