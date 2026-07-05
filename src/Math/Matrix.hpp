@@ -18,9 +18,10 @@ public:
         : data_{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f} {}
 
-    constexpr Matrix4D(const std::array<float, 16zu> &array) = delete;
+    constexpr Matrix4D(const std::array<float, 16zu> &array) : data_{array} {}
 
     constexpr Matrix4D(const std::array<float, 16zu> &&array) : data_{std::move(array)} {}
+
 
     /* matrix *= matrix */
     // Matrix4 should be 64-bytes, which fits into an entire cache line
