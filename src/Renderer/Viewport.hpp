@@ -24,9 +24,11 @@ private:
 
 public:
     Viewport() = default;
-    Viewport(f32 x, f32 y, f32 width_, f32 height_);
+    Viewport(f32 x, f32 y, f32 width, f32 height);
 
-    ViewportGPUData BuildGPUData() const;
+    ViewportGPUData CopyBuildGPUData(const std::array<f32, 16zu> &view, const std::array<f32, 16zu> &projection) const;
+
+    ViewportGPUData MoveBuildGPUData(const std::array<f32, 16zu> &&view, const std::array<f32, 16zu> &&projection) const;
 
 };
 
