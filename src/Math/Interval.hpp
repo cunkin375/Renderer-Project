@@ -1,60 +1,85 @@
 #pragma once
 
-#include "Number.hpp"
+#include "Numbers.hpp"
 
 #include <format>
 #include <limits>
 #include <stdint.h>
 
-namespace Math {
+namespace Math
+{
 
 template <Number T>
-struct Interval {
+struct Interval
+{
+public:
     T lower{}, upper{};
 
-    static constexpr T NegativeInfinity() noexcept {
-        if constexpr (std::numeric_limits<T>::has_infinity) {
-            return -std::numeric_limits<T>::infinity();
-        } else {
-            return std::numeric_limits<T>::lowest();
-        }
-    }
-
-    static constexpr T PositiveInfinity() noexcept {
-        if constexpr (std::numeric_limits<T>::has_infinity) {
-            return std::numeric_limits<T>::infinity();
-        } else {
-            return std::numeric_limits<T>::max();
-        }
-    }
-
+public:
     // this should represent empty constant
-    constexpr Interval() : lower{PositiveInfinity()}, upper{NegativeInfinity()} {}
+    constexpr Interval() : lower{ PositiveInfinity() }, upper{ NegativeInfinity() } {}
 
-    constexpr Interval(T lower, T upper) : lower{lower}, upper{upper} {}
+    constexpr Interval(T lower, T upper) : lower{ lower }, upper{ upper } {}
 
-    constexpr double Size() const { return upper - lower; }
+    constexpr Interval(const Interval &left, const Interval &right)
+    {
+        lower = left.lower <= right.lower ? left.lower : right.lower;
+        upper = left.upper >= right.upper ? left.upper : right.upper;
+    }
 
-    constexpr bool Contains(T x) const { return lower <= x && x <= upper; }
+    static constexpr T NegativeInfinity() noexcept
+    {
+        if constexpr (std::numeric_limits<T>::has_infinity) return -std::numeric_limits<T>::infinity();
+        else return std::numeric_limits<T>::lowest();
+    }
 
-    constexpr bool Surrounds(T x) const { return lower < x && x < upper; }
+    static constexpr T PositiveInfinity() noexcept
+    {
+        if constexpr (std::numeric_limits<T>::has_infinity) return std::numeric_limits<T>::infinity();
+        else return std::numeric_limits<T>::max();
+    }
 
-    constexpr T clamp(T number) const {
+    constexpr double Size() const noexcept { return upper - lower; }
+
+    constexpr bool Contains(T x) const noexcept { return lower <= x && x <= upper; }
+
+    constexpr bool Surrounds(T x) const noexcept { return lower < x && x < upper; }
+
+    constexpr T Clamp(T number) const
+    {
         if (number < lower) return lower;
         if (number > upper) return upper;
         return number;
     }
 
-    static constexpr Interval Empty() { return {PositiveInfinity(), NegativeInfinity()}; }
-    static constexpr Interval Universe() { return {NegativeInfinity(), PositiveInfinity()}; }
+    static constexpr T Clamp(T number, T low, T high)
+    {
+        if (number < low) return low;
+        if (number > high) return number;
+        return high - 1;
+    }
+
+    constexpr Interval Expand(T delta) const
+    {
+        auto padding = delta / 2;
+        return { lower - padding, upper + padding };
+    }
+
+    static constexpr Interval Empty() { return { .lower = PositiveInfinity(), .upper = NegativeInfinity() }; }
+    static constexpr Interval Universe()
+    {
+        return { .lower = NegativeInfinity(), .upper = PositiveInfinity() };
+    }
 };
 
 } // namespace Math
 
 template <Math::Number T>
-struct std::formatter<Math::Interval<T>> {
+struct std::formatter<Math::Interval<T>>
+{
     constexpr auto parse(std::format_parse_context &context) const { return std::begin(context); }
-    constexpr auto format(const Math::Interval<T> &interval, std::format_context &context) const {
+    constexpr auto format(const Math::Interval<T> &interval, std::format_context &context) const
+    {
         auto out = std::format_to(context.out(), "(");
         out = std::format_to(out, "{}, {}", interval.lower, interval.upper);
         return std::format_to(out, ")");
@@ -62,7 +87,10 @@ struct std::formatter<Math::Interval<T>> {
 };
 
 /* Aliases */
-using Interval = Math::Interval<float>;
+template <Math::Number T>
+using Interval = Math::Interval<T>;
+
+using fInterval = Math::Interval<float>;
 using dInterval = Math::Interval<double>;
 using uInterval = Math::Interval<std::uint32_t>;
 using iInterval = Math::Interval<std::int32_t>;
