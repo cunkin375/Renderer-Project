@@ -8,36 +8,39 @@
 
 using IndexData = u32;
 
-struct alignas(16) VertexData {
+struct alignas(16) VertexData
+{
     fVector3 position{};
     fColor color{};
 
-    VertexData(float x, float y, float z) : position{fVector3{x, y, z}} {}
-    VertexData(const fVector3 &_position) : position{_position} {}
-    VertexData(const fVector3 &_position, const fColor &_color) : position{_position}, color{_color} {}
+    VertexData(float x, float y, float z) : position{ fVector3{ x, y, z } } {}
+    VertexData(const fVector3 &_position) : position{ _position } {}
+    VertexData(const fVector3 &_position, const fColor &_color) : position{ _position }, color{ _color } {}
 };
 
-struct ModelData {
+struct ModelData
+{
     std::span<const VertexData> vertices{};
     std::span<const u32> indices{};
 };
 
-struct LoadedModelData {
+struct LoadedModelData
+{
     LoadedModelData() = default;
     LoadedModelData(std::vector<VertexData> _vertices, std::vector<IndexData> _indices)
-        : vertices{_vertices}, indices{_indices} {}
+        : vertices{ _vertices }, indices{ _indices }
+    {
+    }
     std::vector<VertexData> vertices{};
     std::vector<IndexData> indices{};
-    i32 handle{-1};
-    bool is_uploaded{false};
+    i32 handle{ -1 };
+    bool is_uploaded{ false };
 };
 
-
-struct TextureData {
-
+struct TextureData
+{
 };
 
-struct MaterialData {
-
+struct MaterialData
+{
 };
-

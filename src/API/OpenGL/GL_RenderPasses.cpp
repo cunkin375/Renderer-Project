@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 
+#include <cassert>
 #include <string_view>
 
 #include "Types/GL_MeshBuffer.hpp"
@@ -11,8 +12,8 @@
 
 #include "Renderer/Viewport.hpp"
 #include "ResourceHandling/ResourceManager.hpp"
-#include "World/Scene.hpp"
 #include "World/Camera.hpp"
+#include "World/Scene.hpp"
 
 namespace
 {
@@ -32,48 +33,51 @@ namespace OpenGLRenderer
 extern std::vector<OpenGLMeshBuffer> g_meshes;
 extern StringMap<OpenGLShader> g_shaders;
 extern Renderer::Viewport g_viewport_context;
-extern const World::Scene *g_scene_context;
-extern const World::Camera *g_camera_context;
 
 void GenericPass(std::string_view model_name, std::string_view shader_name) {}
 
-void RenderPass()
+void RenderPass(const World::Scene *scene_context, const World::Camera *camera_context)
 {
+    assert(scene_context && camera_context && "View pointers cannot be null");
+
     auto &shader = g_shaders.find("Test")->second;
     shader.Bind();
 
-    for (const auto &object : g_scene_context->objects)
+    for (const auto &object : scene_context->objects)
     {
         auto model_info = object.GetModel();
+
+        assert(model_info->handle >= 0 && !model_info->indices.empty() && !model_info->vertices.empty()
+               && "Invalid model information reached OpenGLRenderer::RenderPass");
+
         if (!model_info || model_info->handle < 0)
         {
             Log::Error("Failed to fetch model info from object!");
             continue;
         }
 
-        // static constexpr auto model = Matrix4{Vector3{0.0f, 0.0f, 0.0f}};
-        // const auto model_uniform = shader.GetUniformLocation("model");
-        // glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
+        static constexpr auto model = Matrix4{ fVector3{ 0.0f, 0.0f, 0.0f } };
+        const auto model_uniform = shader.GetUniformLocation("model");
+        glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
 
         const auto view_uniform = shader.GetUniformLocation("view");
-        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, g_camera_context->View().data());
+        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, camera_context->View().data());
 
         // static const auto projection =
         //     Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
         const auto projection_uniform = shader.GetUniformLocation("projection");
         glUniformMatrix4fv(projection_uniform, 1, GL_FALSE,
-                           g_camera_context->Projection(800.0f / 600.0f).data());
+                           camera_context->Projection(800.0f / 600.0f).data());
 
-        g_meshes[model_info->handle].Bind();
-
+        g_meshes.at(model_info->handle).Bind();
         glDrawElements(GL_TRIANGLES, model_info->indices.size(), GL_UNSIGNED_INT, nullptr);
-
-        g_meshes[model_info->handle].Unbind();
+        g_meshes.at(model_info->handle).Unbind();
     }
 }
 
-void CubePass()
+void CubePass(const World::Scene *scene_context, const World::Camera *camera_context)
 {
+    assert(scene_context && camera_context && "View pointers cannot be null");
     auto info = ResourceManager::GetGPUModelInfo("cube");
     if (info.index_count > 0)
     {
@@ -96,14 +100,16 @@ void CubePass()
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
 
         // const auto view = Matrix4::LookAt(Eye{x, y, z}, LookAt{0.0f, 0.0f, 0.0f}, Up{0.0f, 1.0f, 0.0f});
+
         const auto view_uniform = shader.GetUniformLocation("view");
-        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, g_camera_context->View().data());
+        glUniformMatrix4fv(view_uniform, 1, GL_FALSE, camera_context->View().data());
 
         // static const auto projection =
         //     Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
+
         const auto projection_uniform = shader.GetUniformLocation("projection");
         glUniformMatrix4fv(projection_uniform, 1, GL_FALSE,
-                           g_camera_context->Projection(800.0f / 600.0f).data());
+                           camera_context->Projection(800.0f / 600.0f).data());
 
         g_meshes[info.handle].Bind();
 

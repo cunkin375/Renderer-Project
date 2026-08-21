@@ -1,6 +1,7 @@
 #include "GL_Renderer.hpp"
 
 #include "GL_RenderPasses.hpp"
+
 #include "Types/GL_MeshBuffer.hpp"
 #include "Types/GL_SSBO.hpp"
 #include "Types/GL_Shader.hpp"
@@ -12,12 +13,16 @@
 
 #include "ResourceHandling/ResourceManager.hpp"
 
+#include "World/Scene.hpp"
+
 namespace OpenGLRenderer
 {
 std::vector<OpenGLMeshBuffer> g_meshes;
 StringMap<OpenGLShader> g_shaders;
 StringMap<OpenGLSSBO> g_ssbos;
 Renderer::Viewport g_viewport_context;
+const World::Scene *g_scene_context = nullptr;
+const World::Camera *g_camera_context = nullptr;
 
 void Init()
 {
@@ -98,8 +103,8 @@ void ReloadShader(std::string_view shader_name)
 
 void Render()
 {
-    // RenderPass();
-    CubePass();
+    RenderPass(g_scene_context, g_camera_context);
+    // CubePass();
     // ShaderToyPass();
 }
 
@@ -113,18 +118,21 @@ void UploadVertexData()
             g_meshes.emplace_back(ModelData{ model.vertices, model.indices }, name);
             model.handle = g_meshes.size() - 1;
             model.is_uploaded = true;
-            Log::Info("Uploaded {} to GPU", name);
+            Log::Info("Uploaded [{}]:{} to GPU", model.handle, name);
         }
     }
+    Log::Info("g_meshes size: {}", g_meshes.size());
 }
-
-const World::Scene *g_scene_context = nullptr;
-const World::Camera *g_camera_context = nullptr;
 
 void UpdateViewportBuffers(const World::Scene &new_scene_context, const World::Camera &new_camera_context)
 {
     g_scene_context = &new_scene_context;
     g_camera_context = &new_camera_context;
+    for (const auto &object : g_scene_context->objects)
+    {
+        Log::Info("Thing in scene:[{}]:uploaded({})", object.GetModel()->handle,
+                  object.GetModel()->is_uploaded);
+    }
 }
 
 } // namespace OpenGLRenderer
