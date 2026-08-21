@@ -3,8 +3,6 @@
 #include "Util/Enums.hpp"
 #include "Util/Log.hpp"
 
-#include "Debug.hpp"
-
 int main()
 {
     if (!Backend::Init(API::OPENGL, WindowMode::WINDOWED))
@@ -22,8 +20,6 @@ int main()
     }
 
     Backend::Destroy();
-
-    Debug::LogDataInformation();
 
     Log::Info("Hello, world!");
 }
