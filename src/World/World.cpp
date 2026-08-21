@@ -10,6 +10,7 @@
 
 #include "Util/Aliases.hpp"
 
+#include <cassert>
 #include <numbers>
 
 namespace World
@@ -19,10 +20,12 @@ auto g_camera = Camera{}; // this will absolutely change
 
 void Init()
 {
-    auto model_map = ResourceManager::GetModelMap();
+    auto &model_map = ResourceManager::GetModelMap();
     if (auto it = model_map.find("cube"); it != std::ranges::cend(model_map))
     {
         LoadedModelData *model_view = &(it->second);
+        assert(model_view->handle >= 0 && !model_view->indices.empty() && !model_view->vertices.empty()
+               && "Model data improperly initialized");
         g_scene.objects.emplace_back(Object{ model_view });
     }
 
