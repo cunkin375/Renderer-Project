@@ -3,7 +3,8 @@
 #include "ResourceHandling/Types/Common.hpp"
 #include "Util/AutoRelease.hpp"
 
-namespace {
+namespace
+{
 using NumVAOs = GLsizei;
 using NumVBOs = GLsizei;
 using NumEBOs = GLsizei;
@@ -18,84 +19,94 @@ using Size = GLint;
 } // namespace
 
 OpenGLMeshBuffer::OpenGLMeshBuffer(const ModelData &data)
-    : vao_{[]() -> GLuint {
-               auto vao = GLuint{};
-               glCreateVertexArrays(NumVAOs{1}, &vao);
-               return vao;
-           }(),
-           [](auto vao) { glDeleteVertexArrays(NumVAOs{1}, &vao); }
+    : vao_{ []() -> GLuint
+            {
+                auto vao = GLuint{};
+                glCreateVertexArrays(NumVAOs{ 1 }, &vao);
+                return vao;
+            }(),
+            [](auto vao) { glDeleteVertexArrays(NumVAOs{ 1 }, &vao); }
 
       },
-      vbo_{[]() -> GLuint {
-               auto vbo = GLuint{};
-               glCreateBuffers(NumVBOs{1}, &vbo);
-               return vbo;
-           }(),
-           [](auto vbo) { glDeleteBuffers(NumVBOs{1}, &vbo); }
+      vbo_{ []() -> GLuint
+            {
+                auto vbo = GLuint{};
+                glCreateBuffers(NumVBOs{ 1 }, &vbo);
+                return vbo;
+            }(),
+            [](auto vbo) { glDeleteBuffers(NumVBOs{ 1 }, &vbo); }
 
       },
-      ebo_{[]() -> GLuint {
-               auto ebo = GLuint{};
-               glCreateBuffers(NumEBOs{1}, &ebo);
-               return ebo;
-           }(),
-           [](auto ebo) { glDeleteBuffers(NumEBOs{1}, &ebo); }
+      ebo_{ []() -> GLuint
+            {
+                auto ebo = GLuint{};
+                glCreateBuffers(NumEBOs{ 1 }, &ebo);
+                return ebo;
+            }(),
+            [](auto ebo) { glDeleteBuffers(NumEBOs{ 1 }, &ebo); }
 
       },
-      vertex_stride_{sizeof(VertexData)} {
+      vertex_stride_{ sizeof(VertexData) }
+{
     Load(data);
 }
 
 OpenGLMeshBuffer::OpenGLMeshBuffer(const ModelData &data, const std::string &name)
-    : vao_{[]() -> GLuint {
-               auto vao = GLuint{};
-               glCreateVertexArrays(NumVAOs{1}, &vao);
-               return vao;
-           }(),
-           [](auto vao) { glDeleteVertexArrays(NumVAOs{1}, &vao); }
+    : vao_{ []() -> GLuint
+            {
+                auto vao = GLuint{};
+                glCreateVertexArrays(NumVAOs{ 1 }, &vao);
+                return vao;
+            }(),
+            [](auto vao) { glDeleteVertexArrays(NumVAOs{ 1 }, &vao); }
 
       },
-      vbo_{[]() -> GLuint {
-               auto vbo = GLuint{};
-               glCreateBuffers(NumVBOs{1}, &vbo);
-               return vbo;
-           }(),
-           [](auto vbo) { glDeleteBuffers(NumVBOs{1}, &vbo); }
+      vbo_{ []() -> GLuint
+            {
+                auto vbo = GLuint{};
+                glCreateBuffers(NumVBOs{ 1 }, &vbo);
+                return vbo;
+            }(),
+            [](auto vbo) { glDeleteBuffers(NumVBOs{ 1 }, &vbo); }
 
       },
-      ebo_{[]() -> GLuint {
-               auto ebo = GLuint{};
-               glCreateBuffers(NumEBOs{1}, &ebo);
-               return ebo;
-           }(),
-           [](auto ebo) { glDeleteBuffers(NumEBOs{1}, &ebo); }
+      ebo_{ []() -> GLuint
+            {
+                auto ebo = GLuint{};
+                glCreateBuffers(NumEBOs{ 1 }, &ebo);
+                return ebo;
+            }(),
+            [](auto ebo) { glDeleteBuffers(NumEBOs{ 1 }, &ebo); }
 
       },
-      vertex_stride_{sizeof(VertexData)} {
+      vertex_stride_{ sizeof(VertexData) }
+{
     Load(data, name);
 }
 
-void OpenGLMeshBuffer::Load(const ModelData &data, const std::string &name) {
+void OpenGLMeshBuffer::Load(const ModelData &data, const std::string &name)
+{
     glNamedBufferStorage(vbo_, data.vertices.size_bytes(), data.vertices.data(), 0);
     glNamedBufferStorage(ebo_, data.indices.size_bytes(), data.indices.data(), 0);
 
-    glVertexArrayVertexBuffer(vao_, BindingIndex{0}, vbo_, Offset{0}, Stride{vertex_stride_});
+    glVertexArrayVertexBuffer(vao_, BindingIndex{ 0 }, vbo_, Offset{ 0 }, Stride{ vertex_stride_ });
 
     glVertexArrayElementBuffer(vao_, ebo_);
 
     // Position attribute
-    glEnableVertexArrayAttrib(vao_, Index{0});
-    glVertexArrayAttribFormat(vao_, AttributeIndex{0}, Size{3}, GL_FLOAT, GL_FALSE,
+    glEnableVertexArrayAttrib(vao_, Index{ 0 });
+    glVertexArrayAttribFormat(vao_, AttributeIndex{ 0 }, Size{ 3 }, GL_FLOAT, GL_FALSE,
                               offsetof(VertexData, position));
-    glVertexArrayAttribBinding(vao_, AttributeIndex{0}, BindingIndex{0});
+    glVertexArrayAttribBinding(vao_, AttributeIndex{ 0 }, BindingIndex{ 0 });
 
     // Color attribute
-    glEnableVertexArrayAttrib(vao_, Index{1});
-    glVertexArrayAttribFormat(vao_, AttributeIndex{1}, Size{3}, GL_FLOAT, GL_FALSE,
+    glEnableVertexArrayAttrib(vao_, Index{ 1 });
+    glVertexArrayAttribFormat(vao_, AttributeIndex{ 1 }, Size{ 3 }, GL_FLOAT, GL_FALSE,
                               offsetof(VertexData, color));
-    glVertexArrayAttribBinding(vao_, AttributeIndex{1}, BindingIndex{0});
+    glVertexArrayAttribBinding(vao_, AttributeIndex{ 1 }, BindingIndex{ 0 });
 
-    if (name.length()) {
+    if (name.length())
+    {
         glObjectLabel(GL_BUFFER, vbo_, static_cast<GLsizei>(name.length()), name.c_str());
     }
 }

@@ -1,3 +1,5 @@
 #include "Util.hpp"
 
-namespace Util {}
+namespace Util
+{
+}

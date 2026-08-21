@@ -9,9 +9,11 @@
 
 #include "Util/Log.hpp"
 
-namespace {
+namespace
+{
 void APIENTRY OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
-                                  const GLchar *message, const void *userParam) {
+                                  const GLchar *message, const void *userParam)
+{
 
     // Ignore non-significant error/warning codes
     if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
@@ -51,7 +53,8 @@ void APIENTRY OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum 
     // clang-format on
 
     // Automatically trigger breakpoint in IDE when high-severity error
-    if (severity == GL_DEBUG_SEVERITY_HIGH) {
+    if (severity == GL_DEBUG_SEVERITY_HIGH)
+    {
 #ifdef _MSC_VER
         __debugbreak(); // Visual Studio
 #else
@@ -62,9 +65,12 @@ void APIENTRY OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum 
 
 } // namespace
 
-namespace OpenGLBackend {
-void Init() {
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+namespace OpenGLBackend
+{
+void Init()
+{
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
         std::cerr << "Failed to initialize GLAD\n";
         return;
     }
@@ -82,7 +88,8 @@ void Init() {
     GLint flags;
     glGetIntegerv(GL_CONTEXT_FLAG_DEBUG_BIT, &flags);
 
-    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+    {
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(OpenGLDebugCallback, nullptr);

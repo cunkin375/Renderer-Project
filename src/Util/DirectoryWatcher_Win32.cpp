@@ -12,40 +12,45 @@
 #include "Util/Log.hpp"
 #include "Util/StringHash.hpp"
 
-namespace {
+namespace
+{
 using DebounceInfo = std::chrono::steady_clock::time_point;
 } // namespace
 
-struct DirectoryWatcher::Implementation {
+struct DirectoryWatcher::Implementation
+{
     // Win32 specific
-    HANDLE directory_handle{INVALID_HANDLE_VALUE};
-    HANDLE event_handle{nullptr}; // manual reset event for OVERLAPPED
+    HANDLE directory_handle{ INVALID_HANDLE_VALUE };
+    HANDLE event_handle{ nullptr }; // manual reset event for OVERLAPPED
     OVERLAPPED overlapped{};
-    bool pending_read{false};
+    bool pending_read{ false };
     alignas(DWORD) char buffer[4096];
 
     // Common across implementations
     std::filesystem::path root_directory{};
     Callback callback_function{};
-    bool enabled{false};
-    bool recursive{true};
+    bool enabled{ false };
+    bool recursive{ true };
     StringMap<DebounceInfo> file_timers;
-    std::chrono::milliseconds debounce_time_milliseconds{250};
+    std::chrono::milliseconds debounce_time_milliseconds{ 250 };
 
     Implementation(const std::filesystem::path &_watch_dir, Callback _on_change, bool _recursive)
-        : root_directory{_watch_dir}, callback_function{std::move(_on_change)}, recursive{_recursive} {
+        : root_directory{ _watch_dir }, callback_function{ std::move(_on_change) }, recursive{ _recursive }
+    {
         directory_handle =
             CreateFileW(root_directory.c_str(), FILE_LIST_DIRECTORY,
                         FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING,
                         FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, nullptr);
 
-        if (INVALID_HANDLE_VALUE == directory_handle) {
+        if (INVALID_HANDLE_VALUE == directory_handle)
+        {
             Log::Fatal("CreateFileW failed!");
             std::exit(EXIT_FAILURE);
         }
 
         event_handle = CreateEventW(nullptr, TRUE, FALSE, nullptr);
-        if (!event_handle) {
+        if (!event_handle)
+        {
             Log::Fatal("CreateEventW failed!");
             CloseHandle(directory_handle);
             std::exit(EXIT_FAILURE);
@@ -57,7 +62,8 @@ struct DirectoryWatcher::Implementation {
         BeginRead();
     }
 
-    bool ShouldDebounce(std::string_view filename) {
+    bool ShouldDebounce(std::string_view filename)
+    {
         bool should_debounce = true;
         bool should_not_debounce = false;
 
@@ -71,30 +77,36 @@ struct DirectoryWatcher::Implementation {
             return should_debounce;
         }
 
-        auto has_shader_extension = [](std::string_view name) -> bool {
-            constexpr std::string_view extensions[] = {".vert", ".frag", ".geom", ".tesc",
-                                                       ".tese", ".comp", ".glsl"};
-            for (auto extension : extensions) {
-                if (name.size() >= extension.size() &&
-                    name.substr(name.size() - extension.size()) == extension) {
+        auto has_shader_extension = [](std::string_view name) -> bool
+        {
+            constexpr std::string_view extensions[] = { ".vert", ".frag", ".geom", ".tesc",
+                                                        ".tese", ".comp", ".glsl" };
+            for (auto extension : extensions)
+            {
+                if (name.size() >= extension.size()
+                    && name.substr(name.size() - extension.size()) == extension)
+                {
                     return true;
                 }
             }
             return false;
         };
 
-        if (!has_shader_extension(filename)) {
+        if (!has_shader_extension(filename))
+        {
             return should_debounce;
         }
 
         auto now = std::chrono::steady_clock::now();
 
-        if (auto it = file_timers.find(filename); it != std::ranges::cend(file_timers)) {
+        if (auto it = file_timers.find(filename); it != std::ranges::cend(file_timers))
+        {
             using namespace std::chrono;
             auto &[key, last_event_time] = *it;
             auto time_elapsed = duration_cast<milliseconds>(now - last_event_time);
 
-            if (time_elapsed < debounce_time_milliseconds) {
+            if (time_elapsed < debounce_time_milliseconds)
+            {
                 last_event_time = now;
                 return should_debounce;
             }
@@ -104,11 +116,12 @@ struct DirectoryWatcher::Implementation {
             return should_not_debounce;
         }
 
-        file_timers.emplace(std::string{filename}, DebounceInfo{now});
+        file_timers.emplace(std::string{ filename }, DebounceInfo{ now });
         return should_not_debounce;
     }
 
-    void BeginRead() {
+    void BeginRead()
+    {
         // must reset event_handle at beginning of every read
         ResetEvent(event_handle);
 
@@ -120,7 +133,8 @@ struct DirectoryWatcher::Implementation {
 
         DWORD errors = GetLastError();
         DWORD PASS_THESE_ERRORS = ERROR_IO_INCOMPLETE | ERROR_IO_PENDING;
-        if (!success && !(errors & PASS_THESE_ERRORS)) {
+        if (!success && !(errors & PASS_THESE_ERRORS))
+        {
             Log::Error("ReadDirectoryChangesW failed with code: {}", errors);
             pending_read = false;
             return;
@@ -130,19 +144,23 @@ struct DirectoryWatcher::Implementation {
         pending_read = true;
     }
 
-    void Poll() {
-        if (!enabled) {
+    void Poll()
+    {
+        if (!enabled)
+        {
             return;
         }
 
         DWORD bytes_transferred = 0;
         BOOL result = GetOverlappedResult(directory_handle, &overlapped, &bytes_transferred, FALSE);
 
-        if (!result) {
+        if (!result)
+        {
             DWORD error = GetLastError();
             DWORD PASS_THESE_ERRORS = ERROR_IO_INCOMPLETE | ERROR_IO_PENDING;
             // currently waiting and non-blocking
-            if (error & PASS_THESE_ERRORS) {
+            if (error & PASS_THESE_ERRORS)
+            {
                 return;
             }
 
@@ -153,7 +171,8 @@ struct DirectoryWatcher::Implementation {
         }
 
         // buffer overflow, read again
-        if (bytes_transferred == 0) {
+        if (bytes_transferred == 0)
+        {
             BeginRead();
             return;
         }
@@ -161,18 +180,21 @@ struct DirectoryWatcher::Implementation {
         ParseEventBuffer();
     }
 
-    void ParseEventBuffer() {
+    void ParseEventBuffer()
+    {
         char *ptr = buffer;
 
-        while (true) {
+        while (true)
+        {
             auto *info = reinterpret_cast<FILE_NOTIFY_INFORMATION *>(ptr);
 
             std::wstring wide_name(info->FileName, info->FileNameLength / sizeof(WCHAR));
-            std::filesystem::path relative_path{wide_name};
+            std::filesystem::path relative_path{ wide_name };
 
-            std::string_view filename{relative_path.filename().string()};
+            std::string_view filename{ relative_path.filename().string() };
 
-            if (!ShouldDebounce(filename)) {
+            if (!ShouldDebounce(filename))
+            {
                 std::filesystem::path full_path = root_directory / relative_path;
 
                 // clang-format off
@@ -198,11 +220,12 @@ struct DirectoryWatcher::Implementation {
                 } std::cout << "\n";
                 // clang-format on
 
-                callback_function(FileEvent{action, full_path});
+                callback_function(FileEvent{ action, full_path });
             }
 
             // at the end of the list, return
-            if (info->NextEntryOffset == 0) {
+            if (info->NextEntryOffset == 0)
+            {
                 break;
             }
 
@@ -217,7 +240,9 @@ struct DirectoryWatcher::Implementation {
 // === PUBLIC METHODS ===
 
 DirectoryWatcher::DirectoryWatcher(const std::filesystem::path &watch_dir, Callback on_change, bool recursive)
-    : impl_{std::make_unique<Implementation>(watch_dir, std::move(on_change), recursive)} {}
+    : impl_{ std::make_unique<Implementation>(watch_dir, std::move(on_change), recursive) }
+{
+}
 
 DirectoryWatcher::~DirectoryWatcher() = default;
 

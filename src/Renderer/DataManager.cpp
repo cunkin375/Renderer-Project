@@ -12,12 +12,15 @@
 
 #include "Backend/Backend.hpp"
 
-namespace Renderer::DataManager {
+namespace Renderer::DataManager
+{
 
-void UploadVertexData() {
-    switch (Backend::GetAPI()) {
+void UploadVertexData()
+{
+    switch (Backend::GetAPI())
+    {
         case API::OPENGL: OpenGLRenderer::UploadVertexData();
-        case API::UNDEFINED: Log::Error{"Unknown API in UploadVertexData!"};
+        case API::UNDEFINED: Log::Error{ "Unknown API in UploadVertexData!" };
     }
 }
 

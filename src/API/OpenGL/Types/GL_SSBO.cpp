@@ -1,13 +1,16 @@
 #include "GL_SSBO.hpp"
 
 OpenGLSSBO::OpenGLSSBO(const ObjectBuffer size, const GLbitfield flags_bitmask)
-    : flags_bitmask_{flags_bitmask} {
+    : flags_bitmask_{ flags_bitmask }
+{
     Reserve(size);
 }
 
-void OpenGLSSBO::Reserve(const ObjectBuffer size) {
+void OpenGLSSBO::Reserve(const ObjectBuffer size)
+{
     // skip if we dont need more space
-    if (handle_ != 0 && buffer_size_ >= size) {
+    if (handle_ != 0 && buffer_size_ >= size)
+    {
         return;
     }
 
@@ -18,8 +21,10 @@ void OpenGLSSBO::Reserve(const ObjectBuffer size) {
     buffer_size_ = size;
 }
 
-void OpenGLSSBO::Update(ObjectBuffer size, const void *data) {
-    if (size == 0 || data == nullptr) {
+void OpenGLSSBO::Update(ObjectBuffer size, const void *data)
+{
+    if (size == 0 || data == nullptr)
+    {
         return;
     }
 
@@ -28,8 +33,10 @@ void OpenGLSSBO::Update(ObjectBuffer size, const void *data) {
     glNamedBufferSubData(handle_, 0, static_cast<GLsizeiptr>(size), data);
 }
 
-void OpenGLSSBO::UploadStatic(ObjectBuffer size, const void *data) {
-    if (size == 0 || data == nullptr) {
+void OpenGLSSBO::UploadStatic(ObjectBuffer size, const void *data)
+{
+    if (size == 0 || data == nullptr)
+    {
         return;
     }
 
@@ -38,28 +45,35 @@ void OpenGLSSBO::UploadStatic(ObjectBuffer size, const void *data) {
     glCreateBuffers(1, &handle_);
 }
 
-void OpenGLSSBO::Bind(ObjectHandle index) const {
+void OpenGLSSBO::Bind(ObjectHandle index) const
+{
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, handle_);
 }
 
-void OpenGLSSBO::CleanUp() {
-    if (handle_ != 0) {
+void OpenGLSSBO::CleanUp()
+{
+    if (handle_ != 0)
+    {
         glDeleteBuffers(1, &handle_);
         handle_ = 0;
         buffer_size_ = 0;
     }
 }
 
-void OpenGLSSBO::CopyFrom(const void *host_pointer, std::size_t size_in_bytes) {
-    if (!host_pointer || size_in_bytes == 0 || handle_ == 0) {
+void OpenGLSSBO::CopyFrom(const void *host_pointer, std::size_t size_in_bytes)
+{
+    if (!host_pointer || size_in_bytes == 0 || handle_ == 0)
+    {
         return;
     }
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, handle_);
 }
 
-void OpenGLSSBO::Clear() const {
-    if (handle_ == 0) {
+void OpenGLSSBO::Clear() const
+{
+    if (handle_ == 0)
+    {
         return;
     }
 
@@ -67,8 +81,10 @@ void OpenGLSSBO::Clear() const {
     glClearNamedBufferData(handle_, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, &zero);
 }
 
-void OpenGLSSBO::ClearRange(std::size_t offset, ObjectBuffer size) {
-    if (handle_ == 0) {
+void OpenGLSSBO::ClearRange(std::size_t offset, ObjectBuffer size)
+{
+    if (handle_ == 0)
+    {
         return;
     }
 

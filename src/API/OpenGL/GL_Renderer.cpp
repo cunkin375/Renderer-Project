@@ -12,13 +12,15 @@
 
 #include "ResourceHandling/ResourceManager.hpp"
 
-namespace OpenGLRenderer {
+namespace OpenGLRenderer
+{
 std::vector<OpenGLMeshBuffer> g_meshes;
 StringMap<OpenGLShader> g_shaders;
 StringMap<OpenGLSSBO> g_ssbos;
 Renderer::Viewport g_viewport_context;
 
-void Init() {
+void Init()
+{
     LoadShaders();
     Log::Info("GL Shaders Loaded!");
 
@@ -26,35 +28,50 @@ void Init() {
     Log::Info("GL SSBOs Created!");
 }
 
-void Destroy() {
+void Destroy()
+{
     g_meshes.clear();
     g_shaders.clear();
     g_ssbos.clear();
 }
 
-void LoadShader(const ShaderName &name, const ShaderPaths &shader_paths, const DefineDirectives &defines) {
+void LoadShader(const ShaderName &name, const ShaderPaths &shader_paths, const DefineDirectives &defines)
+{
     const auto [it, inserted] = g_shaders.try_emplace(name, shader_paths, "", defines);
-    if (!inserted) { Log::Error("LoadShader() failed: '{}' already exists!", name); }
+    if (!inserted)
+    {
+        Log::Error("LoadShader() failed: '{}' already exists!", name);
+    }
 }
 
 void LoadShader(const SubDirectory &sub_directory, const ShaderName &name, const ShaderPaths &shader_paths,
-                const DefineDirectives &defines) {
+                const DefineDirectives &defines)
+{
     const auto [it, inserted] = g_shaders.try_emplace(name, shader_paths, sub_directory, defines);
-    if (!inserted) { Log::Error("LoadShader() failed: '{}' already exists!", name); }
+    if (!inserted)
+    {
+        Log::Error("LoadShader() failed: '{}' already exists!", name);
+    }
 }
 
-void LoadShaders() {
-    LoadShader(ShaderName{"Test"},
-               ShaderPaths{"test_fragment_shader_460.frag", "test_vertex_shader_460.vert"});
-    LoadShader(ShaderName{"ShaderToy"}, ShaderPaths{"shader_toy_460.frag", "shader_toy_460.vert"});
+void LoadShaders()
+{
+    LoadShader(ShaderName{ "Test" },
+               ShaderPaths{ "test_fragment_shader_460.frag", "test_vertex_shader_460.vert" });
+    LoadShader(ShaderName{ "ShaderToy" }, ShaderPaths{ "shader_toy_460.frag", "shader_toy_460.vert" });
 }
 
-void CreateSSBO(const std::string &name, std::size_t buffer_size, GLbitfield flags) {
-    auto [it, inserted] = g_ssbos.try_emplace(name, OpenGLSSBO{buffer_size, flags});
-    if (!inserted) { Log::Error("CreateSSBO failed: '{}' already exists!", name); }
+void CreateSSBO(const std::string &name, std::size_t buffer_size, GLbitfield flags)
+{
+    auto [it, inserted] = g_ssbos.try_emplace(name, OpenGLSSBO{ buffer_size, flags });
+    if (!inserted)
+    {
+        Log::Error("CreateSSBO failed: '{}' already exists!", name);
+    }
 }
 
-void CreateSSBOs() {
+void CreateSSBOs()
+{
     [[maybe_unused]] GLbitfield static_flags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
     GLbitfield dynamic_flags = GL_DYNAMIC_STORAGE_BIT | GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
 
@@ -63,30 +80,37 @@ void CreateSSBOs() {
 }
 
 // ReloadShader recompiles an entire shader program, KEEP THIS LIGHT
-void ReloadShaders() {
+void ReloadShaders()
+{
     ReloadShader("Test");
     ReloadShader("ShaderToy");
 }
 
-void ReloadShader(std::string_view shader_name) {
+void ReloadShader(std::string_view shader_name)
+{
     const auto found = g_shaders.find(shader_name);
-    if (found != std::ranges::cend(g_shaders)) {
+    if (found != std::ranges::cend(g_shaders))
+    {
         auto &[key, shader] = *found;
         shader.HotLoad();
     }
 }
 
-void Render() {
+void Render()
+{
     RenderPass();
     // CubePass(viewport);
     // ShaderToyPass();
 }
 
-void UploadVertexData() {
+void UploadVertexData()
+{
     auto cached_models = ResourceManager::GetModelMap();
-    for (auto &[name, model] : cached_models) {
-        if (!model.is_uploaded) {
-            g_meshes.emplace_back(ModelData{model.vertices, model.indices}, name);
+    for (auto &[name, model] : cached_models)
+    {
+        if (!model.is_uploaded)
+        {
+            g_meshes.emplace_back(ModelData{ model.vertices, model.indices }, name);
             model.handle = g_meshes.size() - 1;
             model.is_uploaded = true;
             Log::Info("Uploaded {} to GPU", name);

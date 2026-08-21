@@ -12,7 +12,8 @@
 #include "Renderer/Viewport.hpp"
 #include "ResourceHandling/ResourceManager.hpp"
 
-namespace {
+namespace
+{
 using Indices = GLvoid *;
 using ModelName = std::string_view;
 using ShaderName = std::string_view;
@@ -24,21 +25,24 @@ using LookAt = Vector3;
 using Up = Vector3;
 } // namespace
 
-namespace OpenGLRenderer {
+namespace OpenGLRenderer
+{
 extern std::vector<OpenGLMeshBuffer> g_meshes;
 extern StringMap<OpenGLShader> g_shaders;
 extern Renderer::Viewport g_viewport_context;
 
-void GenericPass(std::string_view model_name, std::string_view shader_name) {
-}
+void GenericPass(std::string_view model_name, std::string_view shader_name) {}
 
-void RenderPass() {
+void RenderPass()
+{
     auto &shader = g_shaders.find("Test")->second;
     shader.Bind();
 
-    for (const auto &object : g_viewport_context.GetScene()->objects) {
+    for (const auto &object : g_viewport_context.GetScene()->objects)
+    {
         auto model_info = ResourceManager::GetGPUModelInfo(object->GetModelName());
-        if (model_info.index_count < 0) {
+        if (model_info.index_count < 0)
+        {
             Log::Error("Failed to fetch {} from ResourceManager!", object->GetModelName());
             continue;
         }
@@ -53,7 +57,8 @@ void RenderPass() {
         // static const auto projection =
         //     Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
         const auto projection_uniform = shader.GetUniformLocation("projection");
-        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, g_viewport_context.GetCamera()->Projection().data());
+        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE,
+                           g_viewport_context.GetCamera()->Projection().data());
 
         g_meshes[model_info.handle].Bind();
 
@@ -63,9 +68,11 @@ void RenderPass() {
     }
 }
 
-void CubePass() {
+void CubePass()
+{
     auto info = ResourceManager::GetGPUModelInfo("cube");
-    if (info.index_count > 0) {
+    if (info.index_count > 0)
+    {
         auto &shader = g_shaders.find("Test")->second;
         shader.Bind();
 
@@ -82,7 +89,7 @@ void CubePass() {
 
         // NOTE: This approach is temporary. These matrices should be constructed in an API agnostic
         // abstraction, THEN passed into the target API.
-        static constexpr auto model = Matrix4{Vector3{0.0f, 0.0f, 0.0f}};
+        static constexpr auto model = Matrix4{ Vector3{ 0.0f, 0.0f, 0.0f } };
         const auto model_uniform = shader.GetUniformLocation("model");
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
 
@@ -93,18 +100,21 @@ void CubePass() {
         // static const auto projection =
         //     Matrix4::Perspective(std::numbers::pi_v<float> / 4.0f, 800.0f, 600.0f, 0.001f, 100.0f);
         const auto projection_uniform = shader.GetUniformLocation("projection");
-        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, g_viewport_context.GetCamera()->Projection().data());
+        glUniformMatrix4fv(projection_uniform, 1, GL_FALSE,
+                           g_viewport_context.GetCamera()->Projection().data());
 
         g_meshes[info.handle].Bind();
 
         glDrawElements(GL_TRIANGLES, info.index_count, GL_UNSIGNED_INT, nullptr);
 
         g_meshes[info.handle].Unbind();
-    } else {
+    }
+    else
+    {
         Log::Error("CubePass failed to fetch from GetGPUModelInfo!");
     }
 }
 
-void ShaderToyPass() { GenericPass(ModelName{"ShaderToy"}, ShaderName{"ShaderToy"}); }
+void ShaderToyPass() { GenericPass(ModelName{ "ShaderToy" }, ShaderName{ "ShaderToy" }); }
 
 } // namespace OpenGLRenderer

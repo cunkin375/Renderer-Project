@@ -8,7 +8,8 @@
 #include "API/OpenGL/GL_Framebuffer.hpp"
 #include "Util/Log.hpp"
 
-namespace Backend::GLFW {
+namespace Backend::GLFW
+{
 const GLFWvidmode *g_mode;
 GLFWwindow *g_window = nullptr;
 GLFWmonitor *g_monitor = nullptr;
@@ -22,14 +23,16 @@ auto g_current_window_width = i32{};
 auto g_current_window_height = i32{};
 auto g_force_close_window = bool{};
 
-bool Init(API api, WindowMode window_mode) {
-    glfwSetErrorCallback(
-        [](i32 error, const char *description) { Log::Error("GLFW Error Code {}: {}", error, description); });
+bool Init(API api, WindowMode window_mode)
+{
+    glfwSetErrorCallback([](i32 error, const char *description)
+                         { Log::Error("GLFW Error Code {}: {}", error, description); });
 
     glfwInit();
 
     /// GLFW version: 4.6
-    if (api == API::OPENGL) {
+    if (api == API::OPENGL)
+    {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -55,26 +58,32 @@ bool Init(API api, WindowMode window_mode) {
 
     // Create window
     g_window_mode = window_mode;
-    if (g_window_mode == WindowMode::WINDOWED) {
+    if (g_window_mode == WindowMode::WINDOWED)
+    {
         g_current_window_width = g_windowed_width;
         g_current_window_height = g_windowed_height;
         g_window = glfwCreateWindow(g_windowed_width, g_windowed_height, "GLFW Window", nullptr, nullptr);
         // stops initial "Wayland: the platform does not support setting the window position"
-        if (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND) {
+        if (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND)
+        {
             glfwSetWindowPos(g_window, 0, 0);
         }
-    } else if (g_window_mode == WindowMode::FULLSCREEN) {
+    }
+    else if (g_window_mode == WindowMode::FULLSCREEN)
+    {
         g_current_window_width = g_fullscreen_width;
         g_current_window_height = g_fullscreen_height;
         g_window =
             glfwCreateWindow(g_fullscreen_width, g_fullscreen_height, "GLFW Window", g_monitor, nullptr);
     }
-    if (g_window == nullptr) {
+    if (g_window == nullptr)
+    {
         Log::Error("Failed to create GLFW window");
         glfwTerminate();
         return false;
     }
-    if (api == API::OPENGL) {
+    if (api == API::OPENGL)
+    {
         glfwSetFramebufferSizeCallback(g_window, OpenGL::GLFW::FramebufferSizeCallback);
     }
 
@@ -83,26 +92,34 @@ bool Init(API api, WindowMode window_mode) {
 
 void Destroy() { glfwTerminate(); }
 
-void BeginFrame(API api) {
-    if (api == API::OPENGL) {
+void BeginFrame(API api)
+{
+    if (api == API::OPENGL)
+    {
         glfwPollEvents();
     }
 }
 
-void EndFrame(API api) {
-    if (api == API::OPENGL) {
+void EndFrame(API api)
+{
+    if (api == API::OPENGL)
+    {
         glfwSwapBuffers(g_window);
     }
 }
 
-Events Update() {
-    if (glfwGetKey(g_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+Events Update()
+{
+    if (glfwGetKey(g_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
         glfwSetWindowShouldClose(g_window, true);
     }
-    if (glfwGetKey(g_window, GLFW_KEY_R)) {
+    if (glfwGetKey(g_window, GLFW_KEY_R))
+    {
         return Events::RELOAD_SHADERS;
     }
-    if (glfwGetKey(g_window, GLFW_KEY_F5)) {
+    if (glfwGetKey(g_window, GLFW_KEY_F5))
+    {
         return Events::ENABLE_AUTO_RELOAD_SHADERS;
     }
     return Events::NONE;
