@@ -60,7 +60,7 @@ public:
                                                    const Matrix4D &right_matrix) = default;
 
     /* matrix <=> matrix */
-    [[nodiscard]] friend constexpr bool operator<=>(const Matrix4D &left_matrix,
+    [[nodiscard]] friend constexpr std::partial_ordering operator<=>(const Matrix4D &left_matrix,
                                                     const Matrix4D &right_matrix) = default;
 
     constexpr Matrix4D(fVector3 translation)
