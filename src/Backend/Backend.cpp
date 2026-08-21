@@ -81,8 +81,8 @@ void EndFrame() { GLFW::EndFrame(g_api); }
 
 void Update()
 {
-    // clang-format off
-    switch (GLFW::Update()) {
+    switch (GLFW::Update())
+    {
         case Events::RELOAD_SHADERS: Renderer::ReloadShaders(); break;
         case Events::ENABLE_AUTO_RELOAD_SHADERS:
             g_auto_reload_enabled = !g_auto_reload_enabled;
@@ -90,7 +90,6 @@ void Update()
             break;
         case Events::NONE: break;
     }
-    // clang-format on
 }
 
 void Destroy()
