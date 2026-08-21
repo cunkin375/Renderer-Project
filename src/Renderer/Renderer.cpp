@@ -22,13 +22,6 @@ void Render()
 
 void Init() { DataManager::UploadVertexData(); }
 
-void UploadVertexData()
-{
-    if (Backend::GetAPI() == API::OPENGL)
-    {
-    }
-}
-
 void ReloadShaders()
 {
     if (API::OPENGL == Backend::GetAPI())

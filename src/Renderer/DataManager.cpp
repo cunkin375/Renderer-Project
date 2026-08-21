@@ -19,8 +19,8 @@ void UploadVertexData()
 {
     switch (Backend::GetAPI())
     {
-        case API::OPENGL: OpenGLRenderer::UploadVertexData();
-        case API::UNDEFINED: Log::Error{ "Unknown API in UploadVertexData!" };
+        case API::OPENGL: OpenGLRenderer::UploadVertexData(); break;
+        case API::UNDEFINED: Log::Error{ "Unknown API in UploadVertexData!" }; break;
     }
 }
 
