@@ -7,3 +7,4 @@ build/
 AutoBuildAndRun.ps1
 .log
 vendor/googletest
+AutoFormat.ps1
