@@ -57,8 +57,8 @@ void LoadShader(const SubDirectory &sub_directory, const ShaderName &name, const
 void LoadShaders()
 {
     LoadShader(ShaderName{ "Test" },
-               ShaderPaths{ "test_fragment_shader_460.frag", "test_vertex_shader_460.vert" });
-    LoadShader(ShaderName{ "ShaderToy" }, ShaderPaths{ "shader_toy_460.frag", "shader_toy_460.vert" });
+               ShaderPaths{ "test_vertex_shader_460.vert", "test_fragment_shader_460.frag" });
+    LoadShader(ShaderName{ "ShaderToy" }, ShaderPaths{ "shader_toy_460.vert", "shader_toy_460.frag" });
 }
 
 void CreateSSBO(const std::string &name, std::size_t buffer_size, GLbitfield flags)
@@ -98,8 +98,8 @@ void ReloadShader(std::string_view shader_name)
 
 void Render()
 {
-    RenderPass();
-    // CubePass(viewport);
+    // RenderPass();
+    CubePass();
     // ShaderToyPass();
 }
 

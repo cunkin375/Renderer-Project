@@ -91,8 +91,6 @@ void CubePass()
         //
         // t += 0.02f;
 
-        // NOTE: This approach is temporary. These matrices should be constructed in an API agnostic
-        // abstraction, THEN passed into the target API.
         static constexpr auto model = Matrix4{ fVector3{ 0.0f, 0.0f, 0.0f } };
         const auto model_uniform = shader.GetUniformLocation("model");
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, model.GetSpan().data());
