@@ -27,9 +27,9 @@ void Init()
     }
 
     g_camera = Camera{
-        Vector3{ 0.0f, 0.0f, 3.0f }, // eye
-        Vector3{ 0.0f, 0.0f, 3.0f }, // look_at
-        Vector3{ 0.0f, 1.0f, 3.0f }, // up
+        fVector3{ 0.0f, 0.0f, 3.0f }, // eye
+        fVector3{ 0.0f, 0.0f, 3.0f }, // look_at
+        fVector3{ 0.0f, 1.0f, 3.0f }, // up
         std::numbers::pi_v<f32> / 2.0f,
         0.001f, // near plane
         100.0f  // far plane

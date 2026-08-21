@@ -23,6 +23,7 @@ public:
     Object(const LoadedModelData *model, const MaterialData *material, const TextureData *texture);
 
     const Matrix4 &GetTransform() const noexcept { return transform_; }
+    const LoadedModelData *GetModel() const noexcept { return model_view_; }
 };
 
 } // namespace World

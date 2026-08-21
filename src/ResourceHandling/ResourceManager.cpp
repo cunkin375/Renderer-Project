@@ -42,7 +42,7 @@ ModelData Cube()
         return { .vertices = cube.vertices, .indices = cube.indices };
     }
 
-    auto positions = std::vector<Vector3>{ { -0.5, -0.5, 0.5 },  { 0.5, -0.5, 0.5 },   { 0.5, 0.5, 0.5 },
+    auto positions = std::vector<fVector3>{ { -0.5, -0.5, 0.5 },  { 0.5, -0.5, 0.5 },   { 0.5, 0.5, 0.5 },
                                            { -0.5, 0.5, 0.5 },   { -0.5, -0.5, -0.5 }, { -0.5, 0.5, -0.5 },
                                            { 0.5, 0.5, -0.5 },   { 0.5, -0.5, -0.5 },  { -0.5, 0.5, -0.5 },
                                            { -0.5, 0.5, 0.5 },   { 0.5, 0.5, 0.5 },    { 0.5, 0.5, -0.5 },
@@ -51,7 +51,7 @@ ModelData Cube()
                                            { 0.5, 0.5, 0.5 },    { 0.5, -0.5, 0.5 },   { -0.5, -0.5, -0.5 },
                                            { -0.5, -0.5, 0.5 },  { -0.5, 0.5, 0.5 },   { -0.5, 0.5, -0.5 } };
 
-    auto colors = std::vector<Color>{ { 0.12, 0.84, 0.33 }, { 0.12, 0.84, 0.33 }, { 0.12, 0.84, 0.33 },
+    auto colors = std::vector<fColor>{ { 0.12, 0.84, 0.33 }, { 0.12, 0.84, 0.33 }, { 0.12, 0.84, 0.33 },
                                       { 0.12, 0.84, 0.33 }, { 0.23, 0.44, 0.77 }, { 0.23, 0.44, 0.77 },
                                       { 0.23, 0.44, 0.77 }, { 0.23, 0.44, 0.77 }, { 0.99, 0.23, 0.14 },
                                       { 0.99, 0.23, 0.14 }, { 0.99, 0.23, 0.14 }, { 0.99, 0.23, 0.14 },
@@ -63,7 +63,7 @@ ModelData Cube()
     auto indices = std::vector<IndexData>{ 0, 1, 2, 4, 5, 6, 8, 9,  10, 12, 13, 14, 16, 17, 18, 20, 21, 22,
                                            0, 2, 3, 4, 6, 7, 8, 10, 11, 12, 14, 15, 16, 18, 19, 20, 22, 23 };
 
-    [[maybe_unused]] Vector2 uvs[]{};
+    [[maybe_unused]] fVector2 uvs[]{};
 
     auto [new_item, inserted] = loaded_model_cache.try_emplace(
         "cube", LoadedModelData{ vertices(positions, colors), std::move(indices) });
@@ -88,9 +88,9 @@ ModelData Triangle()
         return { .vertices = triangle.vertices, .indices = triangle.indices };
     }
 
-    Vector3 positions[]{ { -0.5, -0.5, 0.0 }, { 0.5, -0.5, 0.0 }, { 0.0, 0.5, 0.0 } };
+    fVector3 positions[]{ { -0.5, -0.5, 0.0 }, { 0.5, -0.5, 0.0 }, { 0.0, 0.5, 0.0 } };
 
-    Color colors[]{ { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f } };
+    fColor colors[]{ { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f } };
 
     auto indices = std::vector<IndexData>{ 0, 1, 2 };
 
@@ -117,7 +117,7 @@ ModelData Square()
         return { .vertices = square.vertices, .indices = square.indices };
     }
 
-    Vector3 positions[]{
+    fVector3 positions[]{
         { 0.5f, 0.5f, 0.5f }, { 0.5f, -0.5f, 0.5f }, { -0.5f, -0.5f, 0.5f }, { -0.5f, 0.5f, 0.5f }
     };
 
@@ -146,7 +146,7 @@ ModelData ShaderToy()
         return { .vertices = square.vertices, .indices = square.indices };
     }
 
-    auto positions = std::vector<Vector3>{
+    auto positions = std::vector<fVector3>{
         { 1.0f, 1.0f, 0.0f }, { 1.0f, -1.0f, 0.0f }, { -1.0f, -1.0f, 0.0f }, { -1.0f, 1.0f, 0.0f }
     };
 

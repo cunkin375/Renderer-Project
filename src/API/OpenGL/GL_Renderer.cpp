@@ -105,7 +105,7 @@ void Render()
 
 void UploadVertexData()
 {
-    auto cached_models = ResourceManager::GetModelMap();
+    auto &cached_models = ResourceManager::GetModelMap();
     for (auto &[name, model] : cached_models)
     {
         if (!model.is_uploaded)
@@ -116,6 +116,15 @@ void UploadVertexData()
             Log::Info("Uploaded {} to GPU", name);
         }
     }
+}
+
+const World::Scene *g_scene_context = nullptr;
+const World::Camera *g_camera_context = nullptr;
+
+void UpdateViewportBuffers(const World::Scene &new_scene_context, const World::Camera &new_camera_context)
+{
+    g_scene_context = &new_scene_context;
+    g_camera_context = &new_camera_context;
 }
 
 } // namespace OpenGLRenderer

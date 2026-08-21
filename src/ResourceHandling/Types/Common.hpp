@@ -9,12 +9,12 @@
 using IndexData = u32;
 
 struct alignas(16) VertexData {
-    Vector3 position{};
-    Color color{};
+    fVector3 position{};
+    fColor color{};
 
-    VertexData(float x, float y, float z) : position{Vector3{x, y, z}} {}
-    VertexData(const Vector3 &_position) : position{_position} {}
-    VertexData(const Vector3 &_position, const Color &_color) : position{_position}, color{_color} {}
+    VertexData(float x, float y, float z) : position{fVector3{x, y, z}} {}
+    VertexData(const fVector3 &_position) : position{_position} {}
+    VertexData(const fVector3 &_position, const fColor &_color) : position{_position}, color{_color} {}
 };
 
 struct ModelData {

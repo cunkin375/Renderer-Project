@@ -3,6 +3,11 @@
 #include <string>
 #include <vector>
 
+namespace World {
+struct Scene;
+struct Camera;
+}
+
 using SubDirectory = std::string;
 using ShaderName = std::string;
 using ShaderPaths = std::vector<std::string>;
